@@ -1,0 +1,17 @@
+{
+  "@@locale": "pt_BR",
+  "appName": "Eyes",
+  "homeTitle": "Assistência visual ao seu alcance",
+  "foundationReady": "A fundação do aplicativo está pronta para receber as funcionalidades do MVP.",
+  "accessibilityDescription": "Este aplicativo respeita o tamanho de fonte do sistema, oferece alto contraste e foi estruturado para funcionar com o TalkBack.",
+  "testFeedbackLabel": "Testar vibração e som",
+  "testFeedbackHint": "Ativa uma confirmação tátil e sonora do aparelho",
+  "feedbackConfirmed": "Feedback tátil e sonoro confirmado.",
+  "feedbackUnavailable": "Não foi possível reproduzir o feedback neste aparelho.",
+  "loading": "Carregando",
+  "unexpectedError": "Ocorreu um erro inesperado.",
+  "tryAgain": "Tentar novamente",
+  "notFoundTitle": "Tela não encontrada",
+  "notFoundMessage": "Não foi possível encontrar a tela solicitada.",
+  "goHome": "Voltar ao início"
+}
