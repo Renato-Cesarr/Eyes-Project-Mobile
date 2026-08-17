@@ -80,6 +80,13 @@ fvm flutter build apk --debug --flavor dev --target lib/main_dev.dart
 fvm flutter build appbundle --release --flavor prod --target lib/main_prod.dart --dart-define=API_BASE_URL=https://api.example.invalid
 ```
 
+Pull Requests para `dev` e `main`, assim como pushes nessas branches, executam
+formatação, análise estática, testes com cobertura LCOV, builds dos flavors e
+análise no SonarQube Cloud. O job só é aprovado quando o Quality Gate do Sonar
+é aprovado. O repositório está vinculado ao projeto
+`Renato-Cesarr_Eyes-Project-Mobile` no SonarQube Cloud e usa o secret
+`SONAR_TOKEN` do GitHub Actions para autenticar a análise.
+
 O bundle de produção gerado localmente não contém chave de assinatura. A chave
 de release deverá ser fornecida por um cofre de segredos no pipeline de entrega,
 nunca versionada.
