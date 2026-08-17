@@ -23,9 +23,7 @@ abstract final class AppTheme {
     required bool highContrast,
   }) {
     final isDark = brightness == Brightness.dark;
-    final seedColor = highContrast
-        ? (isDark ? const Color(0xFF8FCBFF) : const Color(0xFF002B52))
-        : const Color(0xFF005A9C);
+    final seedColor = _seedColor(highContrast: highContrast, isDark: isDark);
     final colorScheme = ColorScheme.fromSeed(
       brightness: brightness,
       contrastLevel: highContrast ? 1 : 0.35,
@@ -98,5 +96,12 @@ abstract final class AppTheme {
         ),
       ),
     );
+  }
+
+  static Color _seedColor({required bool highContrast, required bool isDark}) {
+    if (!highContrast) {
+      return const Color(0xFF005A9C);
+    }
+    return isDark ? const Color(0xFF8FCBFF) : const Color(0xFF002B52);
   }
 }
