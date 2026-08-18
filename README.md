@@ -25,7 +25,7 @@ pós-MVP.
 3. FVM instalado:
 
 ```powershell
-dart pub global activate fvm
+dart pub global activate fvm 4.1.2
 ```
 
 ## Setup reproduzível
@@ -34,7 +34,12 @@ dart pub global activate fvm
 fvm install
 fvm flutter pub get
 fvm flutter doctor -v
+./scripts/check-toolchain.ps1
 ```
+
+O diagnóstico exige Flutter `3.44.0` por FVM e Java 21. A CI usa as mesmas
+versões declaradas em `.fvmrc` e `.java-version`, validando-as antes de baixar
+as dependências. Não regenere `pubspec.lock` com outro SDK sem revisão.
 
 Aceite as licenças do Android SDK na primeira configuração:
 

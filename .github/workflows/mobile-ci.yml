@@ -33,6 +33,10 @@ jobs:
           flutter-version: '3.44.0'
           cache: true
 
+      - name: Validate pinned toolchains
+        shell: pwsh
+        run: ./scripts/check-toolchain.ps1 -Ci
+
       - name: Resolve dependencies
         run: flutter pub get
 
