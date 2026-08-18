@@ -1,3 +1,4 @@
+import 'package:eyes_mobile/app/routing/app_router.dart';
 import 'package:eyes_mobile/core/accessibility/accessible_feedback_service.dart';
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
 import 'package:eyes_mobile/features/home/application/home_controller.dart';
@@ -5,6 +6,7 @@ import 'package:eyes_mobile/features/home/domain/home_state.dart';
 import 'package:eyes_mobile/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 final class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -60,6 +62,14 @@ final class _HomeContent extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
+                FilledButton.icon(
+                  onPressed: () => context.pushNamed(AppRoutes.camera),
+                  icon: const ExcludeSemantics(
+                    child: Icon(Icons.camera_alt_outlined),
+                  ),
+                  label: Text(l10n.openCamera),
+                ),
+                const SizedBox(height: 12),
                 Semantics(
                   header: true,
                   child: Text(

@@ -180,6 +180,186 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Voltar ao início'**
   String get goHome;
+
+  /// No description provided for @openCamera.
+  ///
+  /// In pt, this message translates to:
+  /// **'Abrir câmera'**
+  String get openCamera;
+
+  /// No description provided for @cameraPageTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Câmera e varredura'**
+  String get cameraPageTitle;
+
+  /// No description provided for @cameraPrivacyNotice.
+  ///
+  /// In pt, this message translates to:
+  /// **'A imagem é processada apenas enquanto esta tela está ativa. O aplicativo não salva fotos nem vídeos.'**
+  String get cameraPrivacyNotice;
+
+  /// No description provided for @cameraStatusLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Estado da câmera'**
+  String get cameraStatusLabel;
+
+  /// No description provided for @cameraStart.
+  ///
+  /// In pt, this message translates to:
+  /// **'Iniciar câmera'**
+  String get cameraStart;
+
+  /// No description provided for @cameraPause.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pausar câmera'**
+  String get cameraPause;
+
+  /// No description provided for @cameraResume.
+  ///
+  /// In pt, this message translates to:
+  /// **'Retomar câmera'**
+  String get cameraResume;
+
+  /// No description provided for @cameraStop.
+  ///
+  /// In pt, this message translates to:
+  /// **'Encerrar câmera'**
+  String get cameraStop;
+
+  /// No description provided for @cameraPreparing.
+  ///
+  /// In pt, this message translates to:
+  /// **'Preparando câmera'**
+  String get cameraPreparing;
+
+  /// No description provided for @cameraOpenSettings.
+  ///
+  /// In pt, this message translates to:
+  /// **'Abrir configurações do aparelho'**
+  String get cameraOpenSettings;
+
+  /// No description provided for @cameraUnexpectedError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível carregar o controle da câmera.'**
+  String get cameraUnexpectedError;
+
+  /// No description provided for @cameraStatusIdle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pronta para iniciar.'**
+  String get cameraStatusIdle;
+
+  /// No description provided for @cameraStatusRequestingPermission.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aguardando permissão para usar a câmera.'**
+  String get cameraStatusRequestingPermission;
+
+  /// No description provided for @cameraStatusPreparing.
+  ///
+  /// In pt, this message translates to:
+  /// **'Preparando a câmera.'**
+  String get cameraStatusPreparing;
+
+  /// No description provided for @cameraStatusStreaming.
+  ///
+  /// In pt, this message translates to:
+  /// **'Câmera ativa e recebendo imagens.'**
+  String get cameraStatusStreaming;
+
+  /// No description provided for @cameraStatusPaused.
+  ///
+  /// In pt, this message translates to:
+  /// **'Câmera pausada e recursos liberados.'**
+  String get cameraStatusPaused;
+
+  /// No description provided for @cameraStatusDenied.
+  ///
+  /// In pt, this message translates to:
+  /// **'Permissão de câmera negada.'**
+  String get cameraStatusDenied;
+
+  /// No description provided for @cameraStatusPermanentlyDenied.
+  ///
+  /// In pt, this message translates to:
+  /// **'Permissão de câmera bloqueada nas configurações.'**
+  String get cameraStatusPermanentlyDenied;
+
+  /// No description provided for @cameraStatusBusy.
+  ///
+  /// In pt, this message translates to:
+  /// **'A câmera está sendo usada por outro aplicativo.'**
+  String get cameraStatusBusy;
+
+  /// No description provided for @cameraStatusUnavailable.
+  ///
+  /// In pt, this message translates to:
+  /// **'Câmera indisponível.'**
+  String get cameraStatusUnavailable;
+
+  /// No description provided for @cameraPermissionDeniedHelp.
+  ///
+  /// In pt, this message translates to:
+  /// **'Autorize a câmera para iniciar a varredura. Você pode tentar novamente.'**
+  String get cameraPermissionDeniedHelp;
+
+  /// No description provided for @cameraPermissionPermanentlyDeniedHelp.
+  ///
+  /// In pt, this message translates to:
+  /// **'Abra as configurações do aparelho e permita o acesso à câmera para o Eyes.'**
+  String get cameraPermissionPermanentlyDeniedHelp;
+
+  /// No description provided for @cameraPermissionRestrictedHelp.
+  ///
+  /// In pt, this message translates to:
+  /// **'Este aparelho ou perfil restringe o acesso à câmera.'**
+  String get cameraPermissionRestrictedHelp;
+
+  /// No description provided for @cameraBusyHelp.
+  ///
+  /// In pt, this message translates to:
+  /// **'Feche outros aplicativos que estejam usando a câmera e tente novamente.'**
+  String get cameraBusyHelp;
+
+  /// No description provided for @cameraMissingHelp.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhuma câmera compatível foi encontrada neste aparelho.'**
+  String get cameraMissingHelp;
+
+  /// No description provided for @cameraTimeoutHelp.
+  ///
+  /// In pt, this message translates to:
+  /// **'A câmera demorou mais que o esperado para iniciar. Tente novamente.'**
+  String get cameraTimeoutHelp;
+
+  /// No description provided for @cameraInitializationHelp.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível preparar a câmera. Verifique o aparelho e tente novamente.'**
+  String get cameraInitializationHelp;
+
+  /// No description provided for @cameraStreamHelp.
+  ///
+  /// In pt, this message translates to:
+  /// **'A câmera parou de fornecer imagens. Tente iniciar novamente.'**
+  String get cameraStreamHelp;
+
+  /// Telemetria local de diagnóstico da câmera, invisível ao TalkBack.
+  ///
+  /// In pt, this message translates to:
+  /// **'{fps} FPS • recebidos: {received} • processados: {processed} • descartados: {dropped} • processamento: {processingMs} ms'**
+  String cameraTelemetry(
+    String fps,
+    int received,
+    int processed,
+    int dropped,
+    int processingMs,
+  );
 }
 
 class _AppLocalizationsDelegate
