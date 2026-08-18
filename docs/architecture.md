@@ -54,3 +54,28 @@ fronteiras:
 5. necessidade comprovada de alternar implementações.
 
 Não crie repositories para transformar ou repassar dados dentro da memória.
+
+## Pipeline da câmera
+
+`CameraGateway` é a porta da aplicação para permissão, inicialização, stream e
+liberação de hardware. `MobileCameraGateway` concentra `camera` e
+`permission_handler`; nenhum tipo desses plugins atravessa para o domínio.
+
+```text
+CameraDiagnosticsPage
+        ↓ observa
+ScanController (AsyncNotifier<CameraSessionState>)
+        ↓ depende de
+CameraGateway ← MobileCameraGateway ← câmera Android
+        ↓ entrega
+CameraFrameHandler ← inferência TFLite no REN-29
+```
+
+Os estados `idle`, `requestingPermission`, `preparing`, `streaming`, `paused`,
+`denied`, `permanentlyDenied`, `busy` e `unavailable` são explícitos. A UI
+traduz esses estados em texto e região semântica `live`; o adapter nativo não
+abre diálogos nem produz mensagens visuais.
+
+O `LatestFrameProcessor` limita o processamento e mantém somente a imagem mais
+recente enquanto existe trabalho em voo. Sua telemetria agrega frames recebidos,
+processados, descartados, FPS e duração do processamento sem registrar pixels.

@@ -53,6 +53,114 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get goHome => 'Voltar ao início';
+
+  @override
+  String get openCamera => 'Abrir câmera';
+
+  @override
+  String get cameraPageTitle => 'Câmera e varredura';
+
+  @override
+  String get cameraPrivacyNotice =>
+      'A imagem é processada apenas enquanto esta tela está ativa. O aplicativo não salva fotos nem vídeos.';
+
+  @override
+  String get cameraStatusLabel => 'Estado da câmera';
+
+  @override
+  String get cameraStart => 'Iniciar câmera';
+
+  @override
+  String get cameraPause => 'Pausar câmera';
+
+  @override
+  String get cameraResume => 'Retomar câmera';
+
+  @override
+  String get cameraStop => 'Encerrar câmera';
+
+  @override
+  String get cameraPreparing => 'Preparando câmera';
+
+  @override
+  String get cameraOpenSettings => 'Abrir configurações do aparelho';
+
+  @override
+  String get cameraUnexpectedError =>
+      'Não foi possível carregar o controle da câmera.';
+
+  @override
+  String get cameraStatusIdle => 'Pronta para iniciar.';
+
+  @override
+  String get cameraStatusRequestingPermission =>
+      'Aguardando permissão para usar a câmera.';
+
+  @override
+  String get cameraStatusPreparing => 'Preparando a câmera.';
+
+  @override
+  String get cameraStatusStreaming => 'Câmera ativa e recebendo imagens.';
+
+  @override
+  String get cameraStatusPaused => 'Câmera pausada e recursos liberados.';
+
+  @override
+  String get cameraStatusDenied => 'Permissão de câmera negada.';
+
+  @override
+  String get cameraStatusPermanentlyDenied =>
+      'Permissão de câmera bloqueada nas configurações.';
+
+  @override
+  String get cameraStatusBusy =>
+      'A câmera está sendo usada por outro aplicativo.';
+
+  @override
+  String get cameraStatusUnavailable => 'Câmera indisponível.';
+
+  @override
+  String get cameraPermissionDeniedHelp =>
+      'Autorize a câmera para iniciar a varredura. Você pode tentar novamente.';
+
+  @override
+  String get cameraPermissionPermanentlyDeniedHelp =>
+      'Abra as configurações do aparelho e permita o acesso à câmera para o Eyes.';
+
+  @override
+  String get cameraPermissionRestrictedHelp =>
+      'Este aparelho ou perfil restringe o acesso à câmera.';
+
+  @override
+  String get cameraBusyHelp =>
+      'Feche outros aplicativos que estejam usando a câmera e tente novamente.';
+
+  @override
+  String get cameraMissingHelp =>
+      'Nenhuma câmera compatível foi encontrada neste aparelho.';
+
+  @override
+  String get cameraTimeoutHelp =>
+      'A câmera demorou mais que o esperado para iniciar. Tente novamente.';
+
+  @override
+  String get cameraInitializationHelp =>
+      'Não foi possível preparar a câmera. Verifique o aparelho e tente novamente.';
+
+  @override
+  String get cameraStreamHelp =>
+      'A câmera parou de fornecer imagens. Tente iniciar novamente.';
+
+  @override
+  String cameraTelemetry(
+    String fps,
+    int received,
+    int processed,
+    int dropped,
+    int processingMs,
+  ) {
+    return '$fps FPS • recebidos: $received • processados: $processed • descartados: $dropped • processamento: $processingMs ms';
+  }
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -104,4 +212,112 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get goHome => 'Voltar ao início';
+
+  @override
+  String get openCamera => 'Abrir câmera';
+
+  @override
+  String get cameraPageTitle => 'Câmera e varredura';
+
+  @override
+  String get cameraPrivacyNotice =>
+      'A imagem é processada apenas enquanto esta tela está ativa. O aplicativo não salva fotos nem vídeos.';
+
+  @override
+  String get cameraStatusLabel => 'Estado da câmera';
+
+  @override
+  String get cameraStart => 'Iniciar câmera';
+
+  @override
+  String get cameraPause => 'Pausar câmera';
+
+  @override
+  String get cameraResume => 'Retomar câmera';
+
+  @override
+  String get cameraStop => 'Encerrar câmera';
+
+  @override
+  String get cameraPreparing => 'Preparando câmera';
+
+  @override
+  String get cameraOpenSettings => 'Abrir configurações do aparelho';
+
+  @override
+  String get cameraUnexpectedError =>
+      'Não foi possível carregar o controle da câmera.';
+
+  @override
+  String get cameraStatusIdle => 'Pronta para iniciar.';
+
+  @override
+  String get cameraStatusRequestingPermission =>
+      'Aguardando permissão para usar a câmera.';
+
+  @override
+  String get cameraStatusPreparing => 'Preparando a câmera.';
+
+  @override
+  String get cameraStatusStreaming => 'Câmera ativa e recebendo imagens.';
+
+  @override
+  String get cameraStatusPaused => 'Câmera pausada e recursos liberados.';
+
+  @override
+  String get cameraStatusDenied => 'Permissão de câmera negada.';
+
+  @override
+  String get cameraStatusPermanentlyDenied =>
+      'Permissão de câmera bloqueada nas configurações.';
+
+  @override
+  String get cameraStatusBusy =>
+      'A câmera está sendo usada por outro aplicativo.';
+
+  @override
+  String get cameraStatusUnavailable => 'Câmera indisponível.';
+
+  @override
+  String get cameraPermissionDeniedHelp =>
+      'Autorize a câmera para iniciar a varredura. Você pode tentar novamente.';
+
+  @override
+  String get cameraPermissionPermanentlyDeniedHelp =>
+      'Abra as configurações do aparelho e permita o acesso à câmera para o Eyes.';
+
+  @override
+  String get cameraPermissionRestrictedHelp =>
+      'Este aparelho ou perfil restringe o acesso à câmera.';
+
+  @override
+  String get cameraBusyHelp =>
+      'Feche outros aplicativos que estejam usando a câmera e tente novamente.';
+
+  @override
+  String get cameraMissingHelp =>
+      'Nenhuma câmera compatível foi encontrada neste aparelho.';
+
+  @override
+  String get cameraTimeoutHelp =>
+      'A câmera demorou mais que o esperado para iniciar. Tente novamente.';
+
+  @override
+  String get cameraInitializationHelp =>
+      'Não foi possível preparar a câmera. Verifique o aparelho e tente novamente.';
+
+  @override
+  String get cameraStreamHelp =>
+      'A câmera parou de fornecer imagens. Tente iniciar novamente.';
+
+  @override
+  String cameraTelemetry(
+    String fps,
+    int received,
+    int processed,
+    int dropped,
+    int processingMs,
+  ) {
+    return '$fps FPS • recebidos: $received • processados: $processed • descartados: $dropped • processamento: $processingMs ms';
+  }
 }

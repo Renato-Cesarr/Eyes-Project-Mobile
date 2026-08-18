@@ -15,6 +15,8 @@ pós-MVP.
 - `flutter_secure_storage` para credenciais e `shared_preferences` para
   preferências não sensíveis;
 - localização oficial do Flutter, inicialmente em `pt-BR`.
+- plugins oficiais `camera` e `permission_handler` para câmera Android e
+  permissões em tempo de execução.
 
 ## Pré-requisitos
 
@@ -47,6 +49,11 @@ armazenamento seguro em tempo de execução.
 O `flutter_secure_storage` permanece na linha `10.3.x` durante o MVP: a versão
 11 exige Android SDK 37, ainda incompatível com o toolchain Android 36 fixado
 pelo Flutter estável usado neste projeto.
+
+O `permission_handler` está fixado em `12.0.3`. A linha 13 passou a exigir
+compile SDK 37, enquanto o Android Gradle Plugin 9.0.1 usado pelo Flutter 3.44
+recomenda no máximo SDK 36. A atualização será feita somente junto com uma
+migração revisada do toolchain, evitando quebrar builds reproduzíveis.
 
 ## Flavors
 
@@ -127,6 +134,38 @@ visão computacional. Consulte [docs/architecture.md](docs/architecture.md) e os
 Antes de concluir cada tela, valide manualmente com TalkBack, fonte no maior
 tamanho suportado, alto contraste e navegação apenas por gestos do leitor de
 tela.
+
+## Câmera e varredura local
+
+A feature `scanning` mantém o domínio independente dos plugins nativos. A
+implementação Android usa a câmera traseira, resolução média, áudio desativado e
+meta inicial de 12 frames por segundo. O pipeline aceita apenas um frame em
+processamento e um frame pendente; quando chegam imagens adicionais, preserva a
+mais recente e descarta as intermediárias para impedir crescimento de memória e
+alertas baseados em imagens antigas.
+
+O botão **Abrir câmera** conduz à tela de diagnóstico acessível. A permissão é
+solicitada somente após a ação do usuário. Negação temporária, bloqueio
+permanente, câmera ocupada, ausência de hardware, timeout e falha de stream são
+estados distintos e recuperáveis. Fotos e vídeos nunca são salvos.
+
+Ao pausar, sair da tela ou enviar o aplicativo para segundo plano, o stream e o
+controller nativo são liberados. Se a varredura estava ativa antes de o app ir
+para segundo plano, ela é preparada novamente no retorno. Rotação e orientação
+do preview permanecem sob responsabilidade do plugin oficial e das
+configurações Android versionadas.
+
+Validação manual em aparelho Android:
+
+1. executar `flutter run --flavor dev --target lib/main_dev.dart`;
+2. abrir **Câmera e varredura** e conceder a permissão;
+3. confirmar preview, pausa, retomada e encerramento;
+4. repetir negando a permissão e, depois, bloqueando-a nas configurações;
+5. alternar entre o Eyes e outro aplicativo e confirmar a liberação da câmera;
+6. repetir com TalkBack e fonte em 200%.
+
+Consulte o [ADR 0004](docs/adr/0004-camera-stream-lifecycle-and-backpressure.md)
+para as decisões de lifecycle, backpressure e privacidade.
 
 ## Fluxo Git
 
