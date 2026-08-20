@@ -18,7 +18,8 @@ android {
         applicationId = "br.com.eyesproject.mobile"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // LiteRT 1.4.0, used by tflite_flutter 0.12.1, requires Android 8+.
+        minSdk = 26
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
