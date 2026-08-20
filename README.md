@@ -172,6 +172,20 @@ Validação manual em aparelho Android:
 Consulte o [ADR 0004](docs/adr/0004-camera-stream-lifecycle-and-backpressure.md)
 para as decisões de lifecycle, backpressure e privacidade.
 
+## Visão computacional offline
+
+O EfficientDet-Lite0 e seu manifesto são distribuídos como assets e validados
+por tamanho, SHA-256 e contrato de tensores antes do uso. A inferência roda
+localmente em um isolate persistente; frames atravessam a fronteira por
+`TransferableTypedData`, e somente as entidades Pessoa, Cadeira, Mesa e Mochila
+retornam à aplicação. Não existe upload, persistência de imagem ou fallback de
+rede.
+
+O `VisionController` expõe `loading`, `ready` e `error` por Riverpod e encerra o
+isolate no background. A conexão desse controller à tela e ao lifecycle da
+câmera pertence à Fase 4 da REN-29. Consulte o
+[ADR 0005](docs/adr/0005-vision-worker-isolate-and-transferable-frames.md).
+
 ## Fluxo Git
 
 As funcionalidades nascem de `dev`, usam `feat/<linear-id>-<nome-curto>` e

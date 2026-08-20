@@ -5,6 +5,8 @@ import 'package:eyes_mobile/app/config/app_environment.dart';
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
 import 'package:eyes_mobile/core/error/global_error_view.dart';
 import 'package:eyes_mobile/core/logging/secure_logger.dart';
+import 'package:eyes_mobile/features/object_detection/application/vision_worker.dart';
+import 'package:eyes_mobile/features/object_detection/infrastructure/isolate_vision_worker.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_gateway.dart';
 import 'package:eyes_mobile/features/scanning/infrastructure/mobile_camera_gateway.dart';
 import 'package:flutter/foundation.dart';
@@ -40,6 +42,11 @@ Future<void> bootstrap(AppEnvironment environment) async {
             appEnvironmentProvider.overrideWithValue(environment),
             secureLoggerProvider.overrideWithValue(logger),
             appErrorReporterProvider.overrideWithValue(errorReporter),
+            visionWorkerProvider.overrideWith((Ref ref) {
+              final worker = IsolateVisionWorker();
+              ref.onDispose(() => unawaited(worker.dispose()));
+              return worker;
+            }),
             cameraGatewayProvider.overrideWith((Ref ref) {
               final gateway = MobileCameraGateway();
               ref.onDispose(() => unawaited(gateway.release()));
