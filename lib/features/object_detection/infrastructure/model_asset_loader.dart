@@ -77,13 +77,30 @@ final class ModelAssetLoader {
       data.lengthInBytes,
     );
 
-    if (bytes.length != contract.artifact.sizeBytes) {
+    return verify(manifestSource: manifestSource, modelBytes: bytes);
+  }
+
+  VerifiedModelAsset verify({
+    required String manifestSource,
+    required Uint8List modelBytes,
+  }) {
+    final ModelContract contract;
+    try {
+      contract = parser.parse(manifestSource);
+    } on FormatException catch (error) {
+      throw ModelAssetException(
+        ModelAssetErrorCode.invalidManifest,
+        'O manifesto do modelo é incompatível: ${error.message}',
+      );
+    }
+
+    if (modelBytes.length != contract.artifact.sizeBytes) {
       throw ModelAssetException(
         ModelAssetErrorCode.sizeMismatch,
         'O tamanho do modelo não corresponde ao manifesto.',
       );
     }
-    final actualHash = sha256.convert(bytes).toString();
+    final actualHash = sha256.convert(modelBytes).toString();
     if (actualHash != contract.artifact.sha256) {
       throw const ModelAssetException(
         ModelAssetErrorCode.hashMismatch,
@@ -91,6 +108,6 @@ final class ModelAssetLoader {
       );
     }
 
-    return VerifiedModelAsset(bytes: bytes, contract: contract);
+    return VerifiedModelAsset(bytes: modelBytes, contract: contract);
   }
 }

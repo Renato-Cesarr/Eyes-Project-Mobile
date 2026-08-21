@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:isolate';
 import 'dart:typed_data';
 
@@ -5,6 +6,7 @@ import 'package:eyes_mobile/features/object_detection/application/vision_frame.d
 import 'package:eyes_mobile/features/object_detection/application/vision_worker.dart';
 import 'package:eyes_mobile/features/object_detection/domain/detected_object.dart';
 import 'package:eyes_mobile/features/object_detection/infrastructure/isolate_vision_worker.dart';
+import 'package:eyes_mobile/features/object_detection/infrastructure/vision_model_asset_source.dart';
 import 'package:eyes_mobile/features/object_detection/infrastructure/vision_worker_protocol.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -23,6 +25,22 @@ void main() {
     expect(restored.planes.single.bytes, frame.planes.single.bytes);
     expect(() => transferable.materialize(), throwsA(anything));
   });
+
+  test(
+    'transfere os assets do modelo sem cópia e permite materializar uma vez',
+    () {
+      final transferable = TransferableModelAssets.fromBytes(
+        manifestSource: '{"schemaVersion": 1}',
+        modelBytes: Uint8List.fromList([1, 2, 3]),
+      );
+
+      final restored = transferable.materialize();
+
+      expect(restored.manifestSource, '{"schemaVersion": 1}');
+      expect(restored.modelBytes, [1, 2, 3]);
+      expect(() => transferable.materialize(), throwsA(anything));
+    },
+  );
 
   test(
     'mantém um isolate persistente e rejeita inferência concorrente',
@@ -94,6 +112,36 @@ void main() {
       );
       await Future<void>.delayed(Duration.zero);
       await worker.dispose();
+
+      await startingExpectation;
+      expect(worker.snapshot.phase, VisionWorkerPhase.idle);
+    },
+  );
+
+  test(
+    'dispose durante leitura dos assets cancela startup sem iniciar isolate',
+    () async {
+      final source = _DelayedModelAssetSource();
+      final worker = IsolateVisionWorker(
+        entrypoint: _successfulWorkerMain,
+        modelAssetSource: source,
+        startTimeout: const Duration(seconds: 2),
+      );
+      addTearDown(worker.dispose);
+
+      final startingExpectation = expectLater(
+        worker.start(),
+        throwsA(
+          isA<VisionWorkerException>().having(
+            (error) => error.technicalCode,
+            'technicalCode',
+            'vision-start-cancelled',
+          ),
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+      await worker.dispose();
+      source.complete();
 
       await startingExpectation;
       expect(worker.snapshot.phase, VisionWorkerPhase.idle);
@@ -250,5 +298,21 @@ void _slowStartupWorkerMain(VisionWorkerBootstrap bootstrap) async {
       bootstrap.responses.send(const VisionWorkerDisposed());
       return;
     }
+  }
+}
+
+final class _DelayedModelAssetSource implements VisionModelAssetSource {
+  final Completer<TransferableModelAssets> _completer = Completer();
+
+  @override
+  Future<TransferableModelAssets> load() => _completer.future;
+
+  void complete() {
+    _completer.complete(
+      TransferableModelAssets.fromBytes(
+        manifestSource: '{}',
+        modelBytes: Uint8List.fromList([1]),
+      ),
+    );
   }
 }

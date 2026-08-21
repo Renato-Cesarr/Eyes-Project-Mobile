@@ -5,6 +5,7 @@ import 'package:eyes_mobile/features/object_detection/application/vision_frame.d
 import 'package:eyes_mobile/features/object_detection/application/vision_worker.dart';
 import 'package:eyes_mobile/features/object_detection/domain/detected_object.dart';
 import 'package:eyes_mobile/features/object_detection/infrastructure/vision_isolate_entrypoint.dart';
+import 'package:eyes_mobile/features/object_detection/infrastructure/vision_model_asset_source.dart';
 import 'package:eyes_mobile/features/object_detection/infrastructure/vision_worker_protocol.dart';
 import 'package:flutter/services.dart';
 
@@ -14,12 +15,14 @@ final class IsolateVisionWorker implements VisionWorker {
     this.startTimeout = const Duration(seconds: 20),
     this.requestTimeout = const Duration(seconds: 5),
     this.disposeTimeout = const Duration(seconds: 3),
+    this.modelAssetSource = const RootVisionModelAssetSource(),
   });
 
   final VisionWorkerEntrypoint entrypoint;
   final Duration startTimeout;
   final Duration requestTimeout;
   final Duration disposeTimeout;
+  final VisionModelAssetSource modelAssetSource;
 
   final StreamController<VisionWorkerSnapshot> _snapshots =
       StreamController<VisionWorkerSnapshot>.broadcast(sync: true);
@@ -86,6 +89,15 @@ final class IsolateVisionWorker implements VisionWorker {
     _exitSubscription = exits.listen(_handleIsolateExit);
     final completer = Completer<void>();
     _startCompleter = completer;
+    // The public async start future cannot observe this completer until asset
+    // loading finishes. Attach an early listener so lifecycle cancellation
+    // during that gap is never reported as an unhandled asynchronous error.
+    unawaited(
+      completer.future.then<void>(
+        (_) {},
+        onError: (Object error, StackTrace stackTrace) {},
+      ),
+    );
     _setSnapshot(const VisionWorkerSnapshot(phase: VisionWorkerPhase.starting));
     _startTimer = Timer(startTimeout, () {
       _setFailed(
@@ -98,11 +110,17 @@ final class IsolateVisionWorker implements VisionWorker {
     });
 
     try {
+      final modelAssets = await modelAssetSource.load();
+      if (generation != _generation ||
+          _snapshot.phase != VisionWorkerPhase.starting) {
+        return completer.future;
+      }
       final isolate = await Isolate.spawn<VisionWorkerBootstrap>(
         entrypoint,
         VisionWorkerBootstrap(
           responses: responses.sendPort,
           rootIsolateToken: token,
+          modelAssets: modelAssets,
         ),
         onError: errors.sendPort,
         onExit: exits.sendPort,

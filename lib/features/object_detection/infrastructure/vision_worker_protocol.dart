@@ -12,10 +12,49 @@ final class VisionWorkerBootstrap {
   const VisionWorkerBootstrap({
     required this.responses,
     required this.rootIsolateToken,
+    required this.modelAssets,
   });
 
   final SendPort responses;
   final RootIsolateToken rootIsolateToken;
+  final TransferableModelAssets modelAssets;
+}
+
+final class TransferredModelAssets {
+  const TransferredModelAssets({
+    required this.manifestSource,
+    required this.modelBytes,
+  });
+
+  final String manifestSource;
+  final Uint8List modelBytes;
+}
+
+final class TransferableModelAssets {
+  TransferableModelAssets._({
+    required this.manifestSource,
+    required this.modelBytes,
+  });
+
+  factory TransferableModelAssets.fromBytes({
+    required String manifestSource,
+    required Uint8List modelBytes,
+  }) {
+    return TransferableModelAssets._(
+      manifestSource: manifestSource,
+      modelBytes: TransferableTypedData.fromList([modelBytes]),
+    );
+  }
+
+  final String manifestSource;
+  final TransferableTypedData modelBytes;
+
+  TransferredModelAssets materialize() {
+    return TransferredModelAssets(
+      manifestSource: manifestSource,
+      modelBytes: modelBytes.materialize().asUint8List(),
+    );
+  }
 }
 
 final class VisionPlaneLayout {

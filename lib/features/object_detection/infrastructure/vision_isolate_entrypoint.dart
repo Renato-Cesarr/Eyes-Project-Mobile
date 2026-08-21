@@ -19,7 +19,11 @@ void runVisionIsolate(VisionWorkerBootstrap bootstrap) async {
     BackgroundIsolateBinaryMessenger.ensureInitialized(
       bootstrap.rootIsolateToken,
     );
-    final model = await ModelAssetLoader().loadAndVerify();
+    final transferredAssets = bootstrap.modelAssets.materialize();
+    final model = ModelAssetLoader().verify(
+      manifestSource: transferredAssets.manifestSource,
+      modelBytes: transferredAssets.modelBytes,
+    );
     detector = TfliteObjectDetector(
       model: model,
       interpreterFactory: const TfliteLiteInterpreterFactory(),
