@@ -5,9 +5,11 @@ import 'package:eyes_mobile/app/config/app_environment.dart';
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
 import 'package:eyes_mobile/core/error/global_error_view.dart';
 import 'package:eyes_mobile/core/logging/secure_logger.dart';
+import 'package:eyes_mobile/features/object_detection/application/vision_controller.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_worker.dart';
 import 'package:eyes_mobile/features/object_detection/infrastructure/isolate_vision_worker.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_gateway.dart';
+import 'package:eyes_mobile/features/scanning/application/camera_vision_frame_adapter.dart';
 import 'package:eyes_mobile/features/scanning/infrastructure/mobile_camera_gateway.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +53,14 @@ Future<void> bootstrap(AppEnvironment environment) async {
               final gateway = MobileCameraGateway();
               ref.onDispose(() => unawaited(gateway.release()));
               return gateway;
+            }),
+            cameraFrameHandlerProvider.overrideWith((Ref ref) {
+              const adapter = CameraVisionFrameAdapter();
+              return (frame) async {
+                await ref
+                    .read(visionControllerProvider.notifier)
+                    .process(adapter.adapt(frame));
+              };
             }),
           ],
           child: const EyesApp(),

@@ -7,6 +7,8 @@ import 'package:eyes_mobile/features/scanning/application/latest_frame_processor
 import 'package:eyes_mobile/features/scanning/domain/camera_frame.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_permission_state.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_telemetry.dart';
+import 'package:eyes_mobile/features/scanning/infrastructure/camera_frame_rotation_resolver.dart';
+import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 abstract interface class CameraPermissionDriver {
@@ -42,6 +44,8 @@ abstract interface class CameraDeviceController {
   double get aspectRatio;
 
   int? get configuredFramesPerSecond;
+
+  DeviceOrientation get deviceOrientation;
 
   void addListener(void Function() listener);
 
@@ -102,6 +106,10 @@ final class FlutterCameraDeviceController implements CameraDeviceController {
   int? get configuredFramesPerSecond => _controller.mediaSettings.fps;
 
   @override
+  DeviceOrientation get deviceOrientation =>
+      _controller.value.deviceOrientation;
+
+  @override
   bool get hasError => _controller.value.hasError;
 
   @override
@@ -147,6 +155,7 @@ final class MobileCameraGateway implements CameraGateway {
   final FrameClock clock;
 
   CameraDeviceController? _controller;
+  CameraDescription? _cameraDescription;
   LatestFrameProcessor<CameraImage>? _frameProcessor;
   CameraTelemetryHandler? _onTelemetry;
   CameraErrorHandler? _onError;
@@ -205,6 +214,7 @@ final class MobileCameraGateway implements CameraGateway {
         framesPerSecond: configuration.targetFramesPerSecond,
       );
       _controller = controller;
+      _cameraDescription = selectedCamera;
       _nativeErrorReported = false;
       controller.addListener(_handleControllerValue);
       await controller.initialize();
@@ -237,10 +247,17 @@ final class MobileCameraGateway implements CameraGateway {
     required CameraErrorHandler onError,
   }) async {
     final controller = _controller;
+    final cameraDescription = _cameraDescription;
     if (controller == null || !controller.isInitialized) {
       throw const CameraGatewayException(
         CameraGatewayFailureReason.initialization,
         code: 'camera-not-initialized',
+      );
+    }
+    if (cameraDescription == null) {
+      throw const CameraGatewayException(
+        CameraGatewayFailureReason.initialization,
+        code: 'camera-description-unavailable',
       );
     }
 
@@ -257,7 +274,14 @@ final class MobileCameraGateway implements CameraGateway {
       onFrame: (CameraImage image) async {
         final startedAt = clock();
         try {
-          await onFrame(_mapFrame(image, capturedAt: clock()));
+          await onFrame(
+            _mapFrame(
+              image,
+              capturedAt: clock(),
+              cameraDescription: cameraDescription,
+              deviceOrientation: controller.deviceOrientation,
+            ),
+          );
         } on Object {
           _reportError(
             const CameraGatewayException(
@@ -319,6 +343,7 @@ final class MobileCameraGateway implements CameraGateway {
   Future<void> _disposeController() async {
     final controller = _controller;
     _controller = null;
+    _cameraDescription = null;
     if (controller == null) {
       return;
     }
@@ -398,6 +423,8 @@ final class MobileCameraGateway implements CameraGateway {
   static CameraFrame _mapFrame(
     CameraImage image, {
     required DateTime capturedAt,
+    required CameraDescription cameraDescription,
+    required DeviceOrientation deviceOrientation,
   }) {
     return CameraFrame(
       width: image.width,
@@ -417,6 +444,11 @@ final class MobileCameraGateway implements CameraGateway {
             ),
           )
           .toList(growable: false),
+      rotation: CameraFrameRotationResolver.resolve(
+        sensorOrientation: cameraDescription.sensorOrientation,
+        deviceOrientation: deviceOrientation,
+        lensDirection: cameraDescription.lensDirection,
+      ),
       capturedAt: capturedAt,
     );
   }

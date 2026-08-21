@@ -92,6 +92,31 @@ void main() {
     );
   });
 
+  test('encerrar a tela libera runtime e permite uma nova sessão', () async {
+    final worker = _FakeVisionWorker();
+    final container = createContainer(worker);
+    addTearDown(() async {
+      container.dispose();
+      await worker.close();
+    });
+    await container.read(visionControllerProvider.future);
+    final controller = container.read(visionControllerProvider.notifier);
+
+    await controller.stop();
+    expect(worker.disposeCalls, 1);
+    expect(
+      container.read(visionControllerProvider).requireValue.status,
+      VisionRuntimeStatus.paused,
+    );
+
+    await controller.start();
+    expect(worker.startCalls, 2);
+    expect(
+      container.read(visionControllerProvider).requireValue.status,
+      VisionRuntimeStatus.ready,
+    );
+  });
+
   test('falha assíncrona do isolate transita Riverpod para error', () async {
     final worker = _FakeVisionWorker();
     final container = createContainer(worker);

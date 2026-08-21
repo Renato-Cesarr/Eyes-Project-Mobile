@@ -65,6 +65,47 @@ class AppLocalizationsPt extends AppLocalizations {
       'A imagem é processada apenas enquanto esta tela está ativa. O aplicativo não salva fotos nem vídeos.';
 
   @override
+  String get scanStatusLabel => 'Estado da varredura';
+
+  @override
+  String get visionPreparing => 'Preparando inteligência artificial.';
+
+  @override
+  String get visionRecovering => 'Recuperando a inteligência artificial.';
+
+  @override
+  String get visionReady =>
+      'Inteligência artificial pronta. Inicie a câmera quando desejar.';
+
+  @override
+  String get visionPaused => 'Varredura pausada e recursos liberados.';
+
+  @override
+  String get visionFailed => 'Erro ao iniciar inteligência artificial.';
+
+  @override
+  String get visionFailedHelp =>
+      'A varredura não foi iniciada. Tente preparar a inteligência artificial novamente.';
+
+  @override
+  String get visionRetry => 'Tentar iniciar inteligência artificial novamente';
+
+  @override
+  String get scanReady => 'Câmera pronta. Varredura assistiva ativa.';
+
+  @override
+  String get detectedPerson => 'Pessoa detectada.';
+
+  @override
+  String get detectedChair => 'Cadeira detectada.';
+
+  @override
+  String get detectedTable => 'Mesa detectada.';
+
+  @override
+  String get detectedBackpack => 'Mochila detectada.';
+
+  @override
   String get cameraStatusLabel => 'Estado da câmera';
 
   @override
@@ -81,6 +122,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get cameraPreparing => 'Preparando câmera';
+
+  @override
+  String get visionPreparingAction => 'Preparando inteligência artificial';
 
   @override
   String get cameraOpenSettings => 'Abrir configurações do aparelho';
@@ -224,6 +268,47 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'A imagem é processada apenas enquanto esta tela está ativa. O aplicativo não salva fotos nem vídeos.';
 
   @override
+  String get scanStatusLabel => 'Estado da varredura';
+
+  @override
+  String get visionPreparing => 'Preparando inteligência artificial.';
+
+  @override
+  String get visionRecovering => 'Recuperando a inteligência artificial.';
+
+  @override
+  String get visionReady =>
+      'Inteligência artificial pronta. Inicie a câmera quando desejar.';
+
+  @override
+  String get visionPaused => 'Varredura pausada e recursos liberados.';
+
+  @override
+  String get visionFailed => 'Erro ao iniciar inteligência artificial.';
+
+  @override
+  String get visionFailedHelp =>
+      'A varredura não foi iniciada. Tente preparar a inteligência artificial novamente.';
+
+  @override
+  String get visionRetry => 'Tentar iniciar inteligência artificial novamente';
+
+  @override
+  String get scanReady => 'Câmera pronta. Varredura assistiva ativa.';
+
+  @override
+  String get detectedPerson => 'Pessoa detectada.';
+
+  @override
+  String get detectedChair => 'Cadeira detectada.';
+
+  @override
+  String get detectedTable => 'Mesa detectada.';
+
+  @override
+  String get detectedBackpack => 'Mochila detectada.';
+
+  @override
   String get cameraStatusLabel => 'Estado da câmera';
 
   @override
@@ -240,6 +325,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get cameraPreparing => 'Preparando câmera';
+
+  @override
+  String get visionPreparingAction => 'Preparando inteligência artificial';
 
   @override
   String get cameraOpenSettings => 'Abrir configurações do aparelho';

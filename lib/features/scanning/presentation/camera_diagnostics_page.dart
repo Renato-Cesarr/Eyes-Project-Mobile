@@ -1,5 +1,10 @@
 import 'dart:async';
 
+import 'package:eyes_mobile/core/accessibility/accessible_feedback_service.dart';
+import 'package:eyes_mobile/features/object_detection/application/vision_controller.dart';
+import 'package:eyes_mobile/features/object_detection/application/vision_runtime_state.dart';
+import 'package:eyes_mobile/features/object_detection/domain/detected_object.dart';
+import 'package:eyes_mobile/features/scanning/application/assistive_scan_coordinator.dart';
 import 'package:eyes_mobile/features/scanning/application/scan_controller.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_failure.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_scan_status.dart';
@@ -21,19 +26,20 @@ final class CameraDiagnosticsPage extends ConsumerStatefulWidget {
 final class _CameraDiagnosticsPageState
     extends ConsumerState<CameraDiagnosticsPage>
     with WidgetsBindingObserver {
-  late final ScanController _controller;
+  late final AssistiveScanCoordinator _coordinator;
 
   @override
   void initState() {
     super.initState();
-    _controller = ref.read(scanControllerProvider.notifier);
+    _coordinator = ref.read(assistiveScanCoordinatorProvider);
     WidgetsBinding.instance.addObserver(this);
+    unawaited(_coordinator.prepare());
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    unawaited(_controller.stop());
+    unawaited(_coordinator.stop());
     super.dispose();
   }
 
@@ -42,9 +48,9 @@ final class _CameraDiagnosticsPageState
     switch (state) {
       case AppLifecycleState.paused:
       case AppLifecycleState.hidden:
-        unawaited(_controller.handleBackground());
+        unawaited(_coordinator.handleBackground());
       case AppLifecycleState.resumed:
-        unawaited(_controller.handleForeground());
+        unawaited(_coordinator.handleForeground());
       case AppLifecycleState.detached:
       case AppLifecycleState.inactive:
         break;
@@ -53,15 +59,34 @@ final class _CameraDiagnosticsPageState
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(scanControllerProvider);
+    final camera = ref.watch(scanControllerProvider);
+    final vision = ref.watch(visionControllerProvider);
     final l10n = AppLocalizations.of(context);
+
+    ref.listen<AsyncValue<VisionRuntimeState>>(visionControllerProvider, (
+      previous,
+      next,
+    ) {
+      final wasReady =
+          previous?.asData?.value.status == VisionRuntimeStatus.ready;
+      final isReady = next.asData?.value.status == VisionRuntimeStatus.ready;
+      final wasFailed = previous?.hasError ?? false;
+      if (isReady && !wasReady) {
+        unawaited(ref.read(accessibleFeedbackServiceProvider).confirm());
+      } else if (next.hasError && !wasFailed) {
+        unawaited(ref.read(accessibleFeedbackServiceProvider).warn());
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.cameraPageTitle)),
       body: SafeArea(
-        child: state.when(
-          data: (CameraSessionState session) =>
-              _CameraContent(session: session),
+        child: camera.when(
+          data: (session) => _AssistiveScanContent(
+            session: session,
+            vision: vision,
+            coordinator: _coordinator,
+          ),
           error: (Object error, StackTrace stackTrace) => Center(
             child: Padding(
               padding: const EdgeInsets.all(24),
@@ -81,17 +106,32 @@ final class _CameraDiagnosticsPageState
   }
 }
 
-final class _CameraContent extends ConsumerWidget {
-  const _CameraContent({required this.session});
+final class _AssistiveScanContent extends ConsumerWidget {
+  const _AssistiveScanContent({
+    required this.session,
+    required this.vision,
+    required this.coordinator,
+  });
 
   final CameraSessionState session;
+  final AsyncValue<VisionRuntimeState> vision;
+  final AssistiveScanCoordinator coordinator;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final statusText = _statusText(l10n, session.status);
-    final failureText = _failureText(l10n, session.failure);
+    final statusText = _scanStatusText(l10n, session, vision);
+    final failureText = vision.hasError
+        ? l10n.visionFailedHelp
+        : _failureText(l10n, session.failure);
+    final runtime = vision.asData?.value;
+    final isVisionReady = runtime?.status == VisionRuntimeStatus.ready;
+    final isActivelyScanning =
+        isVisionReady && session.status == CameraScanStatus.streaming;
     final previewAspectRatio = session.previewAspectRatio;
+    final latestDetection = isActivelyScanning
+        ? runtime?.lastDetection?.detections.firstOrNull
+        : null;
 
     return ListView(
       padding: const EdgeInsets.all(24),
@@ -107,23 +147,29 @@ final class _CameraContent extends ConsumerWidget {
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 20),
-                if (session.status == CameraScanStatus.streaming &&
-                    previewAspectRatio != null) ...[
-                  CameraPreviewSurface(aspectRatio: previewAspectRatio),
+                if (isActivelyScanning && previewAspectRatio != null) ...[
+                  ExcludeSemantics(
+                    child: CameraPreviewSurface(
+                      aspectRatio: previewAspectRatio,
+                    ),
+                  ),
                   const SizedBox(height: 20),
                 ],
                 Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Semantics(
-                      container: true,
-                      liveRegion: true,
-                      label: '${l10n.cameraStatusLabel}: $statusText',
+                  child: Semantics(
+                    container: true,
+                    liveRegion: true,
+                    excludeSemantics: true,
+                    label: failureText == null
+                        ? '${l10n.scanStatusLabel}: $statusText'
+                        : '${l10n.scanStatusLabel}: $statusText $failureText',
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            l10n.cameraStatusLabel,
+                            l10n.scanStatusLabel,
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           const SizedBox(height: 8),
@@ -147,21 +193,27 @@ final class _CameraContent extends ConsumerWidget {
                     ),
                   ),
                 ),
+                if (latestDetection != null) ...[
+                  const SizedBox(height: 16),
+                  _DetectionAnnouncement(detection: latestDetection),
+                ],
                 const SizedBox(height: 24),
-                _PrimaryCameraAction(session: session),
-                if (session.status == CameraScanStatus.streaming) ...<Widget>[
+                _PrimaryScanAction(
+                  session: session,
+                  vision: vision,
+                  coordinator: coordinator,
+                ),
+                if (isActivelyScanning) ...<Widget>[
                   const SizedBox(height: 12),
                   OutlinedButton(
-                    onPressed: () =>
-                        ref.read(scanControllerProvider.notifier).stop(),
+                    onPressed: coordinator.stop,
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size(48, 56),
                     ),
                     child: Text(l10n.cameraStop),
                   ),
                 ],
-                if (kDebugMode &&
-                    session.status == CameraScanStatus.streaming) ...<Widget>[
+                if (kDebugMode && isActivelyScanning) ...<Widget>[
                   const SizedBox(height: 24),
                   _CameraTelemetryCard(session: session),
                 ],
@@ -174,19 +226,42 @@ final class _CameraContent extends ConsumerWidget {
   }
 }
 
-final class _PrimaryCameraAction extends ConsumerWidget {
-  const _PrimaryCameraAction({required this.session});
+final class _PrimaryScanAction extends ConsumerWidget {
+  const _PrimaryScanAction({
+    required this.session,
+    required this.vision,
+    required this.coordinator,
+  });
 
   final CameraSessionState session;
+  final AsyncValue<VisionRuntimeState> vision;
+  final AssistiveScanCoordinator coordinator;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final controller = ref.read(scanControllerProvider.notifier);
+    final runtime = vision.asData?.value;
 
+    if (vision.hasError) {
+      return FilledButton.icon(
+        onPressed: coordinator.retryVision,
+        icon: const ExcludeSemantics(child: Icon(Icons.refresh_outlined)),
+        label: Text(l10n.visionRetry),
+      );
+    }
+    if (vision.isLoading || runtime?.status == VisionRuntimeStatus.recovering) {
+      return FilledButton.icon(
+        onPressed: null,
+        icon: const SizedBox.square(
+          dimension: 20,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+        label: Text(l10n.visionPreparingAction),
+      );
+    }
     if (session.status == CameraScanStatus.permanentlyDenied) {
       return FilledButton.icon(
-        onPressed: controller.openSettings,
+        onPressed: ref.read(scanControllerProvider.notifier).openSettings,
         icon: const ExcludeSemantics(child: Icon(Icons.settings_outlined)),
         label: Text(l10n.cameraOpenSettings),
       );
@@ -203,14 +278,14 @@ final class _PrimaryCameraAction extends ConsumerWidget {
     }
     if (session.status == CameraScanStatus.streaming) {
       return FilledButton.icon(
-        onPressed: controller.pause,
+        onPressed: coordinator.pause,
         icon: const ExcludeSemantics(child: Icon(Icons.pause_outlined)),
         label: Text(l10n.cameraPause),
       );
     }
     if (session.status == CameraScanStatus.paused) {
       return FilledButton.icon(
-        onPressed: controller.resume,
+        onPressed: coordinator.resume,
         icon: const ExcludeSemantics(child: Icon(Icons.play_arrow_outlined)),
         label: Text(l10n.cameraResume),
       );
@@ -219,15 +294,46 @@ final class _PrimaryCameraAction extends ConsumerWidget {
         session.status == CameraScanStatus.busy ||
         session.status == CameraScanStatus.unavailable) {
       return FilledButton.icon(
-        onPressed: controller.retry,
+        onPressed: coordinator.start,
         icon: const ExcludeSemantics(child: Icon(Icons.refresh_outlined)),
         label: Text(l10n.tryAgain),
       );
     }
     return FilledButton.icon(
-      onPressed: controller.start,
+      onPressed: runtime?.status == VisionRuntimeStatus.ready
+          ? coordinator.start
+          : null,
       icon: const ExcludeSemantics(child: Icon(Icons.camera_alt_outlined)),
       label: Text(l10n.cameraStart),
+    );
+  }
+}
+
+final class _DetectionAnnouncement extends StatelessWidget {
+  const _DetectionAnnouncement({required this.detection});
+
+  final DetectedObject detection;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final text = switch (detection.kind) {
+      DetectedObjectKind.person => l10n.detectedPerson,
+      DetectedObjectKind.chair => l10n.detectedChair,
+      DetectedObjectKind.table => l10n.detectedTable,
+      DetectedObjectKind.backpack => l10n.detectedBackpack,
+    };
+    return Semantics(
+      container: true,
+      liveRegion: true,
+      excludeSemantics: true,
+      label: text,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text(text, style: Theme.of(context).textTheme.titleLarge),
+        ),
+      ),
     );
   }
 }
@@ -260,7 +366,37 @@ final class _CameraTelemetryCard extends StatelessWidget {
   }
 }
 
-String _statusText(AppLocalizations l10n, CameraScanStatus status) {
+String _scanStatusText(
+  AppLocalizations l10n,
+  CameraSessionState session,
+  AsyncValue<VisionRuntimeState> vision,
+) {
+  if (vision.hasError) {
+    return l10n.visionFailed;
+  }
+  if (vision.isLoading) {
+    return l10n.visionPreparing;
+  }
+  final runtime = vision.requireValue;
+  if (runtime.status == VisionRuntimeStatus.recovering) {
+    return l10n.visionRecovering;
+  }
+  if (runtime.status == VisionRuntimeStatus.paused &&
+      session.status != CameraScanStatus.paused) {
+    return l10n.visionPaused;
+  }
+  if (runtime.status == VisionRuntimeStatus.ready &&
+      session.status == CameraScanStatus.streaming) {
+    return l10n.scanReady;
+  }
+  if (runtime.status == VisionRuntimeStatus.ready &&
+      session.status == CameraScanStatus.idle) {
+    return l10n.visionReady;
+  }
+  return _cameraStatusText(l10n, session.status);
+}
+
+String _cameraStatusText(AppLocalizations l10n, CameraScanStatus status) {
   return switch (status) {
     CameraScanStatus.idle => l10n.cameraStatusIdle,
     CameraScanStatus.requestingPermission =>

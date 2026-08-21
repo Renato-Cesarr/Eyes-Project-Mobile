@@ -199,6 +199,84 @@ abstract class AppLocalizations {
   /// **'A imagem é processada apenas enquanto esta tela está ativa. O aplicativo não salva fotos nem vídeos.'**
   String get cameraPrivacyNotice;
 
+  /// No description provided for @scanStatusLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Estado da varredura'**
+  String get scanStatusLabel;
+
+  /// No description provided for @visionPreparing.
+  ///
+  /// In pt, this message translates to:
+  /// **'Preparando inteligência artificial.'**
+  String get visionPreparing;
+
+  /// No description provided for @visionRecovering.
+  ///
+  /// In pt, this message translates to:
+  /// **'Recuperando a inteligência artificial.'**
+  String get visionRecovering;
+
+  /// No description provided for @visionReady.
+  ///
+  /// In pt, this message translates to:
+  /// **'Inteligência artificial pronta. Inicie a câmera quando desejar.'**
+  String get visionReady;
+
+  /// No description provided for @visionPaused.
+  ///
+  /// In pt, this message translates to:
+  /// **'Varredura pausada e recursos liberados.'**
+  String get visionPaused;
+
+  /// No description provided for @visionFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Erro ao iniciar inteligência artificial.'**
+  String get visionFailed;
+
+  /// No description provided for @visionFailedHelp.
+  ///
+  /// In pt, this message translates to:
+  /// **'A varredura não foi iniciada. Tente preparar a inteligência artificial novamente.'**
+  String get visionFailedHelp;
+
+  /// No description provided for @visionRetry.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tentar iniciar inteligência artificial novamente'**
+  String get visionRetry;
+
+  /// No description provided for @scanReady.
+  ///
+  /// In pt, this message translates to:
+  /// **'Câmera pronta. Varredura assistiva ativa.'**
+  String get scanReady;
+
+  /// No description provided for @detectedPerson.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pessoa detectada.'**
+  String get detectedPerson;
+
+  /// No description provided for @detectedChair.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cadeira detectada.'**
+  String get detectedChair;
+
+  /// No description provided for @detectedTable.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mesa detectada.'**
+  String get detectedTable;
+
+  /// No description provided for @detectedBackpack.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mochila detectada.'**
+  String get detectedBackpack;
+
   /// No description provided for @cameraStatusLabel.
   ///
   /// In pt, this message translates to:
@@ -234,6 +312,12 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Preparando câmera'**
   String get cameraPreparing;
+
+  /// No description provided for @visionPreparingAction.
+  ///
+  /// In pt, this message translates to:
+  /// **'Preparando inteligência artificial'**
+  String get visionPreparingAction;
 
   /// No description provided for @cameraOpenSettings.
   ///

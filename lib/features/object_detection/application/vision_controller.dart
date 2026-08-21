@@ -92,7 +92,9 @@ final class VisionController extends AsyncNotifier<VisionRuntimeState> {
       return;
     }
     _resumeAfterLifecycle = false;
-    state = const AsyncLoading<VisionRuntimeState>();
+    state = const AsyncData<VisionRuntimeState>(
+      VisionRuntimeState.recovering(),
+    );
     try {
       await ref.read(visionWorkerProvider).start();
       if (!_isDisposed) {
@@ -107,7 +109,9 @@ final class VisionController extends AsyncNotifier<VisionRuntimeState> {
     if (_isDisposed) {
       return;
     }
-    state = const AsyncLoading<VisionRuntimeState>();
+    state = const AsyncData<VisionRuntimeState>(
+      VisionRuntimeState.recovering(),
+    );
     try {
       await ref.read(visionWorkerProvider).dispose();
       await ref.read(visionWorkerProvider).start();
@@ -116,6 +120,39 @@ final class VisionController extends AsyncNotifier<VisionRuntimeState> {
       }
     } on Object catch (error, stackTrace) {
       _publishFailure(error, stackTrace, source: 'vision-retry');
+    }
+  }
+
+  Future<void> start() async {
+    if (_isDisposed ||
+        state.asData?.value.status == VisionRuntimeStatus.ready) {
+      return;
+    }
+    _resumeAfterLifecycle = false;
+    state = const AsyncData<VisionRuntimeState>(
+      VisionRuntimeState.recovering(),
+    );
+    try {
+      await ref.read(visionWorkerProvider).start();
+      if (!_isDisposed) {
+        state = const AsyncData<VisionRuntimeState>(VisionRuntimeState.ready());
+      }
+    } on Object catch (error, stackTrace) {
+      _publishFailure(error, stackTrace, source: 'vision-manual-start');
+    }
+  }
+
+  Future<void> stop() async {
+    _resumeAfterLifecycle = false;
+    try {
+      await ref.read(visionWorkerProvider).dispose();
+      if (!_isDisposed) {
+        state = const AsyncData<VisionRuntimeState>(
+          VisionRuntimeState.paused(),
+        );
+      }
+    } on Object catch (error, stackTrace) {
+      _publishFailure(error, stackTrace, source: 'vision-manual-stop');
     }
   }
 

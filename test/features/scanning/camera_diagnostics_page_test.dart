@@ -1,7 +1,13 @@
+import 'dart:async';
+
 import 'package:eyes_mobile/app/app.dart';
 import 'package:eyes_mobile/app/config/app_environment.dart';
+import 'package:eyes_mobile/core/accessibility/accessible_feedback_service.dart';
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
 import 'package:eyes_mobile/core/logging/secure_logger.dart';
+import 'package:eyes_mobile/features/object_detection/application/vision_frame.dart';
+import 'package:eyes_mobile/features/object_detection/application/vision_worker.dart';
+import 'package:eyes_mobile/features/object_detection/domain/detected_object.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_configuration.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_gateway.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_permission_state.dart';
@@ -49,18 +55,84 @@ final class _WidgetCameraGateway implements CameraGateway {
   }
 }
 
+final class _ReadyVisionWorker implements VisionWorker {
+  _ReadyVisionWorker({this.startFailure});
+
+  final VisionWorkerException? startFailure;
+  final StreamController<VisionWorkerSnapshot> _snapshots =
+      StreamController<VisionWorkerSnapshot>.broadcast(sync: true);
+
+  @override
+  VisionWorkerSnapshot snapshot = const VisionWorkerSnapshot.idle();
+  int startCalls = 0;
+  int disposeCalls = 0;
+
+  @override
+  Stream<VisionWorkerSnapshot> get snapshots => _snapshots.stream;
+
+  @override
+  Future<void> start() async {
+    startCalls++;
+    final failure = startFailure;
+    if (failure != null) {
+      snapshot = VisionWorkerSnapshot(
+        phase: VisionWorkerPhase.failed,
+        failure: failure,
+      );
+      throw failure;
+    }
+    snapshot = const VisionWorkerSnapshot(phase: VisionWorkerPhase.ready);
+    _snapshots.add(snapshot);
+  }
+
+  @override
+  Future<DetectionBatch> detect(VisionFrame frame) =>
+      throw UnimplementedError();
+
+  @override
+  Future<void> dispose() async {
+    disposeCalls++;
+    snapshot = const VisionWorkerSnapshot.idle();
+    _snapshots.add(snapshot);
+  }
+
+  Future<void> close() => _snapshots.close();
+}
+
+final class _RecordingFeedbackService implements AccessibleFeedbackService {
+  int confirmations = 0;
+  int warnings = 0;
+
+  @override
+  Future<void> confirm() async {
+    confirmations++;
+  }
+
+  @override
+  Future<void> warn() async {
+    warnings++;
+  }
+}
+
 void main() {
   Future<void> pumpApp(
     WidgetTester tester,
-    _WidgetCameraGateway gateway,
-  ) async {
+    _WidgetCameraGateway gateway, {
+    _ReadyVisionWorker? worker,
+    AccessibleFeedbackService? feedback,
+  }) async {
     final environment = AppEnvironment.dev();
     final logger = SecureLogger(environment);
+    final visionWorker = worker ?? _ReadyVisionWorker();
+    addTearDown(visionWorker.close);
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           appErrorReporterProvider.overrideWithValue(AppErrorReporter(logger)),
           cameraGatewayProvider.overrideWithValue(gateway),
+          visionWorkerProvider.overrideWithValue(visionWorker),
+          if (feedback != null)
+            accessibleFeedbackServiceProvider.overrideWithValue(feedback),
         ],
         child: const EyesApp(),
       ),
@@ -93,7 +165,7 @@ void main() {
     expect(find.text('Tentar novamente'), findsOneWidget);
     expect(
       find.bySemanticsLabel(
-        RegExp('Estado da câmera.*Permissão de câmera negada.'),
+        RegExp('Estado da varredura.*Permissão de câmera negada.'),
       ),
       findsOneWidget,
     );
@@ -103,14 +175,18 @@ void main() {
     WidgetTester tester,
   ) async {
     final gateway = _WidgetCameraGateway();
-    await pumpApp(tester, gateway);
+    final worker = _ReadyVisionWorker();
+    await pumpApp(tester, gateway, worker: worker);
 
     await tester.ensureVisible(find.text('Iniciar câmera'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Iniciar câmera'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Câmera ativa e recebendo imagens.'), findsOneWidget);
+    expect(
+      find.text('Câmera pronta. Varredura assistiva ativa.'),
+      findsOneWidget,
+    );
     expect(find.text('Pausar câmera'), findsOneWidget);
     expect(find.text('Encerrar câmera'), findsOneWidget);
 
@@ -122,6 +198,7 @@ void main() {
     expect(find.text('Câmera pausada e recursos liberados.'), findsOneWidget);
     expect(find.text('Retomar câmera'), findsOneWidget);
     expect(gateway.releaseCalls, 1);
+    expect(worker.disposeCalls, 1);
   });
 
   testWidgets('remains usable with 200 percent text scaling', (
@@ -139,5 +216,44 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('Pausar câmera'), findsOneWidget);
+  });
+
+  testWidgets('exposes a sanitized AI failure to TalkBack and haptics', (
+    WidgetTester tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    final feedback = _RecordingFeedbackService();
+    final worker = _ReadyVisionWorker(
+      startFailure: const VisionWorkerException(
+        VisionWorkerFailureReason.initialization,
+        'native interpreter allocation payload',
+        technicalCode: 'interpreter-allocation-failed-42ms',
+      ),
+    );
+
+    await pumpApp(
+      tester,
+      _WidgetCameraGateway(),
+      worker: worker,
+      feedback: feedback,
+    );
+
+    expect(
+      find.text('Erro ao iniciar inteligência artificial.'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('interpreter-allocation'), findsNothing);
+    expect(
+      find.bySemanticsLabel(
+        RegExp('Estado da varredura: Erro ao iniciar inteligência artificial.'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.bySemanticsLabel(RegExp(r'FPS|threshold|\d+\s*ms')),
+      findsNothing,
+    );
+    expect(feedback.warnings, 1);
+    semantics.dispose();
   });
 }
