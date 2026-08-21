@@ -59,6 +59,7 @@ final Provider<CameraConfiguration> cameraConfigurationProvider =
 final Provider<CameraFrameHandler> cameraFrameHandlerProvider =
     Provider<CameraFrameHandler>((Ref ref) {
       return (CameraFrame frame) async {
-        // REN-29 will replace this no-op consumer with on-device inference.
+        // The composition root replaces this safe default with the complete
+        // camera → local inference → proximity pipeline.
       };
     });

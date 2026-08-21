@@ -4,6 +4,8 @@ import 'package:eyes_mobile/core/accessibility/accessible_feedback_service.dart'
 import 'package:eyes_mobile/features/object_detection/application/vision_controller.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_runtime_state.dart';
 import 'package:eyes_mobile/features/object_detection/domain/detected_object.dart';
+import 'package:eyes_mobile/features/proximity/application/proximity_controller.dart';
+import 'package:eyes_mobile/features/proximity/domain/proximity_models.dart';
 import 'package:eyes_mobile/features/scanning/application/assistive_scan_coordinator.dart';
 import 'package:eyes_mobile/features/scanning/application/scan_controller.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_failure.dart';
@@ -129,8 +131,8 @@ final class _AssistiveScanContent extends ConsumerWidget {
     final isActivelyScanning =
         isVisionReady && session.status == CameraScanStatus.streaming;
     final previewAspectRatio = session.previewAspectRatio;
-    final latestDetection = isActivelyScanning
-        ? runtime?.lastDetection?.detections.firstOrNull
+    final latestAlert = isActivelyScanning
+        ? ref.watch(proximityControllerProvider).lastAlert
         : null;
 
     return ListView(
@@ -193,9 +195,9 @@ final class _AssistiveScanContent extends ConsumerWidget {
                     ),
                   ),
                 ),
-                if (latestDetection != null) ...[
+                if (latestAlert != null) ...[
                   const SizedBox(height: 16),
-                  _DetectionAnnouncement(detection: latestDetection),
+                  _ProximityAnnouncement(event: latestAlert),
                 ],
                 const SizedBox(height: 24),
                 _PrimaryScanAction(
@@ -309,19 +311,24 @@ final class _PrimaryScanAction extends ConsumerWidget {
   }
 }
 
-final class _DetectionAnnouncement extends StatelessWidget {
-  const _DetectionAnnouncement({required this.detection});
+final class _ProximityAnnouncement extends StatelessWidget {
+  const _ProximityAnnouncement({required this.event});
 
-  final DetectedObject detection;
+  final ProximityAlertEvent event;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final text = switch (detection.kind) {
-      DetectedObjectKind.person => l10n.detectedPerson,
-      DetectedObjectKind.chair => l10n.detectedChair,
-      DetectedObjectKind.table => l10n.detectedTable,
-      DetectedObjectKind.backpack => l10n.detectedBackpack,
+    final object = switch (event.kind) {
+      DetectedObjectKind.person => l10n.objectPerson,
+      DetectedObjectKind.chair => l10n.objectChair,
+      DetectedObjectKind.table => l10n.objectTable,
+      DetectedObjectKind.backpack => l10n.objectBackpack,
+    };
+    final text = switch (event.band) {
+      ProximityBand.distant => l10n.proximityDistant(object),
+      ProximityBand.attention => l10n.proximityAttention(object),
+      ProximityBand.veryNear => l10n.proximityVeryNear(object),
     };
     return Semantics(
       container: true,
