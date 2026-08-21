@@ -79,3 +79,34 @@ abre diálogos nem produz mensagens visuais.
 O `LatestFrameProcessor` limita o processamento e mantém somente a imagem mais
 recente enquanto existe trabalho em voo. Sua telemetria agrega frames recebidos,
 processados, descartados, FPS e duração do processamento sem registrar pixels.
+
+## Pipeline de visão computacional
+
+O `VisionWorker` é uma porta da aplicação. Sua implementação mantém um isolate
+de longa duração que possui, com exclusividade, o interpretador TFLite. O modelo,
+o manifesto, o pré-processamento e os tensores permanecem na infraestrutura;
+somente `DetectionBatch` retorna à aplicação e ao domínio.
+
+```text
+CameraFrame (root isolate)
+        ↓ adaptação REN-29 / Fase 4
+VisionFrame
+        ↓ TransferableTypedData
+VisionWorker isolate
+        ├── verifica manifesto + SHA-256
+        ├── converte NV21/YUV420 → RGB 320×320
+        ├── executa EfficientDet-Lite0
+        └── devolve DetectionBatch
+        ↓
+VisionController (AsyncNotifier: loading / ready / error)
+```
+
+A criação do `TransferableTypedData` materializa um buffer transferível e custa
+tempo proporcional ao frame; seu envio entre isolates é constante e não cria
+uma segunda cópia. Apenas uma inferência fica em voo. O descarte de frames
+antigos continua sendo responsabilidade do `LatestFrameProcessor`.
+
+No background ou ao fechar a sessão, o comando de encerramento aguarda o
+`close()` do detector antes de confirmar o `dispose`. Timeouts ou quedas do
+isolate invalidam a sessão inteira; um `start()` posterior sempre cria runtime
+e interpretador novos.

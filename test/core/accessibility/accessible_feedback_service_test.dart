@@ -28,7 +28,10 @@ void main() {
   test(
     'combines haptic and sound feedback for confirmations and warnings',
     () async {
-      const service = SystemAccessibleFeedbackService();
+      final delays = <Duration>[];
+      final service = SystemAccessibleFeedbackService(
+        delay: (duration) async => delays.add(duration),
+      );
 
       await service.confirm();
       await service.warn();
@@ -37,10 +40,13 @@ void main() {
         'HapticFeedback.vibrate',
         'SystemSound.play',
         'HapticFeedback.vibrate',
+        'HapticFeedback.vibrate',
         'SystemSound.play',
       ]);
-      expect(calls.first.arguments, 'HapticFeedbackType.mediumImpact');
-      expect(calls[2].arguments, 'HapticFeedbackType.heavyImpact');
+      expect(calls.first.arguments, 'HapticFeedbackType.lightImpact');
+      expect(calls[2].arguments, 'HapticFeedbackType.mediumImpact');
+      expect(calls[3].arguments, 'HapticFeedbackType.mediumImpact');
+      expect(delays, <Duration>[const Duration(milliseconds: 120)]);
     },
   );
 

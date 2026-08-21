@@ -8,22 +8,32 @@ abstract interface class AccessibleFeedbackService {
 
 final class SystemAccessibleFeedbackService
     implements AccessibleFeedbackService {
-  const SystemAccessibleFeedbackService();
+  SystemAccessibleFeedbackService({FeedbackDelay? delay})
+    : _delay = delay ?? _defaultFeedbackDelay;
+
+  final FeedbackDelay _delay;
 
   @override
   Future<void> confirm() async {
-    await HapticFeedback.mediumImpact();
+    await HapticFeedback.lightImpact();
     await SystemSound.play(SystemSoundType.click);
   }
 
   @override
   Future<void> warn() async {
-    await HapticFeedback.heavyImpact();
+    await HapticFeedback.mediumImpact();
+    await _delay(const Duration(milliseconds: 120));
+    await HapticFeedback.mediumImpact();
     await SystemSound.play(SystemSoundType.alert);
   }
 }
 
 final Provider<AccessibleFeedbackService> accessibleFeedbackServiceProvider =
     Provider<AccessibleFeedbackService>(
-      (Ref ref) => const SystemAccessibleFeedbackService(),
+      (Ref ref) => SystemAccessibleFeedbackService(),
     );
+
+typedef FeedbackDelay = Future<void> Function(Duration duration);
+
+Future<void> _defaultFeedbackDelay(Duration duration) =>
+    Future<void>.delayed(duration);

@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:camera/camera.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_configuration.dart';
@@ -8,6 +6,7 @@ import 'package:eyes_mobile/features/scanning/domain/camera_frame.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_permission_state.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_telemetry.dart';
 import 'package:eyes_mobile/features/scanning/infrastructure/mobile_camera_gateway.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -77,6 +76,7 @@ final class _FakeCameraDeviceController implements CameraDeviceController {
   bool errorState = false;
   double previewAspectRatio = 4 / 3;
   int? configuredFramesPerSecondValue;
+  DeviceOrientation deviceOrientationValue = DeviceOrientation.portraitUp;
   Object? initializationError;
   Object? streamStartError;
   Object? stopError;
@@ -93,6 +93,9 @@ final class _FakeCameraDeviceController implements CameraDeviceController {
 
   @override
   int? get configuredFramesPerSecond => configuredFramesPerSecondValue;
+
+  @override
+  DeviceOrientation get deviceOrientation => deviceOrientationValue;
 
   @override
   bool get hasError => errorState;
@@ -385,6 +388,7 @@ void main() {
       expect(frames.single.width, 4);
       expect(frames.single.height, 2);
       expect(frames.single.format, CameraPixelFormat.nv21);
+      expect(frames.single.rotation, CameraFrameRotation.degrees90);
       expect(frames.single.planes.single.bytes, <int>[1, 2, 3, 4]);
       expect(
         () => frames.single.planes.single.bytes[0] = 9,

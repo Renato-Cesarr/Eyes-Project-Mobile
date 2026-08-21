@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 enum CameraPixelFormat { nv21, yuv420, bgra8888, unknown }
 
+enum CameraFrameRotation { degrees0, degrees90, degrees180, degrees270 }
+
 final class CameraFramePlane {
   CameraFramePlane({
     required Uint8List bytes,
@@ -20,6 +22,7 @@ final class CameraFrame {
     required this.height,
     required this.format,
     required List<CameraFramePlane> planes,
+    required this.rotation,
     required this.capturedAt,
   }) : planes = List<CameraFramePlane>.unmodifiable(planes);
 
@@ -27,5 +30,6 @@ final class CameraFrame {
   final int height;
   final CameraPixelFormat format;
   final List<CameraFramePlane> planes;
+  final CameraFrameRotation rotation;
   final DateTime capturedAt;
 }
