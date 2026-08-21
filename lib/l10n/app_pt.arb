@@ -30,6 +30,22 @@
   "detectedChair": "Cadeira detectada.",
   "detectedTable": "Mesa detectada.",
   "detectedBackpack": "Mochila detectada.",
+  "objectPerson": "Pessoa",
+  "objectChair": "Cadeira",
+  "objectTable": "Mesa",
+  "objectBackpack": "Mochila",
+  "proximityDistant": "{object} distante.",
+  "@proximityDistant": {
+    "placeholders": {"object": {"type": "String"}}
+  },
+  "proximityAttention": "{object} próxima. Atenção.",
+  "@proximityAttention": {
+    "placeholders": {"object": {"type": "String"}}
+  },
+  "proximityVeryNear": "{object} muito próxima. Cuidado.",
+  "@proximityVeryNear": {
+    "placeholders": {"object": {"type": "String"}}
+  },
   "cameraStatusLabel": "Estado da câmera",
   "cameraStart": "Iniciar câmera",
   "cameraPause": "Pausar câmera",

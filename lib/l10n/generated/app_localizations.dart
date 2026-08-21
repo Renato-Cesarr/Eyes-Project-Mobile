@@ -277,6 +277,48 @@ abstract class AppLocalizations {
   /// **'Mochila detectada.'**
   String get detectedBackpack;
 
+  /// No description provided for @objectPerson.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pessoa'**
+  String get objectPerson;
+
+  /// No description provided for @objectChair.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cadeira'**
+  String get objectChair;
+
+  /// No description provided for @objectTable.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mesa'**
+  String get objectTable;
+
+  /// No description provided for @objectBackpack.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mochila'**
+  String get objectBackpack;
+
+  /// No description provided for @proximityDistant.
+  ///
+  /// In pt, this message translates to:
+  /// **'{object} distante.'**
+  String proximityDistant(String object);
+
+  /// No description provided for @proximityAttention.
+  ///
+  /// In pt, this message translates to:
+  /// **'{object} próxima. Atenção.'**
+  String proximityAttention(String object);
+
+  /// No description provided for @proximityVeryNear.
+  ///
+  /// In pt, this message translates to:
+  /// **'{object} muito próxima. Cuidado.'**
+  String proximityVeryNear(String object);
+
   /// No description provided for @cameraStatusLabel.
   ///
   /// In pt, this message translates to:

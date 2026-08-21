@@ -8,6 +8,7 @@ import 'package:eyes_mobile/core/logging/secure_logger.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_controller.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_worker.dart';
 import 'package:eyes_mobile/features/object_detection/infrastructure/isolate_vision_worker.dart';
+import 'package:eyes_mobile/features/proximity/application/proximity_controller.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_gateway.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_vision_frame_adapter.dart';
 import 'package:eyes_mobile/features/scanning/infrastructure/mobile_camera_gateway.dart';
@@ -57,9 +58,10 @@ Future<void> bootstrap(AppEnvironment environment) async {
             cameraFrameHandlerProvider.overrideWith((Ref ref) {
               const adapter = CameraVisionFrameAdapter();
               return (frame) async {
-                await ref
+                final batch = await ref
                     .read(visionControllerProvider.notifier)
                     .process(adapter.adapt(frame));
+                ref.read(proximityControllerProvider.notifier).process(batch);
               };
             }),
           ],

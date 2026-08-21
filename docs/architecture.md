@@ -110,3 +110,32 @@ No background ou ao fechar a sessão, o comando de encerramento aguarda o
 `close()` do detector antes de confirmar o `dispose`. Timeouts ou quedas do
 isolate invalidam a sessão inteira; um `start()` posterior sempre cria runtime
 e interpretador novos.
+
+## Proximidade e priorização
+
+O `ProximityEngine` recebe somente `DetectionBatch` e não conhece câmera,
+TFLite, Riverpod ou widgets. Ele mantém tracks temporais por classe e IoU,
+suaviza o sinal por EMA e aplica histerese antes de produzir uma faixa relativa.
+
+```text
+DetectionBatch
+      ↓
+ProximityEngine (IoU → EMA → histerese → persistência)
+      ↓
+ProximityEvaluation (DISTANTE / ATENÇÃO / MUITO_PRÓXIMO)
+      ↓
+prioridade + cooldown + deduplicação
+      ↓
+ProximityAlertEvent (sem imagem)
+      ↓
+ProximityController (Riverpod)
+```
+
+O score combina área normalizada da caixa e posição da borda inferior com
+calibração por classe. Ele não representa metros. Os parâmetros em
+`ProximityPolicy` são um baseline versionado que deverá ser calibrado na
+REN-37. Pausar, encerrar ou enviar o aplicativo ao background limpa todos os
+tracks e cooldowns para impedir que eventos de uma sessão vazem para outra.
+
+Somente eventos que passaram pela estabilização chegam à região semântica
+`live`. Detecções brutas e telemetria continuam fora do TalkBack.

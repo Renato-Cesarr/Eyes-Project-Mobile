@@ -8,6 +8,7 @@ import 'package:eyes_mobile/core/logging/secure_logger.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_frame.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_worker.dart';
 import 'package:eyes_mobile/features/object_detection/domain/detected_object.dart';
+import 'package:eyes_mobile/features/proximity/application/proximity_controller.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_configuration.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_gateway.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_permission_state.dart';
@@ -93,7 +94,9 @@ final class _ReadyVisionWorker implements VisionWorker {
   Future<void> dispose() async {
     disposeCalls++;
     snapshot = const VisionWorkerSnapshot.idle();
-    _snapshots.add(snapshot);
+    if (!_snapshots.isClosed) {
+      _snapshots.add(snapshot);
+    }
   }
 
   Future<void> close() => _snapshots.close();
@@ -218,6 +221,45 @@ void main() {
     expect(find.text('Pausar câmera'), findsOneWidget);
   });
 
+  testWidgets('TalkBack receives only a temporally stabilized alert', (
+    WidgetTester tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    await pumpApp(tester, _WidgetCameraGateway());
+    await tester.ensureVisible(find.text('Iniciar câmera'));
+    await tester.tap(find.text('Iniciar câmera'));
+    await tester.pumpAndSettle();
+    final container = ProviderScope.containerOf(
+      tester.element(find.text('Câmera pronta. Varredura assistiva ativa.')),
+    );
+    final controller = container.read(proximityControllerProvider.notifier);
+
+    controller.process(_detectionBatch(0));
+    await tester.pump();
+    expect(find.text('Cadeira muito próxima. Cuidado.'), findsNothing);
+
+    controller.process(_detectionBatch(1));
+    controller.process(_detectionBatch(2));
+    await tester.pump();
+
+    expect(find.text('Cadeira muito próxima. Cuidado.'), findsOneWidget);
+    expect(
+      find.bySemanticsLabel('Cadeira muito próxima. Cuidado.'),
+      findsOneWidget,
+    );
+    expect(
+      find.bySemanticsLabel(RegExp(r'FPS|threshold|tensor|\d+\s*ms')),
+      findsNothing,
+    );
+    await tester.ensureVisible(find.text('Pausar câmera'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Pausar câmera'));
+    await tester.pumpAndSettle();
+    expect(find.text('Cadeira muito próxima. Cuidado.'), findsNothing);
+    expect(container.read(proximityControllerProvider).lastAlert, isNull);
+    semantics.dispose();
+  });
+
   testWidgets('exposes a sanitized AI failure to TalkBack and haptics', (
     WidgetTester tester,
   ) async {
@@ -256,4 +298,27 @@ void main() {
     expect(feedback.warnings, 1);
     semantics.dispose();
   });
+}
+
+DetectionBatch _detectionBatch(int second) {
+  return DetectionBatch(
+    detections: [
+      DetectedObject(
+        kind: DetectedObjectKind.chair,
+        confidence: 0.9,
+        boundingBox: NormalizedBoundingBox(
+          top: 0.05,
+          left: 0.20,
+          bottom: 0.98,
+          right: 0.80,
+        ),
+      ),
+    ],
+    capturedAt: DateTime.utc(2026).add(Duration(seconds: second)),
+    timings: const DetectionTimings(
+      preprocessing: Duration.zero,
+      inference: Duration.zero,
+      postprocessing: Duration.zero,
+    ),
+  );
 }

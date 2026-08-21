@@ -106,6 +106,33 @@ class AppLocalizationsPt extends AppLocalizations {
   String get detectedBackpack => 'Mochila detectada.';
 
   @override
+  String get objectPerson => 'Pessoa';
+
+  @override
+  String get objectChair => 'Cadeira';
+
+  @override
+  String get objectTable => 'Mesa';
+
+  @override
+  String get objectBackpack => 'Mochila';
+
+  @override
+  String proximityDistant(String object) {
+    return '$object distante.';
+  }
+
+  @override
+  String proximityAttention(String object) {
+    return '$object próxima. Atenção.';
+  }
+
+  @override
+  String proximityVeryNear(String object) {
+    return '$object muito próxima. Cuidado.';
+  }
+
+  @override
   String get cameraStatusLabel => 'Estado da câmera';
 
   @override
@@ -307,6 +334,33 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get detectedBackpack => 'Mochila detectada.';
+
+  @override
+  String get objectPerson => 'Pessoa';
+
+  @override
+  String get objectChair => 'Cadeira';
+
+  @override
+  String get objectTable => 'Mesa';
+
+  @override
+  String get objectBackpack => 'Mochila';
+
+  @override
+  String proximityDistant(String object) {
+    return '$object distante.';
+  }
+
+  @override
+  String proximityAttention(String object) {
+    return '$object próxima. Atenção.';
+  }
+
+  @override
+  String proximityVeryNear(String object) {
+    return '$object muito próxima. Cuidado.';
+  }
 
   @override
   String get cameraStatusLabel => 'Estado da câmera';
