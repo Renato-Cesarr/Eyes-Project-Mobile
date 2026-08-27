@@ -1,9 +1,13 @@
 import 'dart:async';
 
+import 'package:eyes_mobile/app/routing/app_router.dart';
 import 'package:eyes_mobile/core/accessibility/accessible_feedback_service.dart';
+import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_binding.dart';
+import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_controller.dart';
+import 'package:eyes_mobile/features/assistive_feedback/domain/assistive_alert_message.dart';
+import 'package:eyes_mobile/features/assistive_feedback/domain/feedback_preferences.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_controller.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_runtime_state.dart';
-import 'package:eyes_mobile/features/object_detection/domain/detected_object.dart';
 import 'package:eyes_mobile/features/proximity/application/proximity_controller.dart';
 import 'package:eyes_mobile/features/proximity/domain/proximity_models.dart';
 import 'package:eyes_mobile/features/scanning/application/assistive_scan_coordinator.dart';
@@ -16,6 +20,7 @@ import 'package:eyes_mobile/l10n/generated/app_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 final class CameraDiagnosticsPage extends ConsumerStatefulWidget {
   const CameraDiagnosticsPage({super.key});
@@ -61,6 +66,7 @@ final class _CameraDiagnosticsPageState
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(assistiveFeedbackBindingProvider);
     final camera = ref.watch(scanControllerProvider);
     final vision = ref.watch(visionControllerProvider);
     final l10n = AppLocalizations.of(context);
@@ -81,7 +87,16 @@ final class _CameraDiagnosticsPageState
     });
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.cameraPageTitle)),
+      appBar: AppBar(
+        title: Text(l10n.cameraPageTitle),
+        actions: [
+          IconButton(
+            tooltip: l10n.openFeedbackSettings,
+            onPressed: () => context.pushNamed(AppRoutes.settings),
+            icon: const Icon(Icons.settings_outlined),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: camera.when(
           data: (session) => _AssistiveScanContent(
@@ -311,28 +326,23 @@ final class _PrimaryScanAction extends ConsumerWidget {
   }
 }
 
-final class _ProximityAnnouncement extends StatelessWidget {
+final class _ProximityAnnouncement extends ConsumerWidget {
   const _ProximityAnnouncement({required this.event});
 
   final ProximityAlertEvent event;
 
   @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final object = switch (event.kind) {
-      DetectedObjectKind.person => l10n.objectPerson,
-      DetectedObjectKind.chair => l10n.objectChair,
-      DetectedObjectKind.table => l10n.objectTable,
-      DetectedObjectKind.backpack => l10n.objectBackpack,
-    };
-    final text = switch (event.band) {
-      ProximityBand.distant => l10n.proximityDistant(object),
-      ProximityBand.attention => l10n.proximityAttention(object),
-      ProximityBand.veryNear => l10n.proximityVeryNear(object),
-    };
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(assistiveFeedbackControllerProvider);
+    final detail =
+        settings.asData?.value.preferences.detailLevel ??
+        FeedbackPreferences.defaults.detailLevel;
+    final text = AssistiveAlertMessageComposer.compose(event, detail).text;
     return Semantics(
       container: true,
-      liveRegion: true,
+      // O TTS do produto anuncia o evento. Mantê-lo fora de uma live region
+      // evita que o TalkBack fale a mesma frase simultaneamente.
+      liveRegion: false,
       excludeSemantics: true,
       label: text,
       child: Card(

@@ -223,6 +223,160 @@ class AppLocalizationsPt extends AppLocalizations {
       'A câmera parou de fornecer imagens. Tente iniciar novamente.';
 
   @override
+  String get openFeedbackSettings => 'Configurações de áudio e alertas';
+
+  @override
+  String get feedbackSettingsTitle => 'Áudio, alertas e vibração';
+
+  @override
+  String get feedbackSettingsIntro =>
+      'Escolha como o Eyes deve avisar sobre os objetos ao seu redor. Estas opções ficam somente neste aparelho.';
+
+  @override
+  String get loadingFeedbackSettings =>
+      'Carregando configurações de áudio e alertas';
+
+  @override
+  String get feedbackSettingsLoadError =>
+      'Não foi possível carregar as configurações. Tente novamente.';
+
+  @override
+  String get voiceSectionTitle => 'Voz';
+
+  @override
+  String get speechRateLabel => 'Velocidade da voz';
+
+  @override
+  String speechRateValue(int percent) {
+    return '$percent por cento';
+  }
+
+  @override
+  String get speechRateRange =>
+      'Ajustável de 30 a 70 por cento. Deslize para cima ou para baixo para alterar.';
+
+  @override
+  String get speechVolumeLabel => 'Volume da voz';
+
+  @override
+  String percentValue(int percent) {
+    return '$percent por cento';
+  }
+
+  @override
+  String get speechVolumeRange =>
+      'Ajustável de zero a 100 por cento. Deslize para cima ou para baixo para alterar.';
+
+  @override
+  String get voiceDetailLabel => 'Nível de detalhe';
+
+  @override
+  String get voiceDetailConcise => 'Frases curtas';
+
+  @override
+  String get voiceDetailDetailed => 'Frases com orientação';
+
+  @override
+  String get testVoice => 'Testar voz';
+
+  @override
+  String get voiceTestPhrase => 'Teste de voz do Eyes concluído.';
+
+  @override
+  String get alertsSectionTitle => 'Alertas';
+
+  @override
+  String get announceAttentionLabel => 'Avisar também objetos próximos';
+
+  @override
+  String get announceAttentionDescription =>
+      'Quando desativado, o Eyes fala apenas sobre objetos muito próximos.';
+
+  @override
+  String get sensitivityLabel => 'Frequência dos alertas';
+
+  @override
+  String get sensitivityConservative => 'Conservador';
+
+  @override
+  String get sensitivityBalanced => 'Equilibrado';
+
+  @override
+  String get sensitivityFewerAlerts => 'Menos alertas';
+
+  @override
+  String get sensitivityConservativeDescription =>
+      'Avisa mais cedo e repete com maior frequência.';
+
+  @override
+  String get sensitivityBalancedDescription =>
+      'Equilibra segurança e quantidade de avisos.';
+
+  @override
+  String get sensitivityFewerAlertsDescription =>
+      'Exige mais persistência e aumenta o intervalo entre avisos.';
+
+  @override
+  String get hapticsSectionTitle => 'Vibração';
+
+  @override
+  String get hapticsEnabledLabel => 'Usar vibração';
+
+  @override
+  String get hapticsDescription =>
+      'Alertas muito próximos usam duas vibrações curtas como reforço ao áudio.';
+
+  @override
+  String get testHaptics => 'Testar vibração';
+
+  @override
+  String get privacySectionTitle => 'Privacidade e sincronização';
+
+  @override
+  String get feedbackPrivacyDescription =>
+      'O reconhecimento e os alertas funcionam localmente, sem enviar imagens. As preferências não contêm dados sensíveis e não são sincronizadas no MVP.';
+
+  @override
+  String get restoreDefaults => 'Restaurar configurações padrão';
+
+  @override
+  String get restoreDefaultsTitle => 'Restaurar configurações?';
+
+  @override
+  String get restoreDefaultsDescription =>
+      'Velocidade, volume, alertas e vibração voltarão aos valores recomendados.';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get confirmRestore => 'Restaurar';
+
+  @override
+  String get preferencesSaved => 'Configuração salva.';
+
+  @override
+  String get defaultsRestored => 'Configurações padrão restauradas.';
+
+  @override
+  String get voiceTestSucceeded => 'Teste de voz concluído.';
+
+  @override
+  String get hapticTestSucceeded => 'Teste de vibração concluído.';
+
+  @override
+  String get speechUnavailable =>
+      'A voz está indisponível. Verifique o mecanismo de síntese do aparelho e tente novamente.';
+
+  @override
+  String get hapticsUnavailable =>
+      'A vibração não está disponível neste aparelho. Os avisos por voz continuam funcionando.';
+
+  @override
+  String get preferencesSaveFailed =>
+      'Não foi possível salvar a configuração. Tente novamente.';
+
+  @override
   String cameraTelemetry(
     String fps,
     int received,
@@ -451,6 +605,160 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get cameraStreamHelp =>
       'A câmera parou de fornecer imagens. Tente iniciar novamente.';
+
+  @override
+  String get openFeedbackSettings => 'Configurações de áudio e alertas';
+
+  @override
+  String get feedbackSettingsTitle => 'Áudio, alertas e vibração';
+
+  @override
+  String get feedbackSettingsIntro =>
+      'Escolha como o Eyes deve avisar sobre os objetos ao seu redor. Estas opções ficam somente neste aparelho.';
+
+  @override
+  String get loadingFeedbackSettings =>
+      'Carregando configurações de áudio e alertas';
+
+  @override
+  String get feedbackSettingsLoadError =>
+      'Não foi possível carregar as configurações. Tente novamente.';
+
+  @override
+  String get voiceSectionTitle => 'Voz';
+
+  @override
+  String get speechRateLabel => 'Velocidade da voz';
+
+  @override
+  String speechRateValue(int percent) {
+    return '$percent por cento';
+  }
+
+  @override
+  String get speechRateRange =>
+      'Ajustável de 30 a 70 por cento. Deslize para cima ou para baixo para alterar.';
+
+  @override
+  String get speechVolumeLabel => 'Volume da voz';
+
+  @override
+  String percentValue(int percent) {
+    return '$percent por cento';
+  }
+
+  @override
+  String get speechVolumeRange =>
+      'Ajustável de zero a 100 por cento. Deslize para cima ou para baixo para alterar.';
+
+  @override
+  String get voiceDetailLabel => 'Nível de detalhe';
+
+  @override
+  String get voiceDetailConcise => 'Frases curtas';
+
+  @override
+  String get voiceDetailDetailed => 'Frases com orientação';
+
+  @override
+  String get testVoice => 'Testar voz';
+
+  @override
+  String get voiceTestPhrase => 'Teste de voz do Eyes concluído.';
+
+  @override
+  String get alertsSectionTitle => 'Alertas';
+
+  @override
+  String get announceAttentionLabel => 'Avisar também objetos próximos';
+
+  @override
+  String get announceAttentionDescription =>
+      'Quando desativado, o Eyes fala apenas sobre objetos muito próximos.';
+
+  @override
+  String get sensitivityLabel => 'Frequência dos alertas';
+
+  @override
+  String get sensitivityConservative => 'Conservador';
+
+  @override
+  String get sensitivityBalanced => 'Equilibrado';
+
+  @override
+  String get sensitivityFewerAlerts => 'Menos alertas';
+
+  @override
+  String get sensitivityConservativeDescription =>
+      'Avisa mais cedo e repete com maior frequência.';
+
+  @override
+  String get sensitivityBalancedDescription =>
+      'Equilibra segurança e quantidade de avisos.';
+
+  @override
+  String get sensitivityFewerAlertsDescription =>
+      'Exige mais persistência e aumenta o intervalo entre avisos.';
+
+  @override
+  String get hapticsSectionTitle => 'Vibração';
+
+  @override
+  String get hapticsEnabledLabel => 'Usar vibração';
+
+  @override
+  String get hapticsDescription =>
+      'Alertas muito próximos usam duas vibrações curtas como reforço ao áudio.';
+
+  @override
+  String get testHaptics => 'Testar vibração';
+
+  @override
+  String get privacySectionTitle => 'Privacidade e sincronização';
+
+  @override
+  String get feedbackPrivacyDescription =>
+      'O reconhecimento e os alertas funcionam localmente, sem enviar imagens. As preferências não contêm dados sensíveis e não são sincronizadas no MVP.';
+
+  @override
+  String get restoreDefaults => 'Restaurar configurações padrão';
+
+  @override
+  String get restoreDefaultsTitle => 'Restaurar configurações?';
+
+  @override
+  String get restoreDefaultsDescription =>
+      'Velocidade, volume, alertas e vibração voltarão aos valores recomendados.';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get confirmRestore => 'Restaurar';
+
+  @override
+  String get preferencesSaved => 'Configuração salva.';
+
+  @override
+  String get defaultsRestored => 'Configurações padrão restauradas.';
+
+  @override
+  String get voiceTestSucceeded => 'Teste de voz concluído.';
+
+  @override
+  String get hapticTestSucceeded => 'Teste de vibração concluído.';
+
+  @override
+  String get speechUnavailable =>
+      'A voz está indisponível. Verifique o mecanismo de síntese do aparelho e tente novamente.';
+
+  @override
+  String get hapticsUnavailable =>
+      'A vibração não está disponível neste aparelho. Os avisos por voz continuam funcionando.';
+
+  @override
+  String get preferencesSaveFailed =>
+      'Não foi possível salvar a configuração. Tente novamente.';
 
   @override
   String cameraTelemetry(

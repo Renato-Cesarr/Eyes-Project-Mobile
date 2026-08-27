@@ -5,6 +5,7 @@ import 'package:eyes_mobile/app/config/app_environment.dart';
 import 'package:eyes_mobile/core/accessibility/accessible_feedback_service.dart';
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
 import 'package:eyes_mobile/core/logging/secure_logger.dart';
+import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_controller.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_frame.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_worker.dart';
 import 'package:eyes_mobile/features/object_detection/domain/detected_object.dart';
@@ -14,6 +15,7 @@ import 'package:eyes_mobile/features/scanning/application/camera_gateway.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_permission_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../support/fake_assistive_feedback.dart';
 
 final class _WidgetCameraGateway implements CameraGateway {
   _WidgetCameraGateway({this.permission = CameraPermissionState.granted});
@@ -132,6 +134,11 @@ void main() {
       ProviderScope(
         overrides: [
           appErrorReporterProvider.overrideWithValue(AppErrorReporter(logger)),
+          speechGatewayProvider.overrideWithValue(FakeSpeechGateway()),
+          assistiveHapticsProvider.overrideWithValue(FakeAssistiveHaptics()),
+          feedbackPreferencesRepositoryProvider.overrideWithValue(
+            InMemoryFeedbackPreferencesRepository(),
+          ),
           cameraGatewayProvider.overrideWithValue(gateway),
           visionWorkerProvider.overrideWithValue(visionWorker),
           if (feedback != null)
@@ -236,15 +243,21 @@ void main() {
 
     controller.process(_detectionBatch(0));
     await tester.pump();
-    expect(find.text('Cadeira muito próxima. Cuidado.'), findsNothing);
+    expect(
+      find.text('Cadeira muito próxima, à frente. Cuidado.'),
+      findsNothing,
+    );
 
     controller.process(_detectionBatch(1));
     controller.process(_detectionBatch(2));
     await tester.pump();
 
-    expect(find.text('Cadeira muito próxima. Cuidado.'), findsOneWidget);
     expect(
-      find.bySemanticsLabel('Cadeira muito próxima. Cuidado.'),
+      find.text('Cadeira muito próxima, à frente. Cuidado.'),
+      findsOneWidget,
+    );
+    expect(
+      find.bySemanticsLabel('Cadeira muito próxima, à frente. Cuidado.'),
       findsOneWidget,
     );
     expect(
@@ -255,7 +268,10 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Pausar câmera'));
     await tester.pumpAndSettle();
-    expect(find.text('Cadeira muito próxima. Cuidado.'), findsNothing);
+    expect(
+      find.text('Cadeira muito próxima, à frente. Cuidado.'),
+      findsNothing,
+    );
     expect(container.read(proximityControllerProvider).lastAlert, isNull);
     semantics.dispose();
   });

@@ -1,3 +1,4 @@
+import 'package:eyes_mobile/features/assistive_feedback/presentation/feedback_settings_page.dart';
 import 'package:eyes_mobile/features/home/presentation/home_page.dart';
 import 'package:eyes_mobile/features/not_found/presentation/not_found_page.dart';
 import 'package:eyes_mobile/features/scanning/presentation/camera_diagnostics_page.dart';
@@ -8,6 +9,7 @@ import 'package:go_router/go_router.dart';
 abstract final class AppRoutes {
   static const String home = 'home';
   static const String camera = 'camera';
+  static const String settings = 'settings';
 }
 
 final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
@@ -21,6 +23,12 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
         path: '/',
         builder: (BuildContext context, GoRouterState state) =>
             const HomePage(),
+      ),
+      GoRoute(
+        name: AppRoutes.settings,
+        path: '/settings',
+        builder: (BuildContext context, GoRouterState state) =>
+            const FeedbackSettingsPage(),
       ),
       GoRoute(
         name: AppRoutes.camera,

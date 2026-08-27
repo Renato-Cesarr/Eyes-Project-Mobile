@@ -475,6 +475,276 @@ abstract class AppLocalizations {
   /// **'A câmera parou de fornecer imagens. Tente iniciar novamente.'**
   String get cameraStreamHelp;
 
+  /// No description provided for @openFeedbackSettings.
+  ///
+  /// In pt, this message translates to:
+  /// **'Configurações de áudio e alertas'**
+  String get openFeedbackSettings;
+
+  /// No description provided for @feedbackSettingsTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Áudio, alertas e vibração'**
+  String get feedbackSettingsTitle;
+
+  /// No description provided for @feedbackSettingsIntro.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolha como o Eyes deve avisar sobre os objetos ao seu redor. Estas opções ficam somente neste aparelho.'**
+  String get feedbackSettingsIntro;
+
+  /// No description provided for @loadingFeedbackSettings.
+  ///
+  /// In pt, this message translates to:
+  /// **'Carregando configurações de áudio e alertas'**
+  String get loadingFeedbackSettings;
+
+  /// No description provided for @feedbackSettingsLoadError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível carregar as configurações. Tente novamente.'**
+  String get feedbackSettingsLoadError;
+
+  /// No description provided for @voiceSectionTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Voz'**
+  String get voiceSectionTitle;
+
+  /// No description provided for @speechRateLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Velocidade da voz'**
+  String get speechRateLabel;
+
+  /// No description provided for @speechRateValue.
+  ///
+  /// In pt, this message translates to:
+  /// **'{percent} por cento'**
+  String speechRateValue(int percent);
+
+  /// No description provided for @speechRateRange.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ajustável de 30 a 70 por cento. Deslize para cima ou para baixo para alterar.'**
+  String get speechRateRange;
+
+  /// No description provided for @speechVolumeLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Volume da voz'**
+  String get speechVolumeLabel;
+
+  /// No description provided for @percentValue.
+  ///
+  /// In pt, this message translates to:
+  /// **'{percent} por cento'**
+  String percentValue(int percent);
+
+  /// No description provided for @speechVolumeRange.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ajustável de zero a 100 por cento. Deslize para cima ou para baixo para alterar.'**
+  String get speechVolumeRange;
+
+  /// No description provided for @voiceDetailLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nível de detalhe'**
+  String get voiceDetailLabel;
+
+  /// No description provided for @voiceDetailConcise.
+  ///
+  /// In pt, this message translates to:
+  /// **'Frases curtas'**
+  String get voiceDetailConcise;
+
+  /// No description provided for @voiceDetailDetailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Frases com orientação'**
+  String get voiceDetailDetailed;
+
+  /// No description provided for @testVoice.
+  ///
+  /// In pt, this message translates to:
+  /// **'Testar voz'**
+  String get testVoice;
+
+  /// No description provided for @voiceTestPhrase.
+  ///
+  /// In pt, this message translates to:
+  /// **'Teste de voz do Eyes concluído.'**
+  String get voiceTestPhrase;
+
+  /// No description provided for @alertsSectionTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Alertas'**
+  String get alertsSectionTitle;
+
+  /// No description provided for @announceAttentionLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Avisar também objetos próximos'**
+  String get announceAttentionLabel;
+
+  /// No description provided for @announceAttentionDescription.
+  ///
+  /// In pt, this message translates to:
+  /// **'Quando desativado, o Eyes fala apenas sobre objetos muito próximos.'**
+  String get announceAttentionDescription;
+
+  /// No description provided for @sensitivityLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Frequência dos alertas'**
+  String get sensitivityLabel;
+
+  /// No description provided for @sensitivityConservative.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conservador'**
+  String get sensitivityConservative;
+
+  /// No description provided for @sensitivityBalanced.
+  ///
+  /// In pt, this message translates to:
+  /// **'Equilibrado'**
+  String get sensitivityBalanced;
+
+  /// No description provided for @sensitivityFewerAlerts.
+  ///
+  /// In pt, this message translates to:
+  /// **'Menos alertas'**
+  String get sensitivityFewerAlerts;
+
+  /// No description provided for @sensitivityConservativeDescription.
+  ///
+  /// In pt, this message translates to:
+  /// **'Avisa mais cedo e repete com maior frequência.'**
+  String get sensitivityConservativeDescription;
+
+  /// No description provided for @sensitivityBalancedDescription.
+  ///
+  /// In pt, this message translates to:
+  /// **'Equilibra segurança e quantidade de avisos.'**
+  String get sensitivityBalancedDescription;
+
+  /// No description provided for @sensitivityFewerAlertsDescription.
+  ///
+  /// In pt, this message translates to:
+  /// **'Exige mais persistência e aumenta o intervalo entre avisos.'**
+  String get sensitivityFewerAlertsDescription;
+
+  /// No description provided for @hapticsSectionTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Vibração'**
+  String get hapticsSectionTitle;
+
+  /// No description provided for @hapticsEnabledLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Usar vibração'**
+  String get hapticsEnabledLabel;
+
+  /// No description provided for @hapticsDescription.
+  ///
+  /// In pt, this message translates to:
+  /// **'Alertas muito próximos usam duas vibrações curtas como reforço ao áudio.'**
+  String get hapticsDescription;
+
+  /// No description provided for @testHaptics.
+  ///
+  /// In pt, this message translates to:
+  /// **'Testar vibração'**
+  String get testHaptics;
+
+  /// No description provided for @privacySectionTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Privacidade e sincronização'**
+  String get privacySectionTitle;
+
+  /// No description provided for @feedbackPrivacyDescription.
+  ///
+  /// In pt, this message translates to:
+  /// **'O reconhecimento e os alertas funcionam localmente, sem enviar imagens. As preferências não contêm dados sensíveis e não são sincronizadas no MVP.'**
+  String get feedbackPrivacyDescription;
+
+  /// No description provided for @restoreDefaults.
+  ///
+  /// In pt, this message translates to:
+  /// **'Restaurar configurações padrão'**
+  String get restoreDefaults;
+
+  /// No description provided for @restoreDefaultsTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Restaurar configurações?'**
+  String get restoreDefaultsTitle;
+
+  /// No description provided for @restoreDefaultsDescription.
+  ///
+  /// In pt, this message translates to:
+  /// **'Velocidade, volume, alertas e vibração voltarão aos valores recomendados.'**
+  String get restoreDefaultsDescription;
+
+  /// No description provided for @cancel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cancelar'**
+  String get cancel;
+
+  /// No description provided for @confirmRestore.
+  ///
+  /// In pt, this message translates to:
+  /// **'Restaurar'**
+  String get confirmRestore;
+
+  /// No description provided for @preferencesSaved.
+  ///
+  /// In pt, this message translates to:
+  /// **'Configuração salva.'**
+  String get preferencesSaved;
+
+  /// No description provided for @defaultsRestored.
+  ///
+  /// In pt, this message translates to:
+  /// **'Configurações padrão restauradas.'**
+  String get defaultsRestored;
+
+  /// No description provided for @voiceTestSucceeded.
+  ///
+  /// In pt, this message translates to:
+  /// **'Teste de voz concluído.'**
+  String get voiceTestSucceeded;
+
+  /// No description provided for @hapticTestSucceeded.
+  ///
+  /// In pt, this message translates to:
+  /// **'Teste de vibração concluído.'**
+  String get hapticTestSucceeded;
+
+  /// No description provided for @speechUnavailable.
+  ///
+  /// In pt, this message translates to:
+  /// **'A voz está indisponível. Verifique o mecanismo de síntese do aparelho e tente novamente.'**
+  String get speechUnavailable;
+
+  /// No description provided for @hapticsUnavailable.
+  ///
+  /// In pt, this message translates to:
+  /// **'A vibração não está disponível neste aparelho. Os avisos por voz continuam funcionando.'**
+  String get hapticsUnavailable;
+
+  /// No description provided for @preferencesSaveFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível salvar a configuração. Tente novamente.'**
+  String get preferencesSaveFailed;
+
   /// Telemetria local de diagnóstico da câmera, invisível ao TalkBack.
   ///
   /// In pt, this message translates to:
