@@ -2,9 +2,15 @@ import 'dart:async';
 
 import 'package:eyes_mobile/app/app.dart';
 import 'package:eyes_mobile/app/config/app_environment.dart';
+import 'package:eyes_mobile/core/accessibility/accessible_feedback_service.dart';
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
 import 'package:eyes_mobile/core/error/global_error_view.dart';
 import 'package:eyes_mobile/core/logging/secure_logger.dart';
+import 'package:eyes_mobile/core/persistence/storage_providers.dart';
+import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_controller.dart';
+import 'package:eyes_mobile/features/assistive_feedback/infrastructure/flutter_tts_speech_gateway.dart';
+import 'package:eyes_mobile/features/assistive_feedback/infrastructure/shared_preferences_feedback_repository.dart';
+import 'package:eyes_mobile/features/assistive_feedback/infrastructure/system_assistive_haptics.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_controller.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_worker.dart';
 import 'package:eyes_mobile/features/object_detection/infrastructure/isolate_vision_worker.dart';
@@ -45,6 +51,31 @@ Future<void> bootstrap(AppEnvironment environment) async {
             appEnvironmentProvider.overrideWithValue(environment),
             secureLoggerProvider.overrideWithValue(logger),
             appErrorReporterProvider.overrideWithValue(errorReporter),
+            accessibleFeedbackServiceProvider.overrideWith((Ref ref) {
+              return SystemAccessibleFeedbackService(
+                hapticsEnabled: () =>
+                    ref
+                        .read(assistiveFeedbackControllerProvider)
+                        .asData
+                        ?.value
+                        .preferences
+                        .hapticsEnabled ??
+                    true,
+              );
+            }),
+            speechGatewayProvider.overrideWith((Ref ref) {
+              final gateway = FlutterTtsSpeechGateway();
+              ref.onDispose(() => unawaited(gateway.dispose()));
+              return gateway;
+            }),
+            assistiveHapticsProvider.overrideWithValue(
+              SystemAssistiveHaptics(),
+            ),
+            feedbackPreferencesRepositoryProvider.overrideWith((Ref ref) {
+              return SharedPreferencesFeedbackRepository(
+                ref.read(sharedPreferencesProvider),
+              );
+            }),
             visionWorkerProvider.overrideWith((Ref ref) {
               final worker = IsolateVisionWorker();
               ref.onDispose(() => unawaited(worker.dispose()));

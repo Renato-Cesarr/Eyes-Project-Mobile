@@ -137,5 +137,31 @@ calibração por classe. Ele não representa metros. Os parâmetros em
 REN-37. Pausar, encerrar ou enviar o aplicativo ao background limpa todos os
 tracks e cooldowns para impedir que eventos de uma sessão vazem para outra.
 
-Somente eventos que passaram pela estabilização chegam à região semântica
-`live`. Detecções brutas e telemetria continuam fora do TalkBack.
+Somente eventos que passaram pela estabilização chegam à saída assistiva e ao
+cartão semântico. Detecções brutas e telemetria continuam fora do TalkBack.
+
+## Feedback assistivo e preferências
+
+O evento estabilizado ganha apenas uma direção relativa derivada do centro da
+caixa; coordenadas e pixels continuam fora da saída. O binding de aplicação
+conecta Riverpod sem acoplar os domínios:
+
+```text
+ProximityAlertEvent
+        ↓
+AssistiveAlertMessageComposer (template pt-BR determinístico)
+        ↓
+VoiceAlertQueue (prioridade, preempção, deduplicação, backlog limitado)
+        ├── SpeechGateway ← FlutterTtsSpeechGateway
+        └── AssistiveHaptics ← APIs nativas do Flutter
+```
+
+`FeedbackPreferencesRepository` persiste somente velocidade, volume, detalhe,
+frequência de anúncios e vibração. Os presets são traduzidos em
+`ProximityPolicy` por um controller de aplicação; nenhum parâmetro do tensor ou
+confidence threshold é exposto.
+
+TalkBack continua podendo explorar o cartão visual do último alerta, mas esse
+cartão não é uma `liveRegion`: a fala do produto é responsabilidade da fila TTS
+e não deve ser duplicada pelo leitor de tela. Estados operacionais e erros
+continuam em regiões `live`.

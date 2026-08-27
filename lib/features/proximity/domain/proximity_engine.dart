@@ -157,6 +157,7 @@ final class ProximityEngine {
       trackId: track.id,
       kind: track.kind,
       band: track.stableBand,
+      direction: _direction(track.boundingBox),
       score: track.smoothedScore,
       centrality: _centrality(track.boundingBox),
       persistenceFrames: track.seenFrames,
@@ -215,6 +216,7 @@ final class ProximityEngine {
       trackId: selected.id,
       kind: selected.kind,
       band: selected.stableBand,
+      direction: _direction(selected.boundingBox),
       score: selected.smoothedScore,
       priority: _priority(selected),
       occurredAt: capturedAt,
@@ -223,6 +225,17 @@ final class ProximityEngine {
       ..lastAlertAt = capturedAt
       ..lastAlertBand = selected.stableBand;
     return event;
+  }
+
+  ProximityDirection _direction(NormalizedBoundingBox box) {
+    final center = (box.left + box.right) / 2;
+    if (center < 0.38) {
+      return ProximityDirection.left;
+    }
+    if (center > 0.62) {
+      return ProximityDirection.right;
+    }
+    return ProximityDirection.ahead;
   }
 
   double _priority(_TrackedObject track) {

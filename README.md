@@ -17,6 +17,7 @@ pós-MVP.
 - localização oficial do Flutter, inicialmente em `pt-BR`.
 - plugins oficiais `camera` e `permission_handler` para câmera Android e
   permissões em tempo de execução.
+- `flutter_tts` para síntese local em português do Brasil.
 
 ## Pré-requisitos
 
@@ -182,9 +183,27 @@ retornam à aplicação. Não existe upload, persistência de imagem ou fallback
 rede.
 
 O `VisionController` expõe `loading`, `ready` e `error` por Riverpod e encerra o
-isolate no background. A conexão desse controller à tela e ao lifecycle da
-câmera pertence à Fase 4 da REN-29. Consulte o
+isolate no background. A câmera, o worker e a fila de feedback compartilham o
+mesmo lifecycle. Consulte o
 [ADR 0005](docs/adr/0005-vision-worker-isolate-and-transferable-frames.md).
+
+## Voz, vibração e configurações
+
+Alertas estabilizados geram frases curtas com objeto, proximidade relativa e
+direção aproximada. A fila de voz prioriza riscos, interrompe avisos menos
+importantes quando necessário, deduplica mensagens e nunca usa rede ou LLM.
+Alertas muito próximos podem ser reforçados por duas vibrações curtas.
+
+A tela **Configurações de áudio e alertas** permite ajustar velocidade, volume,
+nível de detalhe, anúncio da faixa de atenção, frequência e vibração. Os presets
+alteram somente persistência e intervalos de anúncio; o detector TFLite não é
+reconfigurado. As escolhas ficam no aparelho e podem ser restauradas de forma
+confirmada e acessível.
+
+Ao testar manualmente, habilite TalkBack e confirme que cada alerta é falado uma
+única vez, que um risco crítico interrompe um aviso informativo e que desativar
+vibração remove os haptics não essenciais. Consulte o
+[ADR 0007](docs/adr/0007-deterministic-multimodal-feedback.md).
 
 ## Fluxo Git
 

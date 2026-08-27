@@ -2,11 +2,14 @@ import 'package:eyes_mobile/features/object_detection/domain/detected_object.dar
 
 enum ProximityBand { distant, attention, veryNear }
 
+enum ProximityDirection { left, ahead, right }
+
 final class ProximityObservation {
   const ProximityObservation({
     required this.trackId,
     required this.kind,
     required this.band,
+    required this.direction,
     required this.score,
     required this.centrality,
     required this.persistenceFrames,
@@ -16,6 +19,7 @@ final class ProximityObservation {
   final int trackId;
   final DetectedObjectKind kind;
   final ProximityBand band;
+  final ProximityDirection direction;
   final double score;
   final double centrality;
   final int persistenceFrames;
@@ -29,6 +33,7 @@ final class ProximityAlertEvent {
     required this.trackId,
     required this.kind,
     required this.band,
+    required this.direction,
     required this.score,
     required this.priority,
     required this.occurredAt,
@@ -37,6 +42,7 @@ final class ProximityAlertEvent {
   final int trackId;
   final DetectedObjectKind kind;
   final ProximityBand band;
+  final ProximityDirection direction;
   final double score;
   final double priority;
   final DateTime occurredAt;

@@ -1,3 +1,4 @@
+import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_controller.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_controller.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_runtime_state.dart';
 import 'package:eyes_mobile/features/proximity/application/proximity_controller.dart';
@@ -13,6 +14,7 @@ final class AssistiveScanCoordinator {
 
   Future<void> prepare() async {
     try {
+      await _ref.read(assistiveFeedbackControllerProvider.future);
       final runtime = await _ref.read(visionControllerProvider.future);
       if (runtime.status != VisionRuntimeStatus.ready) {
         await _ref.read(visionControllerProvider.notifier).start();
@@ -23,6 +25,7 @@ final class AssistiveScanCoordinator {
   }
 
   Future<void> start() async {
+    await _ref.read(assistiveFeedbackControllerProvider.future);
     await _ref.read(visionControllerProvider.notifier).start();
     if (_isVisionReady) {
       await _ref.read(scanControllerProvider.notifier).start();
@@ -30,24 +33,41 @@ final class AssistiveScanCoordinator {
   }
 
   Future<void> pause() async {
+    final feedback = _ref.read(assistiveFeedbackControllerProvider.notifier);
+    final camera = _ref.read(scanControllerProvider.notifier);
+    final vision = _ref.read(visionControllerProvider.notifier);
     _resetProximity();
-    await _ref.read(scanControllerProvider.notifier).pause();
-    await _ref.read(visionControllerProvider.notifier).stop();
+    await Future.wait<void>([
+      feedback.stopAlerts(),
+      camera.pause(),
+      vision.stop(),
+    ]);
   }
 
   Future<void> resume() => start();
 
   Future<void> stop() async {
-    _resetProximity();
+    final feedback = _ref.read(assistiveFeedbackControllerProvider.notifier);
     final camera = _ref.read(scanControllerProvider.notifier);
     final vision = _ref.read(visionControllerProvider.notifier);
-    await Future.wait<void>([camera.stop(), vision.stop()]);
+    _resetProximity();
+    await Future.wait<void>([
+      feedback.stopAlerts(),
+      camera.stop(),
+      vision.stop(),
+    ]);
   }
 
   Future<void> handleBackground() async {
+    final feedback = _ref.read(assistiveFeedbackControllerProvider.notifier);
+    final camera = _ref.read(scanControllerProvider.notifier);
+    final vision = _ref.read(visionControllerProvider.notifier);
     _resetProximity();
-    await _ref.read(scanControllerProvider.notifier).handleBackground();
-    await _ref.read(visionControllerProvider.notifier).handleBackground();
+    await Future.wait<void>([
+      feedback.stopAlerts(),
+      camera.handleBackground(),
+      vision.handleBackground(),
+    ]);
   }
 
   Future<void> handleForeground() async {
@@ -58,9 +78,12 @@ final class AssistiveScanCoordinator {
   }
 
   Future<void> retryVision() async {
+    final feedback = _ref.read(assistiveFeedbackControllerProvider.notifier);
+    final camera = _ref.read(scanControllerProvider.notifier);
+    final vision = _ref.read(visionControllerProvider.notifier);
     _resetProximity();
-    await _ref.read(scanControllerProvider.notifier).stop();
-    await _ref.read(visionControllerProvider.notifier).retry();
+    await Future.wait<void>([feedback.stopAlerts(), camera.stop()]);
+    await vision.retry();
   }
 
   void _resetProximity() {

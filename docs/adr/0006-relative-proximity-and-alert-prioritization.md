@@ -26,8 +26,8 @@ Parâmetros baseline:
 | --- | ---: |
 | IoU mínimo | 0,25 |
 | EMA alpha | 0,35 |
-| Entrada em atenção | 0,60 |
-| Entrada em muito próximo | 0,83 |
+| Entrada em atenção | 0,55 |
+| Entrada em muito próximo | 0,78 |
 | Histerese | ±0,05 |
 | Confirmação de novo objeto | 3 frames |
 | Confirmação de mudança | 2 frames |
@@ -44,4 +44,4 @@ Os valores de referência por classe e pesos de risco são versionados em `Proxi
 - não há promessa de distância métrica;
 - mudanças bruscas com IoU insuficiente criam um novo track e precisam ser estabilizadas novamente;
 - a REN-37 deve calibrar thresholds e referências no POCO X5 Pro antes de testes com usuários;
-- a REN-31 poderá trocar `announceAttention`, cooldown e feedback sem alterar o detector.
+- a REN-31 troca `announceAttention`, persistência e cooldown por presets sem alterar o detector.

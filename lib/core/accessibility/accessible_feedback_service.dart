@@ -8,22 +8,30 @@ abstract interface class AccessibleFeedbackService {
 
 final class SystemAccessibleFeedbackService
     implements AccessibleFeedbackService {
-  SystemAccessibleFeedbackService({FeedbackDelay? delay})
-    : _delay = delay ?? _defaultFeedbackDelay;
+  SystemAccessibleFeedbackService({
+    FeedbackDelay? delay,
+    FeedbackEnabled? hapticsEnabled,
+  }) : _delay = delay ?? _defaultFeedbackDelay,
+       _hapticsEnabled = hapticsEnabled ?? _feedbackEnabledByDefault;
 
   final FeedbackDelay _delay;
+  final FeedbackEnabled _hapticsEnabled;
 
   @override
   Future<void> confirm() async {
-    await HapticFeedback.lightImpact();
+    if (_hapticsEnabled()) {
+      await HapticFeedback.lightImpact();
+    }
     await SystemSound.play(SystemSoundType.click);
   }
 
   @override
   Future<void> warn() async {
-    await HapticFeedback.mediumImpact();
-    await _delay(const Duration(milliseconds: 120));
-    await HapticFeedback.mediumImpact();
+    if (_hapticsEnabled()) {
+      await HapticFeedback.mediumImpact();
+      await _delay(const Duration(milliseconds: 120));
+      await HapticFeedback.mediumImpact();
+    }
     await SystemSound.play(SystemSoundType.alert);
   }
 }
@@ -34,6 +42,9 @@ final Provider<AccessibleFeedbackService> accessibleFeedbackServiceProvider =
     );
 
 typedef FeedbackDelay = Future<void> Function(Duration duration);
+typedef FeedbackEnabled = bool Function();
 
 Future<void> _defaultFeedbackDelay(Duration duration) =>
     Future<void>.delayed(duration);
+
+bool _feedbackEnabledByDefault() => true;
