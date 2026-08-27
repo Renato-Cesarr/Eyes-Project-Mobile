@@ -72,22 +72,25 @@ final class AssistiveFeedbackController
     if (current == null) {
       return;
     }
+    var notice = FeedbackNotice.preferencesSaved;
+    try {
+      await ref.read(feedbackPreferencesRepositoryProvider).save(preferences);
+    } on Object catch (error, stackTrace) {
+      notice = FeedbackNotice.persistenceFailed;
+      _report(error, stackTrace, 'feedback-preferences-save');
+    }
     try {
       await ref
           .read(speechGatewayProvider)
           .configure(_speechConfiguration(preferences));
-      await ref.read(feedbackPreferencesRepositoryProvider).save(preferences);
-      if (!_disposed) {
-        state = AsyncData<AssistiveFeedbackState>(
-          current.copyWith(
-            preferences: preferences,
-            notice: FeedbackNotice.preferencesSaved,
-          ),
-        );
-      }
     } on Object catch (error, stackTrace) {
-      _report(error, stackTrace, 'feedback-preferences-save');
-      _setNotice(FeedbackNotice.persistenceFailed);
+      notice = FeedbackNotice.speechUnavailable;
+      _report(error, stackTrace, 'tts-configure');
+    }
+    if (!_disposed) {
+      state = AsyncData<AssistiveFeedbackState>(
+        current.copyWith(preferences: preferences, notice: notice),
+      );
     }
   }
 

@@ -10,7 +10,8 @@ final class FeedbackPreferences {
     this.announceAttention = true,
     this.sensitivity = AlertSensitivityPreset.balanced,
     this.hapticsEnabled = true,
-  });
+  }) : assert(speechRate >= 0.30 && speechRate <= 0.70),
+       assert(volume >= 0 && volume <= 1);
 
   static const FeedbackPreferences defaults = FeedbackPreferences();
 

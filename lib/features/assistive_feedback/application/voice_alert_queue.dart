@@ -53,7 +53,7 @@ final class VoiceAlertQueue {
     _idleCompleter ??= Completer<void>();
 
     if (message.isCritical && current != null && !current.isCritical) {
-      unawaited(_gateway.stop());
+      unawaited(_stopSafely());
     }
     unawaited(_drain());
   }
@@ -61,7 +61,7 @@ final class VoiceAlertQueue {
   Future<void> clear() async {
     _pending.clear();
     _current = null;
-    await _gateway.stop();
+    await _stopSafely();
     _completeIdle();
   }
 
@@ -71,7 +71,11 @@ final class VoiceAlertQueue {
     }
     _disposed = true;
     await clear();
-    await _gateway.dispose();
+    try {
+      await _gateway.dispose();
+    } on Object catch (error, stackTrace) {
+      _onFailure(error, stackTrace);
+    }
   }
 
   bool _isDuplicate(AssistiveAlertMessage message) {
@@ -106,6 +110,18 @@ final class VoiceAlertQueue {
         unawaited(_drain());
       }
     }
+  }
+
+  Future<void> _stopSafely() async {
+    try {
+      await _gateway.stop();
+    } on Object catch (error, stackTrace) {
+      _onFailure(error, stackTrace);
+    }
+  }
+
+  void _onFailure(Object error, StackTrace stackTrace) {
+    onFailure?.call(error, stackTrace);
   }
 
   void _completeIdle() {

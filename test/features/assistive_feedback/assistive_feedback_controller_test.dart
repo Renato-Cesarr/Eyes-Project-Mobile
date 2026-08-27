@@ -81,6 +81,40 @@ void main() {
       AlertSensitivityPreset.fewerAlerts,
     );
   });
+
+  test(
+    'falha do TTS não impede salvar e aplicar outras preferências',
+    () async {
+      final repository = InMemoryFeedbackPreferencesRepository();
+      final container = _container(
+        FakeSpeechGateway(failure: StateError('tts missing')),
+        FakeAssistiveHaptics(),
+        repository,
+      );
+      addTearDown(container.dispose);
+      await container.read(assistiveFeedbackControllerProvider.future);
+
+      await container
+          .read(assistiveFeedbackControllerProvider.notifier)
+          .updatePreferences(
+            const FeedbackPreferences(
+              announceAttention: false,
+              hapticsEnabled: false,
+            ),
+          );
+
+      expect(repository.saves, 1);
+      expect(repository.preferences.hapticsEnabled, isFalse);
+      expect(
+        container
+            .read(assistiveFeedbackControllerProvider)
+            .requireValue
+            .preferences
+            .announceAttention,
+        isFalse,
+      );
+    },
+  );
 }
 
 ProviderContainer _container(

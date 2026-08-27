@@ -60,17 +60,20 @@ void main() {
     );
   });
 
-  test('disabled preference removes haptics but preserves audible cues', () async {
-    final service = SystemAccessibleFeedbackService(
-      hapticsEnabled: () => false,
-    );
+  test(
+    'disabled preference removes haptics but preserves audible cues',
+    () async {
+      final service = SystemAccessibleFeedbackService(
+        hapticsEnabled: () => false,
+      );
 
-    await service.confirm();
-    await service.warn();
+      await service.confirm();
+      await service.warn();
 
-    expect(calls.map((call) => call.method), <String>[
-      'SystemSound.play',
-      'SystemSound.play',
-    ]);
-  });
+      expect(calls.map((call) => call.method), <String>[
+        'SystemSound.play',
+        'SystemSound.play',
+      ]);
+    },
+  );
 }
