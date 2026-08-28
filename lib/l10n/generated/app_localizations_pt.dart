@@ -339,6 +339,110 @@ class AppLocalizationsPt extends AppLocalizations {
   String get recoveryReturnHome => 'Voltar ao início';
 
   @override
+  String get assistiveScanTitle => 'Varredura assistiva';
+
+  @override
+  String get openHelpAndSafety => 'Ajuda e segurança';
+
+  @override
+  String get scanCapabilitiesTitle => 'Recursos ativos';
+
+  @override
+  String get scanAudioAvailable => 'Avisos por voz disponíveis';
+
+  @override
+  String get scanAudioUnavailable => 'Avisos por voz indisponíveis';
+
+  @override
+  String get scanHapticsAvailable => 'Vibração ativa';
+
+  @override
+  String get scanHapticsDisabled => 'Vibração desativada nas configurações';
+
+  @override
+  String get scanHapticsUnavailable => 'Vibração indisponível';
+
+  @override
+  String get scanOfflineAvailable => 'Varredura offline disponível';
+
+  @override
+  String get scanStart => 'Iniciar varredura';
+
+  @override
+  String get scanStartHint => 'Ativa a câmera e os avisos de obstáculos';
+
+  @override
+  String get scanPause => 'Pausar varredura';
+
+  @override
+  String get scanPauseHint =>
+      'Interrompe a câmera e libera os recursos do aparelho';
+
+  @override
+  String get scanResume => 'Retomar varredura';
+
+  @override
+  String get scanResumeHint => 'Reativa a câmera e os avisos de obstáculos';
+
+  @override
+  String get scanPreparingHint => 'Aguarde enquanto os recursos são preparados';
+
+  @override
+  String get scanEnded =>
+      'Varredura encerrada. A câmera e a inteligência artificial estão desligadas.';
+
+  @override
+  String get scanStop => 'Encerrar varredura';
+
+  @override
+  String get scanStopHint =>
+      'Solicita confirmação antes de desligar a varredura';
+
+  @override
+  String get scanStopDialogTitle => 'Encerrar a varredura?';
+
+  @override
+  String get scanStopDialogMessage =>
+      'Você deixará de receber avisos de obstáculos até iniciar uma nova varredura.';
+
+  @override
+  String get scanKeepRunning => 'Continuar varredura';
+
+  @override
+  String get scanConfirmStop => 'Encerrar agora';
+
+  @override
+  String get helpAndSafetyTitle => 'Ajuda e segurança';
+
+  @override
+  String get helpSafetyHeading => 'Uso seguro';
+
+  @override
+  String get helpSafetyBody =>
+      'O Eyes é um apoio complementar. Ele não substitui bengala, cão-guia, orientação humana nem técnicas de mobilidade.';
+
+  @override
+  String get helpPrivacyHeading => 'Privacidade';
+
+  @override
+  String get helpPrivacyBody =>
+      'As imagens são processadas localmente durante a varredura e não são salvas como foto ou vídeo.';
+
+  @override
+  String get helpScanningHeading => 'Como usar a varredura';
+
+  @override
+  String get helpScanningBody =>
+      'Mantenha a câmera traseira livre. Inicie a varredura e siga os avisos curtos de voz e vibração. Pause ou encerre quando não precisar dos alertas.';
+
+  @override
+  String get helpPermissionHeading => 'Permissão da câmera';
+
+  @override
+  String get helpPermissionBody =>
+      'A câmera é solicitada somente ao iniciar. Se a permissão estiver bloqueada, use a ação para abrir as configurações do aparelho.';
+
+  @override
   String get openFeedbackSettings => 'Configurações de áudio e alertas';
 
   @override
@@ -837,6 +941,110 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get recoveryReturnHome => 'Voltar ao início';
+
+  @override
+  String get assistiveScanTitle => 'Varredura assistiva';
+
+  @override
+  String get openHelpAndSafety => 'Ajuda e segurança';
+
+  @override
+  String get scanCapabilitiesTitle => 'Recursos ativos';
+
+  @override
+  String get scanAudioAvailable => 'Avisos por voz disponíveis';
+
+  @override
+  String get scanAudioUnavailable => 'Avisos por voz indisponíveis';
+
+  @override
+  String get scanHapticsAvailable => 'Vibração ativa';
+
+  @override
+  String get scanHapticsDisabled => 'Vibração desativada nas configurações';
+
+  @override
+  String get scanHapticsUnavailable => 'Vibração indisponível';
+
+  @override
+  String get scanOfflineAvailable => 'Varredura offline disponível';
+
+  @override
+  String get scanStart => 'Iniciar varredura';
+
+  @override
+  String get scanStartHint => 'Ativa a câmera e os avisos de obstáculos';
+
+  @override
+  String get scanPause => 'Pausar varredura';
+
+  @override
+  String get scanPauseHint =>
+      'Interrompe a câmera e libera os recursos do aparelho';
+
+  @override
+  String get scanResume => 'Retomar varredura';
+
+  @override
+  String get scanResumeHint => 'Reativa a câmera e os avisos de obstáculos';
+
+  @override
+  String get scanPreparingHint => 'Aguarde enquanto os recursos são preparados';
+
+  @override
+  String get scanEnded =>
+      'Varredura encerrada. A câmera e a inteligência artificial estão desligadas.';
+
+  @override
+  String get scanStop => 'Encerrar varredura';
+
+  @override
+  String get scanStopHint =>
+      'Solicita confirmação antes de desligar a varredura';
+
+  @override
+  String get scanStopDialogTitle => 'Encerrar a varredura?';
+
+  @override
+  String get scanStopDialogMessage =>
+      'Você deixará de receber avisos de obstáculos até iniciar uma nova varredura.';
+
+  @override
+  String get scanKeepRunning => 'Continuar varredura';
+
+  @override
+  String get scanConfirmStop => 'Encerrar agora';
+
+  @override
+  String get helpAndSafetyTitle => 'Ajuda e segurança';
+
+  @override
+  String get helpSafetyHeading => 'Uso seguro';
+
+  @override
+  String get helpSafetyBody =>
+      'O Eyes é um apoio complementar. Ele não substitui bengala, cão-guia, orientação humana nem técnicas de mobilidade.';
+
+  @override
+  String get helpPrivacyHeading => 'Privacidade';
+
+  @override
+  String get helpPrivacyBody =>
+      'As imagens são processadas localmente durante a varredura e não são salvas como foto ou vídeo.';
+
+  @override
+  String get helpScanningHeading => 'Como usar a varredura';
+
+  @override
+  String get helpScanningBody =>
+      'Mantenha a câmera traseira livre. Inicie a varredura e siga os avisos curtos de voz e vibração. Pause ou encerre quando não precisar dos alertas.';
+
+  @override
+  String get helpPermissionHeading => 'Permissão da câmera';
+
+  @override
+  String get helpPermissionBody =>
+      'A câmera é solicitada somente ao iniciar. Se a permissão estiver bloqueada, use a ação para abrir as configurações do aparelho.';
 
   @override
   String get openFeedbackSettings => 'Configurações de áudio e alertas';

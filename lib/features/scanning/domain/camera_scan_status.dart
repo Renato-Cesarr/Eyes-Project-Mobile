@@ -4,6 +4,7 @@ enum CameraScanStatus {
   preparing,
   streaming,
   paused,
+  ended,
   denied,
   permanentlyDenied,
   busy,

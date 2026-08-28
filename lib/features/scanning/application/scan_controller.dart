@@ -176,7 +176,7 @@ final class ScanController extends AsyncNotifier<CameraSessionState> {
     _resumeAfterLifecycle = false;
     ++_operationToken;
     await ref.read(cameraGatewayProvider).release();
-    _setState(const CameraSessionState());
+    _setState(const CameraSessionState(status: CameraScanStatus.ended));
   }
 
   Future<bool> openSettings() {
