@@ -16,6 +16,7 @@ void main() {
       StateError('private details'),
       StackTrace.current,
       source: 'unit-test',
+      diagnosticCode: 'camera-in-use',
     );
     reporter.captureFlutterError(
       FlutterErrorDetails(exception: ArgumentError('invalid')),
@@ -24,6 +25,7 @@ void main() {
 
     expect(records, hasLength(2));
     expect(records.first.message, contains('source: unit-test'));
+    expect(records.first.message, contains('diagnosticCode: camera-in-use'));
     expect(records.first.message, isNot(contains('private details')));
     expect(records.last.message, contains('source: Flutter framework'));
 

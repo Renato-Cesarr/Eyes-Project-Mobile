@@ -112,7 +112,12 @@ final class ScanController extends AsyncNotifier<CameraSessionState> {
       }
       ref
           .read(appErrorReporterProvider)
-          .capture(error, stackTrace, source: 'camera-initialization-timeout');
+          .capture(
+            error,
+            stackTrace,
+            source: 'camera-initialization-timeout',
+            diagnosticCode: 'initialization-timeout',
+          );
       await gateway.release();
       _setFailure(
         CameraScanStatus.unavailable,
@@ -127,7 +132,12 @@ final class ScanController extends AsyncNotifier<CameraSessionState> {
       }
       ref
           .read(appErrorReporterProvider)
-          .capture(error, stackTrace, source: 'camera-gateway');
+          .capture(
+            error,
+            stackTrace,
+            source: 'camera-gateway',
+            diagnosticCode: error.code,
+          );
       await gateway.release();
       _applyGatewayFailure(error);
     } on Object catch (error, stackTrace) {
@@ -136,7 +146,12 @@ final class ScanController extends AsyncNotifier<CameraSessionState> {
       }
       ref
           .read(appErrorReporterProvider)
-          .capture(error, stackTrace, source: 'camera-unexpected');
+          .capture(
+            error,
+            stackTrace,
+            source: 'camera-unexpected',
+            diagnosticCode: 'unexpected-camera-failure',
+          );
       await gateway.release();
       _setFailure(
         CameraScanStatus.unavailable,
@@ -212,6 +227,14 @@ final class ScanController extends AsyncNotifier<CameraSessionState> {
   }
 
   Future<void> _handleRuntimeFailure(CameraGatewayException failure) async {
+    ref
+        .read(appErrorReporterProvider)
+        .capture(
+          failure,
+          StackTrace.current,
+          source: 'camera-stream',
+          diagnosticCode: failure.code,
+        );
     ++_operationToken;
     await ref.read(cameraGatewayProvider).release();
     _applyGatewayFailure(failure);
