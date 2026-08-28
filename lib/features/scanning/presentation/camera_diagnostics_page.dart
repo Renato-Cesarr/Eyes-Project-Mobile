@@ -7,6 +7,7 @@ import 'package:eyes_mobile/core/recovery/operational_failure.dart';
 import 'package:eyes_mobile/core/recovery/recovery_content.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_binding.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_controller.dart';
+import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_state.dart';
 import 'package:eyes_mobile/features/assistive_feedback/domain/assistive_alert_message.dart';
 import 'package:eyes_mobile/features/assistive_feedback/domain/feedback_preferences.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_controller.dart';
@@ -137,19 +138,13 @@ final class _AssistiveScanContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final statusText = _scanStatusText(l10n, session, vision);
-    final blockingFailure = vision.hasError
-        ? ScanFailurePolicy.fromVision(vision.error!)
-        : session.failure == null
-        ? null
-        : ScanFailurePolicy.fromCamera(session.failure!);
+    final blockingFailure = _blockingFailure(session, vision);
     final feedbackNotice = ref
         .watch(assistiveFeedbackControllerProvider)
         .asData
         ?.value
         .notice;
-    final degradedFailure = feedbackNotice == null
-        ? null
-        : ScanFailurePolicy.fromFeedbackNotice(feedbackNotice);
+    final degradedFailure = _degradedFailure(feedbackNotice);
     final runtime = vision.asData?.value;
     final isVisionReady = runtime?.status == VisionRuntimeStatus.ready;
     final isActivelyScanning =
@@ -256,6 +251,22 @@ final class _AssistiveScanContent extends ConsumerWidget {
     );
   }
 }
+
+OperationalFailure? _blockingFailure(
+  CameraSessionState session,
+  AsyncValue<VisionRuntimeState> vision,
+) {
+  if (vision.hasError) {
+    return ScanFailurePolicy.fromVision(vision.error!);
+  }
+  final cameraFailure = session.failure;
+  return cameraFailure == null
+      ? null
+      : ScanFailurePolicy.fromCamera(cameraFailure);
+}
+
+OperationalFailure? _degradedFailure(FeedbackNotice? notice) =>
+    notice == null ? null : ScanFailurePolicy.fromFeedbackNotice(notice);
 
 final class _RecoveryPanel extends ConsumerWidget {
   const _RecoveryPanel({

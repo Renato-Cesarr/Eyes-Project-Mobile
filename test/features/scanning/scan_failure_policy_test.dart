@@ -7,6 +7,16 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('camera failure policy', () {
+    test('maps every camera failure to a blocking recovery path', () {
+      for (final reason in CameraFailureReason.values) {
+        final failure = ScanFailurePolicy.fromCamera(
+          CameraFailure(reason: reason, technicalCode: reason.name),
+        );
+        expect(failure.blocksAssistiveScan, isTrue, reason: reason.name);
+        expect(failure.diagnosticCode, reason.name, reason: reason.name);
+      }
+    });
+
     test('permanent denial opens settings and offers a safe exit', () {
       final failure = ScanFailurePolicy.fromCamera(
         const CameraFailure(
@@ -43,6 +53,31 @@ void main() {
   });
 
   group('vision failure policy', () {
+    test('maps every worker failure reason to controlled recovery', () {
+      for (final reason in VisionWorkerFailureReason.values) {
+        final failure = ScanFailurePolicy.fromVision(
+          VisionWorkerException(
+            reason,
+            'technical payload',
+            technicalCode: reason.name,
+          ),
+        );
+        expect(failure.blocksAssistiveScan, isTrue, reason: reason.name);
+        expect(
+          failure.primaryAction,
+          OperationalRecoveryAction.retry,
+          reason: reason.name,
+        );
+      }
+    });
+
+    test('maps unknown errors to a sanitized unexpected category', () {
+      final failure = ScanFailurePolicy.fromVision(StateError('payload'));
+
+      expect(failure.kind, OperationalFailureKind.unexpected);
+      expect(failure.diagnosticCode, isNull);
+    });
+
     test('classifies timeout independently from runtime failures', () {
       final failure = ScanFailurePolicy.fromVision(
         const VisionWorkerException(
@@ -89,6 +124,18 @@ void main() {
       expect(allocation.kind, OperationalFailureKind.modelOutOfMemory);
       expect(delegate.kind, OperationalFailureKind.modelDelegateUnavailable);
     });
+
+    test('uses generic runtime recovery for unknown initialization code', () {
+      final failure = ScanFailurePolicy.fromVision(
+        const VisionWorkerException(
+          VisionWorkerFailureReason.initialization,
+          'unknown failure',
+          technicalCode: 'vendor-unknown',
+        ),
+      );
+
+      expect(failure.kind, OperationalFailureKind.modelRuntime);
+    });
   });
 
   group('degraded feedback policy', () {
@@ -107,10 +154,31 @@ void main() {
     });
 
     test('success notices are not operational failures', () {
-      expect(
-        ScanFailurePolicy.fromFeedbackNotice(FeedbackNotice.preferencesSaved),
-        isNull,
-      );
+      for (final notice in <FeedbackNotice>[
+        FeedbackNotice.none,
+        FeedbackNotice.preferencesSaved,
+        FeedbackNotice.defaultsRestored,
+        FeedbackNotice.voiceTestSucceeded,
+        FeedbackNotice.hapticTestSucceeded,
+      ]) {
+        expect(
+          ScanFailurePolicy.fromFeedbackNotice(notice),
+          isNull,
+          reason: notice.name,
+        );
+      }
+    });
+
+    test('maps every degraded capability without blocking scanning', () {
+      for (final notice in <FeedbackNotice>[
+        FeedbackNotice.speechUnavailable,
+        FeedbackNotice.hapticsUnavailable,
+        FeedbackNotice.persistenceFailed,
+      ]) {
+        final failure = ScanFailurePolicy.fromFeedbackNotice(notice);
+        expect(failure, isNotNull, reason: notice.name);
+        expect(failure!.blocksAssistiveScan, isFalse, reason: notice.name);
+      }
     });
   });
 }

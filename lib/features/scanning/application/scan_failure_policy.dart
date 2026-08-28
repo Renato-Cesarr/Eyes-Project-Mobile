@@ -21,15 +21,11 @@ abstract final class ScanFailurePolicy {
       CameraFailureReason.streamFailed => OperationalFailureKind.cameraStream,
     };
 
+    final primaryAction = _cameraPrimaryAction(failure.reason);
     return OperationalFailure(
       kind: kind,
       impact: OperationalFailureImpact.blocking,
-      primaryAction:
-          failure.reason == CameraFailureReason.permissionPermanentlyDenied
-          ? OperationalRecoveryAction.openDeviceSettings
-          : _cameraCanRetry(failure.reason)
-          ? OperationalRecoveryAction.retry
-          : OperationalRecoveryAction.returnToSafety,
+      primaryAction: primaryAction,
       secondaryAction:
           failure.reason == CameraFailureReason.permissionPermanentlyDenied ||
               _cameraCanRetry(failure.reason)
@@ -107,6 +103,17 @@ abstract final class ScanFailurePolicy {
     CameraFailureReason.permissionRestricted ||
     CameraFailureReason.noCamera => false,
   };
+
+  static OperationalRecoveryAction _cameraPrimaryAction(
+    CameraFailureReason reason,
+  ) {
+    if (reason == CameraFailureReason.permissionPermanentlyDenied) {
+      return OperationalRecoveryAction.openDeviceSettings;
+    }
+    return _cameraCanRetry(reason)
+        ? OperationalRecoveryAction.retry
+        : OperationalRecoveryAction.returnToSafety;
+  }
 
   static OperationalFailureKind _modelInitializationKind(String? code) {
     final normalized = code?.toLowerCase() ?? '';
