@@ -62,7 +62,7 @@ liberação de hardware. `MobileCameraGateway` concentra `camera` e
 `permission_handler`; nenhum tipo desses plugins atravessa para o domínio.
 
 ```text
-CameraDiagnosticsPage
+AssistiveScanPage
         ↓ observa
 ScanController (AsyncNotifier<CameraSessionState>)
         ↓ depende de
@@ -72,7 +72,7 @@ CameraFrameHandler ← inferência TFLite no REN-29
 ```
 
 Os estados `idle`, `requestingPermission`, `preparing`, `streaming`, `paused`,
-`denied`, `permanentlyDenied`, `busy` e `unavailable` são explícitos. A UI
+`ended`, `denied`, `permanentlyDenied`, `busy` e `unavailable` são explícitos. A UI
 traduz esses estados em texto e região semântica `live`; o adapter nativo não
 abre diálogos nem produz mensagens visuais.
 
@@ -192,3 +192,36 @@ segura e preserva a ordem de foco com texto em escala de 200%.
 Códigos diagnósticos sanitizados podem ser enviados ao `AppErrorReporter`, mas
 mensagens nativas, imagens, tokens, frames e tensores não são registrados. Veja
 o ADR 0008 para a matriz completa e os timeouts de cada recurso.
+
+## Sessão assistiva e tela principal
+
+`AssistiveScanStatus` combina o estado da câmera e do runtime de visão em fases
+de produto estáveis: carregando modelo, pronta, solicitando permissão,
+preparando câmera, varrendo, pausada, encerrada e indisponível. A apresentação
+não infere disponibilidade a partir de textos nem expõe estados técnicos.
+
+A ação primária mantém posição e foco previsíveis ao alternar entre iniciar,
+pausar e retomar. O encerramento exige confirmação, deixa a alternativa segura
+em foco e permanece disponível durante varredura ou pausa. O preview e a
+telemetria ficam fora da árvore semântica; somente mudanças operacionais são
+regiões vivas. Ajuda, segurança e preferências ficam acessíveis diretamente na
+barra superior.
+
+`AssistiveScanCoordinator` é o único proprietário da coordenação entre câmera,
+visão, proximidade, feedback de transição e tela ligada:
+
+```text
+AssistiveScanPage
+        ↓ intenção
+AssistiveScanCoordinator
+        ├── ScanController / CameraGateway
+        ├── VisionController / VisionWorker
+        ├── ProximityController
+        ├── ScanTransitionFeedback
+        └── ScanWakeLockGateway ← wakelock_plus
+```
+
+O wakelock é habilitado somente quando câmera e modelo estão efetivamente
+ativos. Pausa, encerramento, falha, background e saída da tela o desabilitam.
+Falhas ao controlar tela ligada ou feedback são registradas com código
+sanitizado e não bloqueiam a função assistiva principal. Consulte o ADR 0009.
