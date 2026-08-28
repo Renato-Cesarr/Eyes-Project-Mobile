@@ -673,6 +673,198 @@ abstract class AppLocalizations {
   /// **'Voltar ao início'**
   String get recoveryReturnHome;
 
+  /// No description provided for @assistiveScanTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Varredura assistiva'**
+  String get assistiveScanTitle;
+
+  /// No description provided for @openHelpAndSafety.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ajuda e segurança'**
+  String get openHelpAndSafety;
+
+  /// No description provided for @scanCapabilitiesTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Recursos ativos'**
+  String get scanCapabilitiesTitle;
+
+  /// No description provided for @scanAudioAvailable.
+  ///
+  /// In pt, this message translates to:
+  /// **'Avisos por voz disponíveis'**
+  String get scanAudioAvailable;
+
+  /// No description provided for @scanAudioUnavailable.
+  ///
+  /// In pt, this message translates to:
+  /// **'Avisos por voz indisponíveis'**
+  String get scanAudioUnavailable;
+
+  /// No description provided for @scanHapticsAvailable.
+  ///
+  /// In pt, this message translates to:
+  /// **'Vibração ativa'**
+  String get scanHapticsAvailable;
+
+  /// No description provided for @scanHapticsDisabled.
+  ///
+  /// In pt, this message translates to:
+  /// **'Vibração desativada nas configurações'**
+  String get scanHapticsDisabled;
+
+  /// No description provided for @scanHapticsUnavailable.
+  ///
+  /// In pt, this message translates to:
+  /// **'Vibração indisponível'**
+  String get scanHapticsUnavailable;
+
+  /// No description provided for @scanOfflineAvailable.
+  ///
+  /// In pt, this message translates to:
+  /// **'Varredura offline disponível'**
+  String get scanOfflineAvailable;
+
+  /// No description provided for @scanStart.
+  ///
+  /// In pt, this message translates to:
+  /// **'Iniciar varredura'**
+  String get scanStart;
+
+  /// No description provided for @scanStartHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ativa a câmera e os avisos de obstáculos'**
+  String get scanStartHint;
+
+  /// No description provided for @scanPause.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pausar varredura'**
+  String get scanPause;
+
+  /// No description provided for @scanPauseHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Interrompe a câmera e libera os recursos do aparelho'**
+  String get scanPauseHint;
+
+  /// No description provided for @scanResume.
+  ///
+  /// In pt, this message translates to:
+  /// **'Retomar varredura'**
+  String get scanResume;
+
+  /// No description provided for @scanResumeHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Reativa a câmera e os avisos de obstáculos'**
+  String get scanResumeHint;
+
+  /// No description provided for @scanPreparingHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aguarde enquanto os recursos são preparados'**
+  String get scanPreparingHint;
+
+  /// No description provided for @scanEnded.
+  ///
+  /// In pt, this message translates to:
+  /// **'Varredura encerrada. A câmera e a inteligência artificial estão desligadas.'**
+  String get scanEnded;
+
+  /// No description provided for @scanStop.
+  ///
+  /// In pt, this message translates to:
+  /// **'Encerrar varredura'**
+  String get scanStop;
+
+  /// No description provided for @scanStopHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Solicita confirmação antes de desligar a varredura'**
+  String get scanStopHint;
+
+  /// No description provided for @scanStopDialogTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Encerrar a varredura?'**
+  String get scanStopDialogTitle;
+
+  /// No description provided for @scanStopDialogMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você deixará de receber avisos de obstáculos até iniciar uma nova varredura.'**
+  String get scanStopDialogMessage;
+
+  /// No description provided for @scanKeepRunning.
+  ///
+  /// In pt, this message translates to:
+  /// **'Continuar varredura'**
+  String get scanKeepRunning;
+
+  /// No description provided for @scanConfirmStop.
+  ///
+  /// In pt, this message translates to:
+  /// **'Encerrar agora'**
+  String get scanConfirmStop;
+
+  /// No description provided for @helpAndSafetyTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ajuda e segurança'**
+  String get helpAndSafetyTitle;
+
+  /// No description provided for @helpSafetyHeading.
+  ///
+  /// In pt, this message translates to:
+  /// **'Uso seguro'**
+  String get helpSafetyHeading;
+
+  /// No description provided for @helpSafetyBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'O Eyes é um apoio complementar. Ele não substitui bengala, cão-guia, orientação humana nem técnicas de mobilidade.'**
+  String get helpSafetyBody;
+
+  /// No description provided for @helpPrivacyHeading.
+  ///
+  /// In pt, this message translates to:
+  /// **'Privacidade'**
+  String get helpPrivacyHeading;
+
+  /// No description provided for @helpPrivacyBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'As imagens são processadas localmente durante a varredura e não são salvas como foto ou vídeo.'**
+  String get helpPrivacyBody;
+
+  /// No description provided for @helpScanningHeading.
+  ///
+  /// In pt, this message translates to:
+  /// **'Como usar a varredura'**
+  String get helpScanningHeading;
+
+  /// No description provided for @helpScanningBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mantenha a câmera traseira livre. Inicie a varredura e siga os avisos curtos de voz e vibração. Pause ou encerre quando não precisar dos alertas.'**
+  String get helpScanningBody;
+
+  /// No description provided for @helpPermissionHeading.
+  ///
+  /// In pt, this message translates to:
+  /// **'Permissão da câmera'**
+  String get helpPermissionHeading;
+
+  /// No description provided for @helpPermissionBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'A câmera é solicitada somente ao iniciar. Se a permissão estiver bloqueada, use a ação para abrir as configurações do aparelho.'**
+  String get helpPermissionBody;
+
   /// No description provided for @openFeedbackSettings.
   ///
   /// In pt, this message translates to:

@@ -12,6 +12,8 @@ import 'package:eyes_mobile/features/object_detection/domain/detected_object.dar
 import 'package:eyes_mobile/features/proximity/application/proximity_controller.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_configuration.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_gateway.dart';
+import 'package:eyes_mobile/features/scanning/application/scan_transition_feedback.dart';
+import 'package:eyes_mobile/features/scanning/application/scan_wake_lock_gateway.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_permission_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -123,6 +125,26 @@ final class _RecordingFeedbackService implements AccessibleFeedbackService {
   }
 }
 
+final class _RecordingWakeLock implements ScanWakeLockGateway {
+  int enableCalls = 0;
+  int disableCalls = 0;
+
+  @override
+  Future<void> enable() async => enableCalls++;
+
+  @override
+  Future<void> disable() async => disableCalls++;
+}
+
+final class _RecordingTransitionFeedback implements ScanTransitionFeedback {
+  final List<ScanTransition> transitions = <ScanTransition>[];
+
+  @override
+  Future<void> deliver(ScanTransition transition) async {
+    transitions.add(transition);
+  }
+}
+
 void main() {
   Future<void> pumpApp(
     WidgetTester tester,
@@ -130,6 +152,8 @@ void main() {
     _ReadyVisionWorker? worker,
     AccessibleFeedbackService? feedback,
     FakeSpeechGateway? speech,
+    ScanWakeLockGateway? wakeLock,
+    ScanTransitionFeedback? transitionFeedback,
   }) async {
     final environment = AppEnvironment.dev();
     final logger = SecureLogger(environment);
@@ -148,6 +172,12 @@ void main() {
           ),
           cameraGatewayProvider.overrideWithValue(gateway),
           visionWorkerProvider.overrideWithValue(visionWorker),
+          scanWakeLockGatewayProvider.overrideWithValue(
+            wakeLock ?? _RecordingWakeLock(),
+          ),
+          scanTransitionFeedbackProvider.overrideWithValue(
+            transitionFeedback ?? _RecordingTransitionFeedback(),
+          ),
           if (feedback != null)
             accessibleFeedbackServiceProvider.overrideWithValue(feedback),
         ],
@@ -167,9 +197,9 @@ void main() {
     );
     await pumpApp(tester, gateway);
 
-    await tester.ensureVisible(find.text('Iniciar câmera'));
+    await tester.ensureVisible(find.text('Iniciar varredura'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Iniciar câmera'));
+    await tester.tap(find.text('Iniciar varredura'));
     await tester.pumpAndSettle();
 
     expect(find.text('Permissão de câmera negada.'), findsOneWidget);
@@ -196,13 +226,15 @@ void main() {
     );
     await pumpApp(tester, gateway);
 
-    await tester.ensureVisible(find.text('Iniciar câmera'));
-    await tester.tap(find.text('Iniciar câmera'));
+    await tester.ensureVisible(find.text('Iniciar varredura'));
+    await tester.tap(find.text('Iniciar varredura'));
     await tester.pumpAndSettle();
 
     expect(find.text('Permissão de câmera bloqueada'), findsOneWidget);
     expect(find.text('Abrir configurações do aparelho'), findsOneWidget);
     expect(find.text('Voltar ao início'), findsOneWidget);
+    await tester.ensureVisible(find.text('Abrir configurações do aparelho'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Abrir configurações do aparelho'));
     await tester.pump();
     expect(gateway.openSettingsCalls, 1);
@@ -232,7 +264,7 @@ void main() {
     );
     expect(find.text('Tentar novamente'), findsOneWidget);
     expect(find.textContaining('20001ms'), findsNothing);
-    expect(find.text('Pausar câmera'), findsNothing);
+    expect(find.text('Pausar varredura'), findsNothing);
   });
 
   testWidgets('speech failure is explicit but does not block local scanning', (
@@ -244,40 +276,84 @@ void main() {
       speech: FakeSpeechGateway(failure: StateError('native tts payload')),
     );
 
-    expect(find.text('Avisos por voz indisponíveis'), findsOneWidget);
+    expect(find.text('Avisos por voz indisponíveis'), findsWidgets);
     expect(find.text('Configurações de áudio e alertas'), findsOneWidget);
     expect(find.textContaining('native tts payload'), findsNothing);
-    expect(find.text('Iniciar câmera'), findsOneWidget);
+    expect(find.text('Iniciar varredura'), findsOneWidget);
   });
 
-  testWidgets('starts, pauses and releases a camera session', (
+  testWidgets('coordinates wake lock, feedback and confirmed session end', (
     WidgetTester tester,
   ) async {
     final gateway = _WidgetCameraGateway();
     final worker = _ReadyVisionWorker();
-    await pumpApp(tester, gateway, worker: worker);
+    final wakeLock = _RecordingWakeLock();
+    final transitions = _RecordingTransitionFeedback();
+    await pumpApp(
+      tester,
+      gateway,
+      worker: worker,
+      wakeLock: wakeLock,
+      transitionFeedback: transitions,
+    );
 
-    await tester.ensureVisible(find.text('Iniciar câmera'));
+    await tester.ensureVisible(find.text('Iniciar varredura'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Iniciar câmera'));
+    await tester.tap(find.text('Iniciar varredura'));
     await tester.pumpAndSettle();
 
     expect(
       find.text('Câmera pronta. Varredura assistiva ativa.'),
       findsOneWidget,
     );
-    expect(find.text('Pausar câmera'), findsOneWidget);
-    expect(find.text('Encerrar câmera'), findsOneWidget);
+    expect(find.text('Pausar varredura'), findsOneWidget);
+    expect(find.text('Encerrar varredura'), findsOneWidget);
+    expect(wakeLock.enableCalls, 1);
+    expect(transitions.transitions, <ScanTransition>[ScanTransition.started]);
 
-    await tester.ensureVisible(find.text('Pausar câmera'));
+    await tester.ensureVisible(find.text('Pausar varredura'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Pausar câmera'));
+    await tester.tap(find.text('Pausar varredura'));
     await tester.pumpAndSettle();
 
     expect(find.text('Câmera pausada e recursos liberados.'), findsOneWidget);
-    expect(find.text('Retomar câmera'), findsOneWidget);
+    expect(find.text('Retomar varredura'), findsOneWidget);
+    expect(find.text('Encerrar varredura'), findsOneWidget);
     expect(gateway.releaseCalls, 1);
     expect(worker.disposeCalls, 1);
+    expect(wakeLock.disableCalls, greaterThanOrEqualTo(2));
+    expect(transitions.transitions, <ScanTransition>[
+      ScanTransition.started,
+      ScanTransition.paused,
+    ]);
+
+    await tester.ensureVisible(find.text('Encerrar varredura'));
+    await tester.tap(find.text('Encerrar varredura'));
+    await tester.pumpAndSettle();
+    expect(find.text('Encerrar a varredura?'), findsOneWidget);
+
+    await tester.tap(find.text('Continuar varredura'));
+    await tester.pumpAndSettle();
+    expect(find.text('Retomar varredura'), findsOneWidget);
+    expect(transitions.transitions, hasLength(2));
+
+    await tester.tap(find.text('Encerrar varredura'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Encerrar agora'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        'Varredura encerrada. A câmera e a inteligência artificial estão desligadas.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Iniciar varredura'), findsOneWidget);
+    expect(transitions.transitions, <ScanTransition>[
+      ScanTransition.started,
+      ScanTransition.paused,
+      ScanTransition.ended,
+    ]);
   });
 
   testWidgets('remains usable with 200 percent text scaling', (
@@ -288,13 +364,13 @@ void main() {
     final gateway = _WidgetCameraGateway();
 
     await pumpApp(tester, gateway);
-    await tester.ensureVisible(find.text('Iniciar câmera'));
+    await tester.ensureVisible(find.text('Iniciar varredura'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Iniciar câmera'));
+    await tester.tap(find.text('Iniciar varredura'));
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.text('Pausar câmera'), findsOneWidget);
+    expect(find.text('Pausar varredura'), findsOneWidget);
   });
 
   testWidgets('TalkBack receives only a temporally stabilized alert', (
@@ -302,8 +378,8 @@ void main() {
   ) async {
     final semantics = tester.ensureSemantics();
     await pumpApp(tester, _WidgetCameraGateway());
-    await tester.ensureVisible(find.text('Iniciar câmera'));
-    await tester.tap(find.text('Iniciar câmera'));
+    await tester.ensureVisible(find.text('Iniciar varredura'));
+    await tester.tap(find.text('Iniciar varredura'));
     await tester.pumpAndSettle();
     final container = ProviderScope.containerOf(
       tester.element(find.text('Câmera pronta. Varredura assistiva ativa.')),
@@ -333,9 +409,9 @@ void main() {
       find.bySemanticsLabel(RegExp(r'FPS|threshold|tensor|\d+\s*ms')),
       findsNothing,
     );
-    await tester.ensureVisible(find.text('Pausar câmera'));
+    await tester.ensureVisible(find.text('Pausar varredura'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Pausar câmera'));
+    await tester.tap(find.text('Pausar varredura'));
     await tester.pumpAndSettle();
     expect(
       find.text('Cadeira muito próxima, à frente. Cuidado.'),

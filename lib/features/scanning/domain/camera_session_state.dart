@@ -17,6 +17,7 @@ final class CameraSessionState {
 
   bool get canStart =>
       status == CameraScanStatus.idle ||
+      status == CameraScanStatus.ended ||
       status == CameraScanStatus.denied ||
       status == CameraScanStatus.busy ||
       status == CameraScanStatus.unavailable;

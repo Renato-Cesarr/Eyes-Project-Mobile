@@ -17,7 +17,11 @@ import 'package:eyes_mobile/features/object_detection/infrastructure/isolate_vis
 import 'package:eyes_mobile/features/proximity/application/proximity_controller.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_gateway.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_vision_frame_adapter.dart';
+import 'package:eyes_mobile/features/scanning/application/scan_transition_feedback.dart';
+import 'package:eyes_mobile/features/scanning/application/scan_wake_lock_gateway.dart';
 import 'package:eyes_mobile/features/scanning/infrastructure/mobile_camera_gateway.dart';
+import 'package:eyes_mobile/features/scanning/infrastructure/system_scan_transition_feedback.dart';
+import 'package:eyes_mobile/features/scanning/infrastructure/wakelock_plus_scan_gateway.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -85,6 +89,21 @@ Future<void> bootstrap(AppEnvironment environment) async {
               final gateway = MobileCameraGateway();
               ref.onDispose(() => unawaited(gateway.release()));
               return gateway;
+            }),
+            scanWakeLockGatewayProvider.overrideWithValue(
+              const WakelockPlusScanGateway(),
+            ),
+            scanTransitionFeedbackProvider.overrideWith((Ref ref) {
+              return SystemScanTransitionFeedback(
+                hapticsEnabled: () =>
+                    ref
+                        .read(assistiveFeedbackControllerProvider)
+                        .asData
+                        ?.value
+                        .preferences
+                        .hapticsEnabled ??
+                    true,
+              );
             }),
             cameraFrameHandlerProvider.overrideWith((Ref ref) {
               const adapter = CameraVisionFrameAdapter();
