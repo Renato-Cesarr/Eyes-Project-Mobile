@@ -7,12 +7,18 @@ final class AppErrorReporter {
 
   final SecureLogger _logger;
 
-  void capture(Object error, StackTrace stackTrace, {required String source}) {
+  void capture(
+    Object error,
+    StackTrace stackTrace, {
+    required String source,
+    String? diagnosticCode,
+  }) {
     _logger.severe(
       'unhandled-error',
       context: <String, Object?>{
         'errorType': error.runtimeType.toString(),
         'source': source,
+        'diagnosticCode': ?diagnosticCode,
       },
       stackTrace: stackTrace,
     );

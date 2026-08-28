@@ -176,7 +176,14 @@ final class VisionController extends AsyncNotifier<VisionRuntimeState> {
     }
     ref
         .read(appErrorReporterProvider)
-        .capture(error, stackTrace, source: source);
+        .capture(
+          error,
+          stackTrace,
+          source: source,
+          diagnosticCode: error is VisionWorkerException
+              ? error.technicalCode
+              : null,
+        );
     state = AsyncError<VisionRuntimeState>(error, stackTrace);
   }
 }
