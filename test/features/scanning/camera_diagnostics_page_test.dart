@@ -23,6 +23,7 @@ final class _WidgetCameraGateway implements CameraGateway {
   CameraPermissionState permission;
   bool streaming = false;
   int releaseCalls = 0;
+  int openSettingsCalls = 0;
 
   @override
   bool get isPreviewReady => streaming;
@@ -37,7 +38,10 @@ final class _WidgetCameraGateway implements CameraGateway {
   Future<void> initialize(CameraConfiguration configuration) async {}
 
   @override
-  Future<bool> openSettings() async => true;
+  Future<bool> openSettings() async {
+    openSettingsCalls++;
+    return true;
+  }
 
   @override
   Future<void> release() async {
@@ -125,6 +129,7 @@ void main() {
     _WidgetCameraGateway gateway, {
     _ReadyVisionWorker? worker,
     AccessibleFeedbackService? feedback,
+    FakeSpeechGateway? speech,
   }) async {
     final environment = AppEnvironment.dev();
     final logger = SecureLogger(environment);
@@ -134,7 +139,9 @@ void main() {
       ProviderScope(
         overrides: [
           appErrorReporterProvider.overrideWithValue(AppErrorReporter(logger)),
-          speechGatewayProvider.overrideWithValue(FakeSpeechGateway()),
+          speechGatewayProvider.overrideWithValue(
+            speech ?? FakeSpeechGateway(),
+          ),
           assistiveHapticsProvider.overrideWithValue(FakeAssistiveHaptics()),
           feedbackPreferencesRepositoryProvider.overrideWithValue(
             InMemoryFeedbackPreferencesRepository(),
@@ -179,6 +186,68 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('permanent denial offers device settings and a safe exit', (
+    WidgetTester tester,
+  ) async {
+    final gateway = _WidgetCameraGateway(
+      permission: CameraPermissionState.permanentlyDenied,
+    );
+    await pumpApp(tester, gateway);
+
+    await tester.ensureVisible(find.text('Iniciar câmera'));
+    await tester.tap(find.text('Iniciar câmera'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Permissão de câmera bloqueada'), findsOneWidget);
+    expect(find.text('Abrir configurações do aparelho'), findsOneWidget);
+    expect(find.text('Voltar ao início'), findsOneWidget);
+    await tester.tap(find.text('Abrir configurações do aparelho'));
+    await tester.pump();
+    expect(gateway.openSettingsCalls, 1);
+  });
+
+  testWidgets('model timeout keeps scanning off and offers retry', (
+    WidgetTester tester,
+  ) async {
+    final worker = _ReadyVisionWorker(
+      startFailure: const VisionWorkerException(
+        VisionWorkerFailureReason.startupTimeout,
+        'startup took 20001ms with tensor payload',
+        technicalCode: 'vision-start-timeout',
+      ),
+    );
+    await pumpApp(tester, _WidgetCameraGateway(), worker: worker);
+
+    expect(
+      find.text('A inteligência artificial demorou para iniciar'),
+      findsOneWidget,
+    );
+    expect(
+      find.text(
+        'A varredura permaneceu desligada. Tente preparar a inteligência artificial novamente.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Tentar novamente'), findsOneWidget);
+    expect(find.textContaining('20001ms'), findsNothing);
+    expect(find.text('Pausar câmera'), findsNothing);
+  });
+
+  testWidgets('speech failure is explicit but does not block local scanning', (
+    WidgetTester tester,
+  ) async {
+    await pumpApp(
+      tester,
+      _WidgetCameraGateway(),
+      speech: FakeSpeechGateway(failure: StateError('native tts payload')),
+    );
+
+    expect(find.text('Avisos por voz indisponíveis'), findsOneWidget);
+    expect(find.text('Configurações de áudio e alertas'), findsOneWidget);
+    expect(find.textContaining('native tts payload'), findsNothing);
+    expect(find.text('Iniciar câmera'), findsOneWidget);
   });
 
   testWidgets('starts, pauses and releases a camera session', (

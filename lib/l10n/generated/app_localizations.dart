@@ -475,6 +475,204 @@ abstract class AppLocalizations {
   /// **'A câmera parou de fornecer imagens. Tente iniciar novamente.'**
   String get cameraStreamHelp;
 
+  /// No description provided for @recoveryCameraPermissionTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'A câmera precisa de permissão'**
+  String get recoveryCameraPermissionTitle;
+
+  /// No description provided for @recoveryCameraPermissionBlockedTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Permissão de câmera bloqueada'**
+  String get recoveryCameraPermissionBlockedTitle;
+
+  /// No description provided for @recoveryCameraRestrictedTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'A câmera está restrita'**
+  String get recoveryCameraRestrictedTitle;
+
+  /// No description provided for @recoveryCameraTimeoutTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'A câmera demorou para iniciar'**
+  String get recoveryCameraTimeoutTitle;
+
+  /// No description provided for @recoveryCameraInterruptedTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'A câmera foi interrompida'**
+  String get recoveryCameraInterruptedTitle;
+
+  /// No description provided for @recoveryModelTimeoutTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'A inteligência artificial demorou para iniciar'**
+  String get recoveryModelTimeoutTitle;
+
+  /// No description provided for @recoveryModelTimeoutMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'A varredura permaneceu desligada. Tente preparar a inteligência artificial novamente.'**
+  String get recoveryModelTimeoutMessage;
+
+  /// No description provided for @recoveryModelUnavailableTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Inteligência artificial indisponível'**
+  String get recoveryModelUnavailableTitle;
+
+  /// No description provided for @recoveryModelInvalidMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'O recurso de reconhecimento não pôde ser validado. Tente novamente ou volte ao início com segurança.'**
+  String get recoveryModelInvalidMessage;
+
+  /// No description provided for @recoveryModelMemoryMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'O aparelho não conseguiu reservar memória para o reconhecimento. Feche outros aplicativos e tente novamente.'**
+  String get recoveryModelMemoryMessage;
+
+  /// No description provided for @recoveryModelDelegateMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'O acelerador do aparelho não está disponível. Tente novamente usando o processamento compatível.'**
+  String get recoveryModelDelegateMessage;
+
+  /// No description provided for @recoverySpeechTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Avisos por voz indisponíveis'**
+  String get recoverySpeechTitle;
+
+  /// No description provided for @recoverySpeechMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'A varredura pode continuar, mas os avisos falados podem não funcionar. Verifique as configurações de voz antes de usar.'**
+  String get recoverySpeechMessage;
+
+  /// No description provided for @recoveryHapticsTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Vibração indisponível'**
+  String get recoveryHapticsTitle;
+
+  /// No description provided for @recoveryHapticsMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'A varredura pode continuar com avisos por voz e texto. Verifique as configurações de vibração.'**
+  String get recoveryHapticsMessage;
+
+  /// No description provided for @recoveryPreferencesTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Preferências não foram salvas'**
+  String get recoveryPreferencesTitle;
+
+  /// No description provided for @recoveryPreferencesMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'Os padrões seguros estão ativos nesta sessão. Revise as configurações quando puder.'**
+  String get recoveryPreferencesMessage;
+
+  /// No description provided for @recoveryLoginTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível entrar'**
+  String get recoveryLoginTitle;
+
+  /// No description provided for @recoveryInvalidCredentialsMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'Confira os dados informados ou continue usando a varredura offline.'**
+  String get recoveryInvalidCredentialsMessage;
+
+  /// No description provided for @recoverySessionTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sua sessão terminou'**
+  String get recoverySessionTitle;
+
+  /// No description provided for @recoverySessionMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entre novamente quando houver conexão. A varredura offline continua disponível.'**
+  String get recoverySessionMessage;
+
+  /// No description provided for @recoveryNetworkTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sem conexão com o serviço'**
+  String get recoveryNetworkTitle;
+
+  /// No description provided for @recoveryNetworkMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'A sincronização ficará pendente. A varredura local continua disponível.'**
+  String get recoveryNetworkMessage;
+
+  /// No description provided for @recoverySyncTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sincronização pendente'**
+  String get recoverySyncTitle;
+
+  /// No description provided for @recoverySyncMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'Os dados permitidos serão enviados quando a conexão voltar. A varredura local não foi interrompida.'**
+  String get recoverySyncMessage;
+
+  /// No description provided for @recoveryBatteryTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Bateria baixa'**
+  String get recoveryBatteryTitle;
+
+  /// No description provided for @recoveryBatteryMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'O ritmo da varredura foi reduzido para preservar a bateria.'**
+  String get recoveryBatteryMessage;
+
+  /// No description provided for @recoveryThermalTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aparelho aquecido'**
+  String get recoveryThermalTitle;
+
+  /// No description provided for @recoveryThermalMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'O ritmo da varredura foi reduzido até o aparelho esfriar.'**
+  String get recoveryThermalMessage;
+
+  /// No description provided for @recoveryUnexpectedTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível iniciar a varredura'**
+  String get recoveryUnexpectedTitle;
+
+  /// No description provided for @recoveryUnexpectedMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'A varredura permaneceu desligada. Tente novamente ou volte ao início com segurança.'**
+  String get recoveryUnexpectedMessage;
+
+  /// No description provided for @recoveryContinueOffline.
+  ///
+  /// In pt, this message translates to:
+  /// **'Continuar no modo offline'**
+  String get recoveryContinueOffline;
+
+  /// No description provided for @recoveryReturnHome.
+  ///
+  /// In pt, this message translates to:
+  /// **'Voltar ao início'**
+  String get recoveryReturnHome;
+
   /// No description provided for @openFeedbackSettings.
   ///
   /// In pt, this message translates to:

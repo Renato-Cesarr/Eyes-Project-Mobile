@@ -223,6 +223,122 @@ class AppLocalizationsPt extends AppLocalizations {
       'A câmera parou de fornecer imagens. Tente iniciar novamente.';
 
   @override
+  String get recoveryCameraPermissionTitle => 'A câmera precisa de permissão';
+
+  @override
+  String get recoveryCameraPermissionBlockedTitle =>
+      'Permissão de câmera bloqueada';
+
+  @override
+  String get recoveryCameraRestrictedTitle => 'A câmera está restrita';
+
+  @override
+  String get recoveryCameraTimeoutTitle => 'A câmera demorou para iniciar';
+
+  @override
+  String get recoveryCameraInterruptedTitle => 'A câmera foi interrompida';
+
+  @override
+  String get recoveryModelTimeoutTitle =>
+      'A inteligência artificial demorou para iniciar';
+
+  @override
+  String get recoveryModelTimeoutMessage =>
+      'A varredura permaneceu desligada. Tente preparar a inteligência artificial novamente.';
+
+  @override
+  String get recoveryModelUnavailableTitle =>
+      'Inteligência artificial indisponível';
+
+  @override
+  String get recoveryModelInvalidMessage =>
+      'O recurso de reconhecimento não pôde ser validado. Tente novamente ou volte ao início com segurança.';
+
+  @override
+  String get recoveryModelMemoryMessage =>
+      'O aparelho não conseguiu reservar memória para o reconhecimento. Feche outros aplicativos e tente novamente.';
+
+  @override
+  String get recoveryModelDelegateMessage =>
+      'O acelerador do aparelho não está disponível. Tente novamente usando o processamento compatível.';
+
+  @override
+  String get recoverySpeechTitle => 'Avisos por voz indisponíveis';
+
+  @override
+  String get recoverySpeechMessage =>
+      'A varredura pode continuar, mas os avisos falados podem não funcionar. Verifique as configurações de voz antes de usar.';
+
+  @override
+  String get recoveryHapticsTitle => 'Vibração indisponível';
+
+  @override
+  String get recoveryHapticsMessage =>
+      'A varredura pode continuar com avisos por voz e texto. Verifique as configurações de vibração.';
+
+  @override
+  String get recoveryPreferencesTitle => 'Preferências não foram salvas';
+
+  @override
+  String get recoveryPreferencesMessage =>
+      'Os padrões seguros estão ativos nesta sessão. Revise as configurações quando puder.';
+
+  @override
+  String get recoveryLoginTitle => 'Não foi possível entrar';
+
+  @override
+  String get recoveryInvalidCredentialsMessage =>
+      'Confira os dados informados ou continue usando a varredura offline.';
+
+  @override
+  String get recoverySessionTitle => 'Sua sessão terminou';
+
+  @override
+  String get recoverySessionMessage =>
+      'Entre novamente quando houver conexão. A varredura offline continua disponível.';
+
+  @override
+  String get recoveryNetworkTitle => 'Sem conexão com o serviço';
+
+  @override
+  String get recoveryNetworkMessage =>
+      'A sincronização ficará pendente. A varredura local continua disponível.';
+
+  @override
+  String get recoverySyncTitle => 'Sincronização pendente';
+
+  @override
+  String get recoverySyncMessage =>
+      'Os dados permitidos serão enviados quando a conexão voltar. A varredura local não foi interrompida.';
+
+  @override
+  String get recoveryBatteryTitle => 'Bateria baixa';
+
+  @override
+  String get recoveryBatteryMessage =>
+      'O ritmo da varredura foi reduzido para preservar a bateria.';
+
+  @override
+  String get recoveryThermalTitle => 'Aparelho aquecido';
+
+  @override
+  String get recoveryThermalMessage =>
+      'O ritmo da varredura foi reduzido até o aparelho esfriar.';
+
+  @override
+  String get recoveryUnexpectedTitle => 'Não foi possível iniciar a varredura';
+
+  @override
+  String get recoveryUnexpectedMessage =>
+      'A varredura permaneceu desligada. Tente novamente ou volte ao início com segurança.';
+
+  @override
+  String get recoveryContinueOffline => 'Continuar no modo offline';
+
+  @override
+  String get recoveryReturnHome => 'Voltar ao início';
+
+  @override
   String get openFeedbackSettings => 'Configurações de áudio e alertas';
 
   @override
@@ -605,6 +721,122 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get cameraStreamHelp =>
       'A câmera parou de fornecer imagens. Tente iniciar novamente.';
+
+  @override
+  String get recoveryCameraPermissionTitle => 'A câmera precisa de permissão';
+
+  @override
+  String get recoveryCameraPermissionBlockedTitle =>
+      'Permissão de câmera bloqueada';
+
+  @override
+  String get recoveryCameraRestrictedTitle => 'A câmera está restrita';
+
+  @override
+  String get recoveryCameraTimeoutTitle => 'A câmera demorou para iniciar';
+
+  @override
+  String get recoveryCameraInterruptedTitle => 'A câmera foi interrompida';
+
+  @override
+  String get recoveryModelTimeoutTitle =>
+      'A inteligência artificial demorou para iniciar';
+
+  @override
+  String get recoveryModelTimeoutMessage =>
+      'A varredura permaneceu desligada. Tente preparar a inteligência artificial novamente.';
+
+  @override
+  String get recoveryModelUnavailableTitle =>
+      'Inteligência artificial indisponível';
+
+  @override
+  String get recoveryModelInvalidMessage =>
+      'O recurso de reconhecimento não pôde ser validado. Tente novamente ou volte ao início com segurança.';
+
+  @override
+  String get recoveryModelMemoryMessage =>
+      'O aparelho não conseguiu reservar memória para o reconhecimento. Feche outros aplicativos e tente novamente.';
+
+  @override
+  String get recoveryModelDelegateMessage =>
+      'O acelerador do aparelho não está disponível. Tente novamente usando o processamento compatível.';
+
+  @override
+  String get recoverySpeechTitle => 'Avisos por voz indisponíveis';
+
+  @override
+  String get recoverySpeechMessage =>
+      'A varredura pode continuar, mas os avisos falados podem não funcionar. Verifique as configurações de voz antes de usar.';
+
+  @override
+  String get recoveryHapticsTitle => 'Vibração indisponível';
+
+  @override
+  String get recoveryHapticsMessage =>
+      'A varredura pode continuar com avisos por voz e texto. Verifique as configurações de vibração.';
+
+  @override
+  String get recoveryPreferencesTitle => 'Preferências não foram salvas';
+
+  @override
+  String get recoveryPreferencesMessage =>
+      'Os padrões seguros estão ativos nesta sessão. Revise as configurações quando puder.';
+
+  @override
+  String get recoveryLoginTitle => 'Não foi possível entrar';
+
+  @override
+  String get recoveryInvalidCredentialsMessage =>
+      'Confira os dados informados ou continue usando a varredura offline.';
+
+  @override
+  String get recoverySessionTitle => 'Sua sessão terminou';
+
+  @override
+  String get recoverySessionMessage =>
+      'Entre novamente quando houver conexão. A varredura offline continua disponível.';
+
+  @override
+  String get recoveryNetworkTitle => 'Sem conexão com o serviço';
+
+  @override
+  String get recoveryNetworkMessage =>
+      'A sincronização ficará pendente. A varredura local continua disponível.';
+
+  @override
+  String get recoverySyncTitle => 'Sincronização pendente';
+
+  @override
+  String get recoverySyncMessage =>
+      'Os dados permitidos serão enviados quando a conexão voltar. A varredura local não foi interrompida.';
+
+  @override
+  String get recoveryBatteryTitle => 'Bateria baixa';
+
+  @override
+  String get recoveryBatteryMessage =>
+      'O ritmo da varredura foi reduzido para preservar a bateria.';
+
+  @override
+  String get recoveryThermalTitle => 'Aparelho aquecido';
+
+  @override
+  String get recoveryThermalMessage =>
+      'O ritmo da varredura foi reduzido até o aparelho esfriar.';
+
+  @override
+  String get recoveryUnexpectedTitle => 'Não foi possível iniciar a varredura';
+
+  @override
+  String get recoveryUnexpectedMessage =>
+      'A varredura permaneceu desligada. Tente novamente ou volte ao início com segurança.';
+
+  @override
+  String get recoveryContinueOffline => 'Continuar no modo offline';
+
+  @override
+  String get recoveryReturnHome => 'Voltar ao início';
 
   @override
   String get openFeedbackSettings => 'Configurações de áudio e alertas';

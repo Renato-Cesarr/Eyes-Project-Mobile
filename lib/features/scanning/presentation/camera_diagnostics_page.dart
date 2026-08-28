@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:eyes_mobile/app/routing/app_router.dart';
 import 'package:eyes_mobile/core/accessibility/accessible_feedback_service.dart';
+import 'package:eyes_mobile/core/recovery/accessible_recovery_panel.dart';
+import 'package:eyes_mobile/core/recovery/operational_failure.dart';
+import 'package:eyes_mobile/core/recovery/recovery_content.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_binding.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_controller.dart';
 import 'package:eyes_mobile/features/assistive_feedback/domain/assistive_alert_message.dart';
@@ -12,7 +15,7 @@ import 'package:eyes_mobile/features/proximity/application/proximity_controller.
 import 'package:eyes_mobile/features/proximity/domain/proximity_models.dart';
 import 'package:eyes_mobile/features/scanning/application/assistive_scan_coordinator.dart';
 import 'package:eyes_mobile/features/scanning/application/scan_controller.dart';
-import 'package:eyes_mobile/features/scanning/domain/camera_failure.dart';
+import 'package:eyes_mobile/features/scanning/application/scan_failure_policy.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_scan_status.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_session_state.dart';
 import 'package:eyes_mobile/features/scanning/infrastructure/camera_preview_surface.dart';
@@ -104,12 +107,8 @@ final class _CameraDiagnosticsPageState
             vision: vision,
             coordinator: _coordinator,
           ),
-          error: (Object error, StackTrace stackTrace) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Text(l10n.cameraUnexpectedError),
-            ),
-          ),
+          error: (Object error, StackTrace stackTrace) =>
+              _UnexpectedScanError(coordinator: _coordinator),
           loading: () => Center(
             child: Semantics(
               label: l10n.loading,
@@ -138,9 +137,19 @@ final class _AssistiveScanContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final statusText = _scanStatusText(l10n, session, vision);
-    final failureText = vision.hasError
-        ? l10n.visionFailedHelp
-        : _failureText(l10n, session.failure);
+    final blockingFailure = vision.hasError
+        ? ScanFailurePolicy.fromVision(vision.error!)
+        : session.failure == null
+        ? null
+        : ScanFailurePolicy.fromCamera(session.failure!);
+    final feedbackNotice = ref
+        .watch(assistiveFeedbackControllerProvider)
+        .asData
+        ?.value
+        .notice;
+    final degradedFailure = feedbackNotice == null
+        ? null
+        : ScanFailurePolicy.fromFeedbackNotice(feedbackNotice);
     final runtime = vision.asData?.value;
     final isVisionReady = runtime?.status == VisionRuntimeStatus.ready;
     final isActivelyScanning =
@@ -175,11 +184,9 @@ final class _AssistiveScanContent extends ConsumerWidget {
                 Card(
                   child: Semantics(
                     container: true,
-                    liveRegion: true,
+                    liveRegion: blockingFailure == null,
                     excludeSemantics: true,
-                    label: failureText == null
-                        ? '${l10n.scanStatusLabel}: $statusText'
-                        : '${l10n.scanStatusLabel}: $statusText $failureText',
+                    label: '${l10n.scanStatusLabel}: $statusText',
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(
@@ -194,32 +201,39 @@ final class _AssistiveScanContent extends ConsumerWidget {
                             statusText,
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
-                          if (failureText != null) ...<Widget>[
-                            const SizedBox(height: 12),
-                            Text(
-                              failureText,
-                              style: Theme.of(context).textTheme.bodyLarge
-                                  ?.copyWith(
-                                    color: Theme.of(context).colorScheme.error,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                            ),
-                          ],
                         ],
                       ),
                     ),
                   ),
                 ),
+                if (blockingFailure != null) ...<Widget>[
+                  const SizedBox(height: 16),
+                  _RecoveryPanel(
+                    failure: blockingFailure,
+                    visionFailure: vision.hasError,
+                    coordinator: coordinator,
+                  ),
+                ],
+                if (blockingFailure == null &&
+                    degradedFailure != null) ...<Widget>[
+                  const SizedBox(height: 16),
+                  _RecoveryPanel(
+                    failure: degradedFailure,
+                    visionFailure: false,
+                    coordinator: coordinator,
+                  ),
+                ],
                 if (latestAlert != null) ...[
                   const SizedBox(height: 16),
                   _ProximityAnnouncement(event: latestAlert),
                 ],
                 const SizedBox(height: 24),
-                _PrimaryScanAction(
-                  session: session,
-                  vision: vision,
-                  coordinator: coordinator,
-                ),
+                if (blockingFailure == null)
+                  _PrimaryScanAction(
+                    session: session,
+                    vision: vision,
+                    coordinator: coordinator,
+                  ),
                 if (isActivelyScanning) ...<Widget>[
                   const SizedBox(height: 12),
                   OutlinedButton(
@@ -239,6 +253,96 @@ final class _AssistiveScanContent extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+final class _RecoveryPanel extends ConsumerWidget {
+  const _RecoveryPanel({
+    required this.failure,
+    required this.visionFailure,
+    required this.coordinator,
+  });
+
+  final OperationalFailure failure;
+  final bool visionFailure;
+  final AssistiveScanCoordinator coordinator;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final content = RecoveryContentResolver.resolve(l10n, failure.kind);
+    final secondary = failure.secondaryAction;
+    return AccessibleRecoveryPanel(
+      announcementKey: failure.kind,
+      title: content.title,
+      message: content.message,
+      primaryActionLabel: RecoveryContentResolver.actionLabel(
+        l10n,
+        failure.primaryAction,
+      ),
+      onPrimaryAction: () => _execute(context, ref, failure.primaryAction),
+      secondaryActionLabel: secondary == null
+          ? null
+          : RecoveryContentResolver.actionLabel(l10n, secondary),
+      onSecondaryAction: secondary == null
+          ? null
+          : () => _execute(context, ref, secondary),
+      blocking: failure.blocksAssistiveScan,
+    );
+  }
+
+  void _execute(
+    BuildContext context,
+    WidgetRef ref,
+    OperationalRecoveryAction action,
+  ) {
+    switch (action) {
+      case OperationalRecoveryAction.retry:
+        unawaited(
+          visionFailure ? coordinator.retryVision() : coordinator.start(),
+        );
+        return;
+      case OperationalRecoveryAction.openDeviceSettings:
+        unawaited(ref.read(scanControllerProvider.notifier).openSettings());
+        return;
+      case OperationalRecoveryAction.openFeedbackSettings:
+        unawaited(context.pushNamed(AppRoutes.settings));
+        return;
+      case OperationalRecoveryAction.continueOffline:
+        return;
+      case OperationalRecoveryAction.returnToSafety:
+        unawaited(coordinator.stop());
+        context.goNamed(AppRoutes.home);
+        return;
+    }
+  }
+}
+
+final class _UnexpectedScanError extends ConsumerWidget {
+  const _UnexpectedScanError({required this.coordinator});
+
+  final AssistiveScanCoordinator coordinator;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 720),
+          child: _RecoveryPanel(
+            failure: const OperationalFailure(
+              kind: OperationalFailureKind.unexpected,
+              impact: OperationalFailureImpact.blocking,
+              primaryAction: OperationalRecoveryAction.retry,
+              secondaryAction: OperationalRecoveryAction.returnToSafety,
+            ),
+            visionFailure: false,
+            coordinator: coordinator,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -425,23 +529,5 @@ String _cameraStatusText(AppLocalizations l10n, CameraScanStatus status) {
     CameraScanStatus.permanentlyDenied => l10n.cameraStatusPermanentlyDenied,
     CameraScanStatus.busy => l10n.cameraStatusBusy,
     CameraScanStatus.unavailable => l10n.cameraStatusUnavailable,
-  };
-}
-
-String? _failureText(AppLocalizations l10n, CameraFailure? failure) {
-  if (failure == null) {
-    return null;
-  }
-  return switch (failure.reason) {
-    CameraFailureReason.permissionDenied => l10n.cameraPermissionDeniedHelp,
-    CameraFailureReason.permissionPermanentlyDenied =>
-      l10n.cameraPermissionPermanentlyDeniedHelp,
-    CameraFailureReason.permissionRestricted =>
-      l10n.cameraPermissionRestrictedHelp,
-    CameraFailureReason.cameraBusy => l10n.cameraBusyHelp,
-    CameraFailureReason.noCamera => l10n.cameraMissingHelp,
-    CameraFailureReason.initializationTimeout => l10n.cameraTimeoutHelp,
-    CameraFailureReason.initializationFailed => l10n.cameraInitializationHelp,
-    CameraFailureReason.streamFailed => l10n.cameraStreamHelp,
   };
 }
