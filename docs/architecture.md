@@ -165,3 +165,30 @@ TalkBack continua podendo explorar o cartão visual do último alerta, mas esse
 cartão não é uma `liveRegion`: a fala do produto é responsabilidade da fila TTS
 e não deve ser duplicada pelo leitor de tela. Estados operacionais e erros
 continuam em regiões `live`.
+
+## Falhas operacionais e recuperação
+
+Plugins, infraestrutura e exceções não chegam diretamente à apresentação. A
+política de recuperação traduz cada falha para uma categoria estável, seu
+impacto e ações seguras:
+
+```text
+CameraFailure / VisionWorkerException / FeedbackNotice
+                         ↓
+                 ScanFailurePolicy
+                         ↓
+                OperationalFailure
+        (blocking/degraded + recovery actions)
+                         ↓
+             AccessibleRecoveryPanel
+```
+
+Falhas de câmera ou modelo bloqueiam o pipeline e nunca exibem a varredura como
+ativa. Falhas de voz, vibração ou persistência são apresentadas como degradação
+e mantêm o processamento local disponível. O painel anuncia um resumo sem
+jargão técnico somente quando a categoria muda, oferece ação primária e saída
+segura e preserva a ordem de foco com texto em escala de 200%.
+
+Códigos diagnósticos sanitizados podem ser enviados ao `AppErrorReporter`, mas
+mensagens nativas, imagens, tokens, frames e tensores não são registrados. Veja
+o ADR 0008 para a matriz completa e os timeouts de cada recurso.
