@@ -4,9 +4,12 @@ import 'package:eyes_mobile/app/routing/app_router.dart';
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
 import 'package:eyes_mobile/core/error/global_error_view.dart';
 import 'package:eyes_mobile/core/logging/secure_logger.dart';
+import 'package:eyes_mobile/features/onboarding/application/onboarding_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../support/fake_onboarding.dart';
 
 void main() {
   testWidgets('unknown route explains the error and returns home', (
@@ -19,6 +22,9 @@ void main() {
         appEnvironmentProvider.overrideWithValue(environment),
         secureLoggerProvider.overrideWithValue(logger),
         appErrorReporterProvider.overrideWithValue(AppErrorReporter(logger)),
+        onboardingRepositoryProvider.overrideWithValue(
+          InMemoryOnboardingRepository(completed: true),
+        ),
       ],
     );
     addTearDown(container.dispose);
