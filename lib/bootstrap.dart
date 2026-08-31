@@ -14,6 +14,8 @@ import 'package:eyes_mobile/features/assistive_feedback/infrastructure/system_as
 import 'package:eyes_mobile/features/object_detection/application/vision_controller.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_worker.dart';
 import 'package:eyes_mobile/features/object_detection/infrastructure/isolate_vision_worker.dart';
+import 'package:eyes_mobile/features/onboarding/application/onboarding_repository.dart';
+import 'package:eyes_mobile/features/onboarding/infrastructure/shared_preferences_onboarding_repository.dart';
 import 'package:eyes_mobile/features/proximity/application/proximity_controller.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_gateway.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_vision_frame_adapter.dart';
@@ -77,6 +79,11 @@ Future<void> bootstrap(AppEnvironment environment) async {
             ),
             feedbackPreferencesRepositoryProvider.overrideWith((Ref ref) {
               return SharedPreferencesFeedbackRepository(
+                ref.read(sharedPreferencesProvider),
+              );
+            }),
+            onboardingRepositoryProvider.overrideWith((Ref ref) {
+              return SharedPreferencesOnboardingRepository(
                 ref.read(sharedPreferencesProvider),
               );
             }),

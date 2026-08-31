@@ -7,9 +7,12 @@ import 'package:eyes_mobile/core/error/app_error_reporter.dart';
 import 'package:eyes_mobile/core/logging/secure_logger.dart';
 import 'package:eyes_mobile/features/home/application/home_controller.dart';
 import 'package:eyes_mobile/features/home/domain/home_state.dart';
+import 'package:eyes_mobile/features/onboarding/application/onboarding_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../support/fake_onboarding.dart';
 
 final class _FakeAccessibleFeedbackService
     implements AccessibleFeedbackService {
@@ -47,6 +50,9 @@ void main() {
           secureLoggerProvider.overrideWithValue(logger),
           appErrorReporterProvider.overrideWithValue(errorReporter),
           accessibleFeedbackServiceProvider.overrideWithValue(feedbackService),
+          onboardingRepositoryProvider.overrideWithValue(
+            InMemoryOnboardingRepository(completed: true),
+          ),
         ],
         child: const EyesApp(),
       ),
@@ -88,6 +94,9 @@ void main() {
           accessibleFeedbackServiceProvider.overrideWithValue(
             _FakeAccessibleFeedbackService(),
           ),
+          onboardingRepositoryProvider.overrideWithValue(
+            InMemoryOnboardingRepository(completed: true),
+          ),
         ],
         child: const EyesApp(),
       ),
@@ -111,6 +120,9 @@ void main() {
           appErrorReporterProvider.overrideWithValue(AppErrorReporter(logger)),
           accessibleFeedbackServiceProvider.overrideWithValue(
             _FailingAccessibleFeedbackService(),
+          ),
+          onboardingRepositoryProvider.overrideWithValue(
+            InMemoryOnboardingRepository(completed: true),
           ),
         ],
         child: const EyesApp(),
@@ -151,6 +163,9 @@ void main() {
           homeControllerProvider.overrideWithBuild(
             (ref, notifier) => pendingState.future,
           ),
+          onboardingRepositoryProvider.overrideWithValue(
+            InMemoryOnboardingRepository(completed: true),
+          ),
         ],
         child: const EyesApp(),
       ),
@@ -174,6 +189,9 @@ void main() {
           appErrorReporterProvider.overrideWithValue(AppErrorReporter(logger)),
           homeControllerProvider.overrideWithBuild(
             (ref, notifier) async => throw StateError('load failed'),
+          ),
+          onboardingRepositoryProvider.overrideWithValue(
+            InMemoryOnboardingRepository(completed: true),
           ),
         ],
         child: const EyesApp(),

@@ -12,6 +12,97 @@ class AppLocalizationsPt extends AppLocalizations {
   String get appName => 'Eyes';
 
   @override
+  String get onboardingTitle => 'Primeiros passos';
+
+  @override
+  String onboardingProgress(int current, int total) {
+    return 'Etapa $current de $total';
+  }
+
+  @override
+  String get onboardingWelcomeTitle => 'Bem-vindo ao Eyes';
+
+  @override
+  String get onboardingWelcomeBody =>
+      'O Eyes usa a câmera do celular para reconhecer alguns objetos e oferecer avisos curtos por voz e vibração.';
+
+  @override
+  String get onboardingSafetyTitle => 'Use como apoio complementar';
+
+  @override
+  String get onboardingSafetyBody =>
+      'O Eyes pode errar ou não perceber um obstáculo. Ele não substitui bengala, cão-guia, orientação humana nem técnicas de mobilidade.';
+
+  @override
+  String get onboardingPrivacyTitle => 'Suas imagens permanecem no aparelho';
+
+  @override
+  String get onboardingPrivacyBody =>
+      'A câmera é processada localmente durante a varredura. O Eyes não salva fotos ou vídeos e a função assistiva opera sem internet e sem conta. Nenhum dado é sincronizado no MVP.';
+
+  @override
+  String get onboardingFeedbackTitle => 'Prepare voz e vibração';
+
+  @override
+  String get onboardingFeedbackBody =>
+      'Teste os dois canais antes de usar. A vibração complementa a voz e nunca é o único aviso.';
+
+  @override
+  String get onboardingCameraTitle => 'Permita a câmera quando estiver pronto';
+
+  @override
+  String get onboardingCameraBody =>
+      'A câmera é necessária somente para a varredura. A solicitação acontece agora, depois desta explicação.';
+
+  @override
+  String get onboardingAllowCamera => 'Permitir acesso à câmera';
+
+  @override
+  String get onboardingTryCameraAgain => 'Solicitar câmera novamente';
+
+  @override
+  String get onboardingCameraGranted =>
+      'Câmera autorizada. O modo assistivo está pronto para iniciar.';
+
+  @override
+  String get onboardingCameraDenied =>
+      'A câmera não foi autorizada. Você pode tentar novamente ou continuar e permitir depois.';
+
+  @override
+  String get onboardingCameraPermanentlyDenied =>
+      'A permissão está bloqueada. Abra as configurações do aparelho para autorizar a câmera.';
+
+  @override
+  String get onboardingCameraRestricted =>
+      'Este aparelho ou perfil restringe a câmera. Verifique as configurações ou continue sem a varredura.';
+
+  @override
+  String get onboardingContinueOffline => 'Continuar sem conta no modo offline';
+
+  @override
+  String get onboardingContinueWithoutCamera =>
+      'Continuar sem câmera por enquanto';
+
+  @override
+  String get onboardingLoadError =>
+      'Não foi possível carregar ou salvar os primeiros passos. Tente novamente.';
+
+  @override
+  String get repeatOnboarding => 'Repetir primeiros passos';
+
+  @override
+  String get repeatFeedbackTests => 'Repetir testes de voz e vibração';
+
+  @override
+  String get next => 'Avançar';
+
+  @override
+  String get back => 'Voltar';
+
+  @override
+  String get close => 'Fechar';
+
+  @override
   String get homeTitle => 'Assistência visual ao seu alcance';
 
   @override
@@ -614,6 +705,97 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get appName => 'Eyes';
+
+  @override
+  String get onboardingTitle => 'Primeiros passos';
+
+  @override
+  String onboardingProgress(int current, int total) {
+    return 'Etapa $current de $total';
+  }
+
+  @override
+  String get onboardingWelcomeTitle => 'Bem-vindo ao Eyes';
+
+  @override
+  String get onboardingWelcomeBody =>
+      'O Eyes usa a câmera do celular para reconhecer alguns objetos e oferecer avisos curtos por voz e vibração.';
+
+  @override
+  String get onboardingSafetyTitle => 'Use como apoio complementar';
+
+  @override
+  String get onboardingSafetyBody =>
+      'O Eyes pode errar ou não perceber um obstáculo. Ele não substitui bengala, cão-guia, orientação humana nem técnicas de mobilidade.';
+
+  @override
+  String get onboardingPrivacyTitle => 'Suas imagens permanecem no aparelho';
+
+  @override
+  String get onboardingPrivacyBody =>
+      'A câmera é processada localmente durante a varredura. O Eyes não salva fotos ou vídeos e a função assistiva opera sem internet e sem conta. Nenhum dado é sincronizado no MVP.';
+
+  @override
+  String get onboardingFeedbackTitle => 'Prepare voz e vibração';
+
+  @override
+  String get onboardingFeedbackBody =>
+      'Teste os dois canais antes de usar. A vibração complementa a voz e nunca é o único aviso.';
+
+  @override
+  String get onboardingCameraTitle => 'Permita a câmera quando estiver pronto';
+
+  @override
+  String get onboardingCameraBody =>
+      'A câmera é necessária somente para a varredura. A solicitação acontece agora, depois desta explicação.';
+
+  @override
+  String get onboardingAllowCamera => 'Permitir acesso à câmera';
+
+  @override
+  String get onboardingTryCameraAgain => 'Solicitar câmera novamente';
+
+  @override
+  String get onboardingCameraGranted =>
+      'Câmera autorizada. O modo assistivo está pronto para iniciar.';
+
+  @override
+  String get onboardingCameraDenied =>
+      'A câmera não foi autorizada. Você pode tentar novamente ou continuar e permitir depois.';
+
+  @override
+  String get onboardingCameraPermanentlyDenied =>
+      'A permissão está bloqueada. Abra as configurações do aparelho para autorizar a câmera.';
+
+  @override
+  String get onboardingCameraRestricted =>
+      'Este aparelho ou perfil restringe a câmera. Verifique as configurações ou continue sem a varredura.';
+
+  @override
+  String get onboardingContinueOffline => 'Continuar sem conta no modo offline';
+
+  @override
+  String get onboardingContinueWithoutCamera =>
+      'Continuar sem câmera por enquanto';
+
+  @override
+  String get onboardingLoadError =>
+      'Não foi possível carregar ou salvar os primeiros passos. Tente novamente.';
+
+  @override
+  String get repeatOnboarding => 'Repetir primeiros passos';
+
+  @override
+  String get repeatFeedbackTests => 'Repetir testes de voz e vibração';
+
+  @override
+  String get next => 'Avançar';
+
+  @override
+  String get back => 'Voltar';
+
+  @override
+  String get close => 'Fechar';
 
   @override
   String get homeTitle => 'Assistência visual ao seu alcance';
