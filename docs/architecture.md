@@ -225,3 +225,29 @@ O wakelock é habilitado somente quando câmera e modelo estão efetivamente
 ativos. Pausa, encerramento, falha, background e saída da tela o desabilitam.
 Falhas ao controlar tela ligada ou feedback são registradas com código
 sanitizado e não bloqueiam a função assistiva principal. Consulte o ADR 0009.
+
+## Primeiro uso e consentimento contextual
+
+`AppEntryPage` consulta apenas a conclusão versionada do primeiro uso e decide
+entre o onboarding e a home local. A persistência usa `SharedPreferencesAsync`
+por meio de `OnboardingRepository`; nenhum dado pessoal, consentimento de
+sincronização, imagem ou credencial é armazenado nesse fluxo.
+
+```text
+AppEntryPage
+      ↓ observa
+OnboardingController
+      ├── OnboardingRepository ← SharedPreferences
+      └── CameraGateway ← permissão Android
+```
+
+O onboarding possui cinco etapas curtas: proposta, limite de segurança,
+privacidade offline, teste de voz/vibração e câmera. A câmera só é solicitada na
+última etapa, depois da explicação, e o plugin de permissão permanece na
+infraestrutura. Negação temporária permite nova tentativa; bloqueio permanente
+oferece configurações do aparelho; em ambos os casos o usuário pode concluir o
+conteúdo e permanecer sem câmera até decidir concedê-la.
+
+Login e rede nunca bloqueiam a função local. A conclusão usa explicitamente a
+ação “continuar sem conta no modo offline”. Ajuda e Segurança permite repetir o
+onboarding e alcançar novamente os testes de feedback. Consulte o ADR 0010.
