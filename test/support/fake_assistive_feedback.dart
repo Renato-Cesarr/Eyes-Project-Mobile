@@ -6,7 +6,7 @@ import 'package:eyes_mobile/features/assistive_feedback/domain/feedback_preferen
 final class FakeSpeechGateway implements SpeechGateway {
   FakeSpeechGateway({this.failure});
 
-  final Object? failure;
+  Object? failure;
   final List<String> spoken = [];
   final List<SpeechConfiguration> configurations = [];
   int stopCalls = 0;
@@ -40,12 +40,19 @@ final class FakeSpeechGateway implements SpeechGateway {
 }
 
 final class FakeAssistiveHaptics implements AssistiveHaptics {
-  FakeAssistiveHaptics({this.failure});
+  FakeAssistiveHaptics({this.failure, this.available = true});
 
-  final Object? failure;
+  Object? failure;
+  bool available;
   int confirmations = 0;
   int warnings = 0;
   int criticalAlerts = 0;
+
+  @override
+  Future<bool> isAvailable() async {
+    _throwIfConfigured();
+    return available;
+  }
 
   @override
   Future<void> confirm() async {

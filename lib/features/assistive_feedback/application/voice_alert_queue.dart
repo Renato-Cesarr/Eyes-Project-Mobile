@@ -6,12 +6,14 @@ import 'package:eyes_mobile/features/assistive_feedback/domain/assistive_alert_m
 typedef Clock = DateTime Function();
 typedef VoiceQueueFailureHandler =
     void Function(Object error, StackTrace stackTrace);
+typedef VoiceQueueSuccessHandler = void Function();
 
 final class VoiceAlertQueue {
   VoiceAlertQueue(
     this._gateway, {
     Clock? clock,
     this.onFailure,
+    this.onSuccess,
     this.deduplicationCooldown = const Duration(seconds: 4),
     this.maximumPending = 4,
   }) : _clock = clock ?? DateTime.now;
@@ -19,6 +21,7 @@ final class VoiceAlertQueue {
   final SpeechGateway _gateway;
   final Clock _clock;
   final VoiceQueueFailureHandler? onFailure;
+  final VoiceQueueSuccessHandler? onSuccess;
   final Duration deduplicationCooldown;
   final int maximumPending;
   final List<AssistiveAlertMessage> _pending = [];
@@ -96,6 +99,10 @@ final class VoiceAlertQueue {
         try {
           await _gateway.speak(next.text);
           _lastDelivered[next.deduplicationKey] = _clock();
+          onSuccess?.call();
+        } on SpeechPlaybackInterruptedException {
+          // Lifecycle changes and priority preemption intentionally cancel
+          // speech. They must not mark the TTS engine as unavailable.
         } on Object catch (error, stackTrace) {
           onFailure?.call(error, stackTrace);
         } finally {

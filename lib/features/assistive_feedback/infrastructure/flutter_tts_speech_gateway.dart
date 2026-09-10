@@ -30,7 +30,13 @@ final class FlutterTtsSpeechGateway implements SpeechGateway {
 
   @override
   Future<void> speak(String message) async {
-    _ensureSuccess(await _tts.speak(message), 'síntese de voz indisponível');
+    final result = await _tts.speak(message);
+    if (result is int && result == 0) {
+      // flutter_tts returns zero when an awaited utterance is intentionally
+      // stopped. This is cancellation, not proof that the engine is missing.
+      throw const SpeechPlaybackInterruptedException();
+    }
+    _ensureSuccess(result, 'síntese de voz indisponível');
   }
 
   @override

@@ -14,7 +14,8 @@ final Provider<void> assistiveFeedbackBindingProvider = Provider<void>((
     assistiveFeedbackControllerProvider,
     (previous, next) {
       final preferences = next.asData?.value.preferences;
-      if (preferences != null) {
+      final previousPreferences = previous?.asData?.value.preferences;
+      if (preferences != null && !identical(preferences, previousPreferences)) {
         ref
             .read(proximityPolicyProvider.notifier)
             .configure(

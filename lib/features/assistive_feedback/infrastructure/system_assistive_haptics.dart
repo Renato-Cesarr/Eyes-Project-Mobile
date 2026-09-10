@@ -1,26 +1,42 @@
-import 'dart:async';
-
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_haptics.dart';
 import 'package:flutter/services.dart';
 
-typedef HapticDelay = Future<void> Function(Duration duration);
-
 final class SystemAssistiveHaptics implements AssistiveHaptics {
-  SystemAssistiveHaptics({HapticDelay? delay})
-    : _delay = delay ?? Future<void>.delayed;
+  SystemAssistiveHaptics({MethodChannel? channel})
+    : _channel = channel ?? const MethodChannel(_channelName);
 
-  final HapticDelay _delay;
-
-  @override
-  Future<void> confirm() => HapticFeedback.lightImpact();
-
-  @override
-  Future<void> warning() => HapticFeedback.mediumImpact();
+  static const String _channelName =
+      'br.com.eyesproject.mobile/assistive_haptics';
+  final MethodChannel _channel;
 
   @override
-  Future<void> criticalAlert() async {
-    await HapticFeedback.heavyImpact();
-    await _delay(const Duration(milliseconds: 100));
-    await HapticFeedback.heavyImpact();
+  Future<bool> isAvailable() async =>
+      await _channel.invokeMethod<bool>('isAvailable') ?? false;
+
+  @override
+  Future<void> confirm() => _vibrate('confirm');
+
+  @override
+  Future<void> warning() => _vibrate('warning');
+
+  @override
+  Future<void> criticalAlert() => _vibrate('critical');
+
+  Future<void> _vibrate(String pattern) async {
+    final delivered =
+        await _channel.invokeMethod<bool>('vibrate', <String, Object>{
+          'pattern': pattern,
+        }) ??
+        false;
+    if (!delivered) {
+      throw const HapticsUnavailableException();
+    }
   }
+}
+
+final class HapticsUnavailableException implements Exception {
+  const HapticsUnavailableException();
+
+  @override
+  String toString() => 'HapticsUnavailableException';
 }
