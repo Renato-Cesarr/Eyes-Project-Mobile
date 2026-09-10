@@ -103,6 +103,162 @@ abstract class AppLocalizations {
   /// **'Eyes'**
   String get appName;
 
+  /// No description provided for @onboardingTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Primeiros passos'**
+  String get onboardingTitle;
+
+  /// No description provided for @onboardingProgress.
+  ///
+  /// In pt, this message translates to:
+  /// **'Etapa {current} de {total}'**
+  String onboardingProgress(int current, int total);
+
+  /// No description provided for @onboardingWelcomeTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Bem-vindo ao Eyes'**
+  String get onboardingWelcomeTitle;
+
+  /// No description provided for @onboardingWelcomeBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'O Eyes usa a câmera do celular para reconhecer alguns objetos e oferecer avisos curtos por voz e vibração.'**
+  String get onboardingWelcomeBody;
+
+  /// No description provided for @onboardingSafetyTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Use como apoio complementar'**
+  String get onboardingSafetyTitle;
+
+  /// No description provided for @onboardingSafetyBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'O Eyes pode errar ou não perceber um obstáculo. Ele não substitui bengala, cão-guia, orientação humana nem técnicas de mobilidade.'**
+  String get onboardingSafetyBody;
+
+  /// No description provided for @onboardingPrivacyTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Suas imagens permanecem no aparelho'**
+  String get onboardingPrivacyTitle;
+
+  /// No description provided for @onboardingPrivacyBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'A câmera é processada localmente durante a varredura. O Eyes não salva fotos ou vídeos e a função assistiva opera sem internet e sem conta. Nenhum dado é sincronizado no MVP.'**
+  String get onboardingPrivacyBody;
+
+  /// No description provided for @onboardingFeedbackTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Prepare voz e vibração'**
+  String get onboardingFeedbackTitle;
+
+  /// No description provided for @onboardingFeedbackBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'Teste os dois canais antes de usar. A vibração complementa a voz e nunca é o único aviso.'**
+  String get onboardingFeedbackBody;
+
+  /// No description provided for @onboardingCameraTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Permita a câmera quando estiver pronto'**
+  String get onboardingCameraTitle;
+
+  /// No description provided for @onboardingCameraBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'A câmera é necessária somente para a varredura. A solicitação acontece agora, depois desta explicação.'**
+  String get onboardingCameraBody;
+
+  /// No description provided for @onboardingAllowCamera.
+  ///
+  /// In pt, this message translates to:
+  /// **'Permitir acesso à câmera'**
+  String get onboardingAllowCamera;
+
+  /// No description provided for @onboardingTryCameraAgain.
+  ///
+  /// In pt, this message translates to:
+  /// **'Solicitar câmera novamente'**
+  String get onboardingTryCameraAgain;
+
+  /// No description provided for @onboardingCameraGranted.
+  ///
+  /// In pt, this message translates to:
+  /// **'Câmera autorizada. O modo assistivo está pronto para iniciar.'**
+  String get onboardingCameraGranted;
+
+  /// No description provided for @onboardingCameraDenied.
+  ///
+  /// In pt, this message translates to:
+  /// **'A câmera não foi autorizada. Você pode tentar novamente ou continuar e permitir depois.'**
+  String get onboardingCameraDenied;
+
+  /// No description provided for @onboardingCameraPermanentlyDenied.
+  ///
+  /// In pt, this message translates to:
+  /// **'A permissão está bloqueada. Abra as configurações do aparelho para autorizar a câmera.'**
+  String get onboardingCameraPermanentlyDenied;
+
+  /// No description provided for @onboardingCameraRestricted.
+  ///
+  /// In pt, this message translates to:
+  /// **'Este aparelho ou perfil restringe a câmera. Verifique as configurações ou continue sem a varredura.'**
+  String get onboardingCameraRestricted;
+
+  /// No description provided for @onboardingContinueOffline.
+  ///
+  /// In pt, this message translates to:
+  /// **'Continuar sem conta no modo offline'**
+  String get onboardingContinueOffline;
+
+  /// No description provided for @onboardingContinueWithoutCamera.
+  ///
+  /// In pt, this message translates to:
+  /// **'Continuar sem câmera por enquanto'**
+  String get onboardingContinueWithoutCamera;
+
+  /// No description provided for @onboardingLoadError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível carregar ou salvar os primeiros passos. Tente novamente.'**
+  String get onboardingLoadError;
+
+  /// No description provided for @repeatOnboarding.
+  ///
+  /// In pt, this message translates to:
+  /// **'Repetir primeiros passos'**
+  String get repeatOnboarding;
+
+  /// No description provided for @repeatFeedbackTests.
+  ///
+  /// In pt, this message translates to:
+  /// **'Repetir testes de voz e vibração'**
+  String get repeatFeedbackTests;
+
+  /// No description provided for @next.
+  ///
+  /// In pt, this message translates to:
+  /// **'Avançar'**
+  String get next;
+
+  /// No description provided for @back.
+  ///
+  /// In pt, this message translates to:
+  /// **'Voltar'**
+  String get back;
+
+  /// No description provided for @close.
+  ///
+  /// In pt, this message translates to:
+  /// **'Fechar'**
+  String get close;
+
   /// No description provided for @homeTitle.
   ///
   /// In pt, this message translates to:

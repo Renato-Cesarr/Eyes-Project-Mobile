@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:eyes_mobile/app/routing/app_router.dart';
 import 'package:eyes_mobile/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 final class HelpAndSafetyPage extends StatelessWidget {
   const HelpAndSafetyPage({super.key});
@@ -35,6 +39,25 @@ final class HelpAndSafetyPage extends StatelessWidget {
               title: l10n.helpPermissionHeading,
               body: l10n.helpPermissionBody,
               icon: Icons.camera_alt_outlined,
+            ),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: () => unawaited(
+                context.pushNamed(
+                  AppRoutes.onboarding,
+                  queryParameters: const <String, String>{'replay': 'true'},
+                ),
+              ),
+              icon: const ExcludeSemantics(child: Icon(Icons.replay_outlined)),
+              label: Text(l10n.repeatOnboarding),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () => unawaited(context.pushNamed(AppRoutes.settings)),
+              icon: const ExcludeSemantics(
+                child: Icon(Icons.volume_up_outlined),
+              ),
+              label: Text(l10n.repeatFeedbackTests),
             ),
           ],
         ),

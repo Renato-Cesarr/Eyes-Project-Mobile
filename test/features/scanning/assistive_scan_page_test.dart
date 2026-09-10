@@ -9,6 +9,7 @@ import 'package:eyes_mobile/features/assistive_feedback/application/assistive_fe
 import 'package:eyes_mobile/features/object_detection/application/vision_frame.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_worker.dart';
 import 'package:eyes_mobile/features/object_detection/domain/detected_object.dart';
+import 'package:eyes_mobile/features/onboarding/application/onboarding_repository.dart';
 import 'package:eyes_mobile/features/proximity/application/proximity_controller.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_configuration.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_gateway.dart';
@@ -18,6 +19,7 @@ import 'package:eyes_mobile/features/scanning/domain/camera_permission_state.dar
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../../support/fake_assistive_feedback.dart';
+import '../../support/fake_onboarding.dart';
 
 final class _WidgetCameraGateway implements CameraGateway {
   _WidgetCameraGateway({this.permission = CameraPermissionState.granted});
@@ -171,6 +173,9 @@ void main() {
             InMemoryFeedbackPreferencesRepository(),
           ),
           cameraGatewayProvider.overrideWithValue(gateway),
+          onboardingRepositoryProvider.overrideWithValue(
+            InMemoryOnboardingRepository(completed: true),
+          ),
           visionWorkerProvider.overrideWithValue(visionWorker),
           scanWakeLockGatewayProvider.overrideWithValue(
             wakeLock ?? _RecordingWakeLock(),
