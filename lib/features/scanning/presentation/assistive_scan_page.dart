@@ -150,10 +150,9 @@ final class _AssistiveScanContent extends ConsumerWidget {
     );
     final blockingFailure = _blockingFailure(session, vision);
     final feedbackState = ref.watch(assistiveFeedbackControllerProvider);
-    final feedbackNotice = feedbackState.asData?.value.notice;
-    final preferences =
-        feedbackState.asData?.value.preferences ?? FeedbackPreferences.defaults;
-    final degradedFailure = _degradedFailure(feedbackNotice);
+    final feedback = feedbackState.asData?.value;
+    final preferences = feedback?.preferences ?? FeedbackPreferences.defaults;
+    final degradedFailure = _degradedFailure(feedback);
     final runtime = vision.asData?.value;
     final isVisionReady = runtime?.status == VisionRuntimeStatus.ready;
     final isActivelyScanning = operationalStatus.isScanning && isVisionReady;
@@ -174,51 +173,33 @@ final class _AssistiveScanContent extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Text(
-                  l10n.cameraPrivacyNotice,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                const SizedBox(height: 20),
-                if (isActivelyScanning && previewAspectRatio != null) ...[
-                  ExcludeSemantics(
-                    child: CameraPreviewSurface(
-                      aspectRatio: previewAspectRatio,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
-                _CapabilityOverview(
-                  preferences: preferences,
-                  notice: feedbackNotice,
-                ),
-                const SizedBox(height: 16),
-                _OperationalStatusCard(
-                  phase: operationalStatus.phase,
-                  statusText: statusText,
-                  announce: blockingFailure == null,
-                ),
                 if (blockingFailure != null) ...<Widget>[
-                  const SizedBox(height: 16),
                   _RecoveryPanel(
                     failure: blockingFailure,
                     visionFailure: vision.hasError,
                     coordinator: coordinator,
                   ),
+                  const SizedBox(height: 16),
                 ],
                 if (blockingFailure == null &&
                     degradedFailure != null) ...<Widget>[
-                  const SizedBox(height: 16),
                   _RecoveryPanel(
                     failure: degradedFailure,
                     visionFailure: false,
                     coordinator: coordinator,
                   ),
+                  const SizedBox(height: 16),
                 ],
+                _OperationalStatusCard(
+                  phase: operationalStatus.phase,
+                  statusText: statusText,
+                  announce: blockingFailure == null,
+                ),
                 if (latestAlert != null) ...[
                   const SizedBox(height: 16),
                   _ProximityAnnouncement(event: latestAlert),
                 ],
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
                 if (blockingFailure == null)
                   _PrimaryScanAction(
                     phase: operationalStatus.phase,
@@ -244,6 +225,24 @@ final class _AssistiveScanContent extends ConsumerWidget {
                     ),
                   ),
                 ],
+                if (isActivelyScanning && previewAspectRatio != null) ...[
+                  const SizedBox(height: 20),
+                  ExcludeSemantics(
+                    child: CameraPreviewSurface(
+                      aspectRatio: previewAspectRatio,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    l10n.cameraPrivacyNotice,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+                const SizedBox(height: 16),
+                _CapabilityOverview(
+                  preferences: preferences,
+                  feedback: feedback,
+                ),
                 if (kDebugMode && isActivelyScanning) ...<Widget>[
                   const SizedBox(height: 24),
                   _CameraTelemetryCard(session: session),
@@ -270,63 +269,76 @@ OperationalFailure? _blockingFailure(
       : ScanFailurePolicy.fromCamera(cameraFailure);
 }
 
-OperationalFailure? _degradedFailure(FeedbackNotice? notice) =>
-    notice == null ? null : ScanFailurePolicy.fromFeedbackNotice(notice);
+OperationalFailure? _degradedFailure(AssistiveFeedbackState? feedback) {
+  if (feedback == null) {
+    return null;
+  }
+  if (feedback.speechAvailability == FeedbackChannelAvailability.unavailable) {
+    return ScanFailurePolicy.fromFeedbackNotice(
+      FeedbackNotice.speechUnavailable,
+    );
+  }
+  if (feedback.preferences.hapticsEnabled &&
+      feedback.hapticsAvailability == FeedbackChannelAvailability.unavailable) {
+    return ScanFailurePolicy.fromFeedbackNotice(
+      FeedbackNotice.hapticsUnavailable,
+    );
+  }
+  return ScanFailurePolicy.fromFeedbackNotice(feedback.notice);
+}
 
 final class _CapabilityOverview extends StatelessWidget {
-  const _CapabilityOverview({required this.preferences, required this.notice});
+  const _CapabilityOverview({
+    required this.preferences,
+    required this.feedback,
+  });
 
   final FeedbackPreferences preferences;
-  final FeedbackNotice? notice;
+  final AssistiveFeedbackState? feedback;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final speechAvailable = notice != FeedbackNotice.speechUnavailable;
-    final hapticsAvailable = notice != FeedbackNotice.hapticsUnavailable;
+    final speechAvailable =
+        feedback?.speechAvailability != FeedbackChannelAvailability.unavailable;
+    final hapticsAvailable =
+        feedback?.hapticsAvailability !=
+        FeedbackChannelAvailability.unavailable;
     final hapticsLabel = !preferences.hapticsEnabled
         ? l10n.scanHapticsDisabled
         : hapticsAvailable
         ? l10n.scanHapticsAvailable
         : l10n.scanHapticsUnavailable;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
+    final labels = <String>[
+      speechAvailable ? l10n.scanAudioAvailable : l10n.scanAudioUnavailable,
+      hapticsLabel,
+      l10n.scanOfflineAvailable,
+    ];
+    return Semantics(
+      container: true,
+      label: '${l10n.scanCapabilitiesTitle}: ${labels.join('. ')}',
+      excludeSemantics: true,
+      child: ExcludeSemantics(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Semantics(
-              header: true,
-              child: Text(
-                l10n.scanCapabilitiesTitle,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
+            _CapabilityItem(
+              icon: speechAvailable
+                  ? Icons.volume_up_outlined
+                  : Icons.volume_off_outlined,
+              label: labels[0],
             ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 16,
-              runSpacing: 12,
-              children: <Widget>[
-                _CapabilityItem(
-                  icon: speechAvailable
-                      ? Icons.volume_up_outlined
-                      : Icons.volume_off_outlined,
-                  label: speechAvailable
-                      ? l10n.scanAudioAvailable
-                      : l10n.scanAudioUnavailable,
-                ),
-                _CapabilityItem(
-                  icon: preferences.hapticsEnabled && hapticsAvailable
-                      ? Icons.vibration_outlined
-                      : Icons.phone_android_outlined,
-                  label: hapticsLabel,
-                ),
-                _CapabilityItem(
-                  icon: Icons.offline_bolt_outlined,
-                  label: l10n.scanOfflineAvailable,
-                ),
-              ],
+            const SizedBox(height: 6),
+            _CapabilityItem(
+              icon: preferences.hapticsEnabled && hapticsAvailable
+                  ? Icons.vibration_outlined
+                  : Icons.phone_android_outlined,
+              label: labels[1],
+            ),
+            const SizedBox(height: 6),
+            _CapabilityItem(
+              icon: Icons.offline_bolt_outlined,
+              label: labels[2],
             ),
           ],
         ),
@@ -343,16 +355,20 @@ final class _CapabilityItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      container: true,
-      label: label,
-      excludeSemantics: true,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(icon),
-          const SizedBox(width: 8),
-          Flexible(child: Text(label)),
+          Icon(icon, size: 20),
+          const SizedBox(width: 6),
+          Expanded(child: Text(label)),
         ],
       ),
     );
@@ -381,21 +397,21 @@ final class _OperationalStatusCard extends StatelessWidget {
         label: '${l10n.scanStatusLabel}: $statusText',
         excludeSemantics: true,
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              ExcludeSemantics(child: Icon(_phaseIcon(phase), size: 32)),
-              const SizedBox(width: 16),
+              ExcludeSemantics(child: Icon(_phaseIcon(phase), size: 28)),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
                       l10n.scanStatusLabel,
-                      style: Theme.of(context).textTheme.titleLarge,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Text(
                       statusText,
                       style: Theme.of(context).textTheme.bodyLarge,
