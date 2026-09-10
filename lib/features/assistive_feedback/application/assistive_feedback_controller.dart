@@ -39,6 +39,8 @@ final class AssistiveFeedbackController
     final repository = ref.read(feedbackPreferencesRepositoryProvider);
     var preferences = FeedbackPreferences.defaults;
     var notice = FeedbackNotice.none;
+    var speechAvailability = FeedbackChannelAvailability.available;
+    var hapticsAvailability = FeedbackChannelAvailability.available;
     try {
       preferences = await repository.load();
     } on Object catch (error, stackTrace) {
@@ -50,13 +52,30 @@ final class AssistiveFeedbackController
       await gateway.configure(_speechConfiguration(preferences));
     } on Object catch (error, stackTrace) {
       notice = FeedbackNotice.speechUnavailable;
+      speechAvailability = FeedbackChannelAvailability.unavailable;
       _report(error, stackTrace, 'tts-initialize');
+    }
+    try {
+      final available = await ref.read(assistiveHapticsProvider).isAvailable();
+      if (!available) {
+        hapticsAvailability = FeedbackChannelAvailability.unavailable;
+        if (notice == FeedbackNotice.none) {
+          notice = FeedbackNotice.hapticsUnavailable;
+        }
+      }
+    } on Object catch (error, stackTrace) {
+      hapticsAvailability = FeedbackChannelAvailability.unavailable;
+      if (notice == FeedbackNotice.none) {
+        notice = FeedbackNotice.hapticsUnavailable;
+      }
+      _report(error, stackTrace, 'haptics-initialize');
     }
     _queue = VoiceAlertQueue(
       gateway,
+      onSuccess: _markSpeechAvailable,
       onFailure: (error, stackTrace) {
         _report(error, stackTrace, 'tts-alert');
-        _setNotice(FeedbackNotice.speechUnavailable);
+        _markSpeechUnavailable();
       },
     );
     ref.onDispose(() {
@@ -64,7 +83,12 @@ final class AssistiveFeedbackController
       unawaited(_queue?.dispose());
       _queue = null;
     });
-    return AssistiveFeedbackState(preferences: preferences, notice: notice);
+    return AssistiveFeedbackState(
+      preferences: preferences,
+      speechAvailability: speechAvailability,
+      hapticsAvailability: hapticsAvailability,
+      notice: notice,
+    );
   }
 
   Future<void> updatePreferences(FeedbackPreferences preferences) async {
@@ -83,13 +107,20 @@ final class AssistiveFeedbackController
       await ref
           .read(speechGatewayProvider)
           .configure(_speechConfiguration(preferences));
+      _markSpeechAvailable();
     } on Object catch (error, stackTrace) {
       notice = FeedbackNotice.speechUnavailable;
       _report(error, stackTrace, 'tts-configure');
     }
     if (!_disposed) {
       state = AsyncData<AssistiveFeedbackState>(
-        current.copyWith(preferences: preferences, notice: notice),
+        current.copyWith(
+          preferences: preferences,
+          speechAvailability: notice == FeedbackNotice.speechUnavailable
+              ? FeedbackChannelAvailability.unavailable
+              : FeedbackChannelAvailability.available,
+          notice: notice,
+        ),
       );
     }
   }
@@ -109,6 +140,7 @@ final class AssistiveFeedbackController
         state = AsyncData<AssistiveFeedbackState>(
           current.copyWith(
             preferences: FeedbackPreferences.defaults,
+            speechAvailability: FeedbackChannelAvailability.available,
             notice: FeedbackNotice.defaultsRestored,
           ),
         );
@@ -128,10 +160,15 @@ final class AssistiveFeedbackController
       final gateway = ref.read(speechGatewayProvider);
       await gateway.configure(_speechConfiguration(current.preferences));
       await gateway.speak(message);
-      _setNotice(FeedbackNotice.voiceTestSucceeded);
+      _setChannelState(
+        speechAvailability: FeedbackChannelAvailability.available,
+        notice: FeedbackNotice.voiceTestSucceeded,
+      );
+    } on SpeechPlaybackInterruptedException {
+      return;
     } on Object catch (error, stackTrace) {
       _report(error, stackTrace, 'tts-test');
-      _setNotice(FeedbackNotice.speechUnavailable);
+      _markSpeechUnavailable();
     }
   }
 
@@ -141,11 +178,19 @@ final class AssistiveFeedbackController
       return;
     }
     try {
-      await ref.read(assistiveHapticsProvider).confirm();
-      _setNotice(FeedbackNotice.hapticTestSucceeded);
+      final haptics = ref.read(assistiveHapticsProvider);
+      if (!await haptics.isAvailable()) {
+        _markHapticsUnavailable();
+        return;
+      }
+      await haptics.confirm();
+      _setChannelState(
+        hapticsAvailability: FeedbackChannelAvailability.available,
+        notice: FeedbackNotice.hapticTestSucceeded,
+      );
     } on Object catch (error, stackTrace) {
       _report(error, stackTrace, 'haptics-test');
-      _setNotice(FeedbackNotice.hapticsUnavailable);
+      _markHapticsUnavailable();
     }
   }
 
@@ -171,9 +216,10 @@ final class AssistiveFeedbackController
   Future<void> _deliverCriticalHaptic() async {
     try {
       await ref.read(assistiveHapticsProvider).criticalAlert();
+      _markHapticsAvailable();
     } on Object catch (error, stackTrace) {
       _report(error, stackTrace, 'haptics-alert');
-      _setNotice(FeedbackNotice.hapticsUnavailable);
+      _markHapticsUnavailable();
     }
   }
 
@@ -185,13 +231,69 @@ final class AssistiveFeedbackController
   }
 
   void _setNotice(FeedbackNotice notice) {
+    _setChannelState(notice: notice);
+  }
+
+  void _markSpeechAvailable() {
+    final current = state.asData?.value;
+    if (current == null ||
+        (current.speechAvailability == FeedbackChannelAvailability.available &&
+            current.notice != FeedbackNotice.speechUnavailable)) {
+      return;
+    }
+    _setChannelState(
+      speechAvailability: FeedbackChannelAvailability.available,
+      notice: current?.notice == FeedbackNotice.speechUnavailable
+          ? FeedbackNotice.none
+          : null,
+    );
+  }
+
+  void _markSpeechUnavailable() {
+    _setChannelState(
+      speechAvailability: FeedbackChannelAvailability.unavailable,
+      notice: FeedbackNotice.speechUnavailable,
+    );
+  }
+
+  void _markHapticsAvailable() {
+    final current = state.asData?.value;
+    if (current == null ||
+        (current.hapticsAvailability == FeedbackChannelAvailability.available &&
+            current.notice != FeedbackNotice.hapticsUnavailable)) {
+      return;
+    }
+    _setChannelState(
+      hapticsAvailability: FeedbackChannelAvailability.available,
+      notice: current?.notice == FeedbackNotice.hapticsUnavailable
+          ? FeedbackNotice.none
+          : null,
+    );
+  }
+
+  void _markHapticsUnavailable() {
+    _setChannelState(
+      hapticsAvailability: FeedbackChannelAvailability.unavailable,
+      notice: FeedbackNotice.hapticsUnavailable,
+    );
+  }
+
+  void _setChannelState({
+    FeedbackChannelAvailability? speechAvailability,
+    FeedbackChannelAvailability? hapticsAvailability,
+    FeedbackNotice? notice,
+  }) {
     if (_disposed) {
       return;
     }
     final current = state.asData?.value;
     if (current != null) {
       state = AsyncData<AssistiveFeedbackState>(
-        current.copyWith(notice: notice),
+        current.copyWith(
+          speechAvailability: speechAvailability,
+          hapticsAvailability: hapticsAvailability,
+          notice: notice,
+        ),
       );
     }
   }

@@ -103,6 +103,39 @@ void main() {
     await queue.idle;
     expect(gateway.spoken, isNot(contains('baixo')));
   });
+
+  test(
+    'interrupção intencional não sinaliza indisponibilidade do TTS',
+    () async {
+      final failures = <Object>[];
+      final queue = VoiceAlertQueue(
+        _InterruptedSpeechGateway(),
+        onFailure: (error, _) => failures.add(error),
+      );
+      addTearDown(queue.dispose);
+
+      queue.enqueue(_message('Alerta interrompido', key: 'interrupted'));
+      await queue.idle;
+
+      expect(failures, isEmpty);
+    },
+  );
+}
+
+final class _InterruptedSpeechGateway implements SpeechGateway {
+  @override
+  Future<void> configure(SpeechConfiguration configuration) async {}
+
+  @override
+  Future<void> dispose() async {}
+
+  @override
+  Future<void> speak(String message) async {
+    throw const SpeechPlaybackInterruptedException();
+  }
+
+  @override
+  Future<void> stop() async {}
 }
 
 AssistiveAlertMessage _message(

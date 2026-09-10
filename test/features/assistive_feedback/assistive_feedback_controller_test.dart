@@ -2,6 +2,7 @@ import 'package:eyes_mobile/app/config/app_environment.dart';
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
 import 'package:eyes_mobile/core/logging/secure_logger.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_controller.dart';
+import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_state.dart';
 import 'package:eyes_mobile/features/assistive_feedback/domain/feedback_preferences.dart';
 import 'package:eyes_mobile/features/object_detection/domain/detected_object.dart';
 import 'package:eyes_mobile/features/proximity/domain/proximity_models.dart';
@@ -115,6 +116,55 @@ void main() {
       );
     },
   );
+
+  test('recupera o estado da voz após um teste bem-sucedido', () async {
+    final speech = FakeSpeechGateway(failure: StateError('tts unavailable'));
+    final container = _container(
+      speech,
+      FakeAssistiveHaptics(),
+      InMemoryFeedbackPreferencesRepository(),
+    );
+    addTearDown(container.dispose);
+    await container.read(assistiveFeedbackControllerProvider.future);
+
+    expect(
+      container
+          .read(assistiveFeedbackControllerProvider)
+          .requireValue
+          .speechAvailability,
+      FeedbackChannelAvailability.unavailable,
+    );
+
+    speech.failure = null;
+    await container
+        .read(assistiveFeedbackControllerProvider.notifier)
+        .testVoice('Teste concluído');
+
+    final current = container
+        .read(assistiveFeedbackControllerProvider)
+        .requireValue;
+    expect(current.speechAvailability, FeedbackChannelAvailability.available);
+    expect(current.notice, FeedbackNotice.voiceTestSucceeded);
+  });
+
+  test('não anuncia vibração ativa sem capacidade física', () async {
+    final container = _container(
+      FakeSpeechGateway(),
+      FakeAssistiveHaptics(available: false),
+      InMemoryFeedbackPreferencesRepository(),
+    );
+    addTearDown(container.dispose);
+    await container.read(assistiveFeedbackControllerProvider.future);
+
+    final current = container
+        .read(assistiveFeedbackControllerProvider)
+        .requireValue;
+    expect(
+      current.hapticsAvailability,
+      FeedbackChannelAvailability.unavailable,
+    );
+    expect(current.notice, FeedbackNotice.hapticsUnavailable);
+  });
 }
 
 ProviderContainer _container(

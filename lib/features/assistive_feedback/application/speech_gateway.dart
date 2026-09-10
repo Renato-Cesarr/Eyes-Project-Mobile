@@ -11,3 +11,8 @@ abstract interface class SpeechGateway {
   Future<void> stop();
   Future<void> dispose();
 }
+
+/// A normal interruption requested by the application, not a TTS failure.
+final class SpeechPlaybackInterruptedException implements Exception {
+  const SpeechPlaybackInterruptedException();
+}
