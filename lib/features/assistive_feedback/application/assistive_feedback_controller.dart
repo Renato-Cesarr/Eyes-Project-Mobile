@@ -243,7 +243,7 @@ final class AssistiveFeedbackController
     }
     _setChannelState(
       speechAvailability: FeedbackChannelAvailability.available,
-      notice: current?.notice == FeedbackNotice.speechUnavailable
+      notice: current.notice == FeedbackNotice.speechUnavailable
           ? FeedbackNotice.none
           : null,
     );
@@ -265,7 +265,7 @@ final class AssistiveFeedbackController
     }
     _setChannelState(
       hapticsAvailability: FeedbackChannelAvailability.available,
-      notice: current?.notice == FeedbackNotice.hapticsUnavailable
+      notice: current.notice == FeedbackNotice.hapticsUnavailable
           ? FeedbackNotice.none
           : null,
     );
