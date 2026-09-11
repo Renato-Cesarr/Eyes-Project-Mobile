@@ -207,6 +207,24 @@ vibração remove os haptics não essenciais. Consulte o
 
 ## Fluxo Git
 
+## Calibração científica da proximidade
+
+A instrumentação da REN-37 é desabilitada por padrão e não faz parte da
+experiência do usuário. Ela exige simultaneamente um build Profile com
+`EYES_CALIBRATION=true` e um cenário estruturado iniciado por ADB. As coletas
+contêm somente faixas, classes, caixas normalizadas e durações; imagens, vídeo,
+áudio, nomes e texto livre não são registrados.
+
+O protocolo completo, a separação entre conjuntos de calibração e avaliação e
+os comandos reproduzíveis estão em
+[docs/calibration/REN-37-protocol.md](docs/calibration/REN-37-protocol.md). Os
+parâmetros executados pelo app são espelhados no manifesto
+`config/proximity-policy.v1.json`, com teste automático contra divergências.
+Os dados brutos permanecem em `artifacts/calibration/`, ignorados pelo Git;
+somente relatórios agregados e sem dados pessoais devem ser publicados.
+
+## Fluxo Git
+
 As funcionalidades nascem de `dev`, usam `feat/<linear-id>-<nome-curto>` e
 retornam para `dev` por Pull Request. A promoção de versão ocorre de `dev` para
 `main`, que é protegida.

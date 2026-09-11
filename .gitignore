@@ -34,6 +34,7 @@ migrate_working_dir/
 /android/build/
 /coverage/
 /.fvm/
+/artifacts/calibration/
 
 # Local configuration and signing material
 .env

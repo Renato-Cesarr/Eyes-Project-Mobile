@@ -140,6 +140,20 @@ tracks e cooldowns para impedir que eventos de uma sessão vazem para outra.
 Somente eventos que passaram pela estabilização chegam à saída assistiva e ao
 cartão semântico. Detecções brutas e telemetria continuam fora do TalkBack.
 
+## Instrumentação de calibração
+
+A REN-37 adiciona um recorder opt-in que permanece inerte em builds comuns. Um
+APK compilado explicitamente para calibração ainda exige metadados estruturados
+de cenário fornecidos por ADB. O recorder observa somente batches de detecção,
+avaliações de proximidade, alertas e o callback nativo de início do TTS; ele
+nunca recebe pixels.
+
+Os eventos JSON Lines permitem medir câmera → decisão e câmera → início real da
+fala, além de gerar a matriz de confusão das faixas. Configuração, protocolo e
+analisador são versionados, mas coletas brutas permanecem ignoradas pelo Git.
+Nenhum dado de calibração entra na UI ou na árvore semântica. Consulte o ADR
+0012 e `docs/calibration/REN-37-protocol.md`.
+
 ## Feedback assistivo e preferências
 
 O evento estabilizado ganha apenas uma direção relativa derivada do centro da
