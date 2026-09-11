@@ -69,6 +69,10 @@ final class ProximityPolicy {
     }
   }
 
+  /// Version of the machine-readable baseline in
+  /// `config/proximity-policy.v1.json`.
+  static const baselineVersion = '1.0.0';
+
   static const Map<DetectedObjectKind, ProximityClassCalibration>
   defaultCalibrations = {
     DetectedObjectKind.person: ProximityClassCalibration(
