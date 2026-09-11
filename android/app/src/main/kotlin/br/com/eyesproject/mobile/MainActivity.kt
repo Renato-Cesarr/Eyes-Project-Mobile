@@ -33,6 +33,15 @@ class MainActivity : FlutterActivity() {
                 else -> result.notImplemented()
             }
         }
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            CALIBRATION_CHANNEL,
+        ).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "getSessionConfiguration" -> result.success(calibrationConfiguration())
+                else -> result.notImplemented()
+            }
+        }
     }
 
     private fun systemVibrator(): Vibrator =
@@ -89,8 +98,21 @@ class MainActivity : FlutterActivity() {
         }
     }
 
+    private fun calibrationConfiguration(): Map<String, Any?> = mapOf(
+        "enabled" to intent.getBooleanExtra("calibrationEnabled", false),
+        "sessionId" to intent.getStringExtra("calibrationSessionId"),
+        "scenarioId" to intent.getStringExtra("calibrationScenarioId"),
+        "datasetSplit" to intent.getStringExtra("calibrationDatasetSplit"),
+        "expectedKind" to intent.getStringExtra("calibrationExpectedKind"),
+        "expectedBand" to intent.getStringExtra("calibrationExpectedBand"),
+        "lighting" to intent.getStringExtra("calibrationLighting"),
+        "occlusion" to intent.getStringExtra("calibrationOcclusion"),
+    )
+
     private companion object {
         const val HAPTICS_CHANNEL =
             "br.com.eyesproject.mobile/assistive_haptics"
+        const val CALIBRATION_CHANNEL =
+            "br.com.eyesproject.mobile/calibration"
     }
 }

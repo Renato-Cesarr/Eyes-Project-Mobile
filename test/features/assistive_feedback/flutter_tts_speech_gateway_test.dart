@@ -71,4 +71,35 @@ void main() {
       throwsA(isA<SpeechGatewayException>()),
     );
   });
+
+  test('observa o início nativo da fala com relógio injetado', () async {
+    final starts = <(String, DateTime)>[];
+    final startedAt = DateTime.utc(2026, 9, 11, 12);
+    binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
+      MethodCall call,
+    ) async {
+      calls.add(call);
+      if (call.method == 'speak') {
+        await binding.defaultBinaryMessenger.handlePlatformMessage(
+          channel.name,
+          const StandardMethodCodec().encodeMethodCall(
+            MethodCall('speak.onStart'),
+          ),
+          (_) {},
+        );
+      }
+      return 1;
+    });
+    final gateway = FlutterTtsSpeechGateway(
+      clock: () => startedAt,
+      onPlaybackStarted: (message, timestamp) {
+        starts.add((message, timestamp));
+      },
+    );
+    await gateway.configure(const SpeechConfiguration(rate: 0.5, volume: 1));
+
+    await gateway.speak('Cadeira próxima à direita.');
+
+    expect(starts, [('Cadeira próxima à direita.', startedAt)]);
+  });
 }

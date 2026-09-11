@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
+import 'package:eyes_mobile/features/assistive_feedback/application/assistive_alert_observer.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_state.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_haptics.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/feedback_preferences_repository.dart';
@@ -27,6 +28,11 @@ feedbackPreferencesRepositoryProvider = Provider<FeedbackPreferencesRepository>(
     'FeedbackPreferencesRepository não configurado.',
   ),
 );
+
+final Provider<AssistiveAlertObserver> assistiveAlertObserverProvider =
+    Provider<AssistiveAlertObserver>(
+      (Ref ref) => const NoopAssistiveAlertObserver(),
+    );
 
 final class AssistiveFeedbackController
     extends AsyncNotifier<AssistiveFeedbackState> {
@@ -205,6 +211,11 @@ final class AssistiveFeedbackController
       event,
       preferences.detailLevel,
     );
+    try {
+      ref.read(assistiveAlertObserverProvider).onAlertQueued(event, message);
+    } on Object catch (error, stackTrace) {
+      _report(error, stackTrace, 'assistive-alert-observer');
+    }
     _queue?.enqueue(message);
     if (preferences.hapticsEnabled && event.isCritical) {
       unawaited(_deliverCriticalHaptic());

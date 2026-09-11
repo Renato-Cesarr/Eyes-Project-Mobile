@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "policyVersion": "1.0.0",
+  "status": "candidate_pending_ren_37_evaluation",
+  "deviceReference": "Xiaomi POCO X5 Pro 5G (22101320G)",
+  "distanceSemantics": "relative_categories_only",
+  "parameters": {
+    "iouThreshold": 0.25,
+    "emaAlpha": 0.35,
+    "attentionThreshold": 0.55,
+    "veryNearThreshold": 0.78,
+    "hysteresisMargin": 0.05,
+    "minimumTrackFrames": 3,
+    "transitionConfirmationFrames": 2,
+    "maximumMissedFrames": 3,
+    "globalMinimumIntervalMs": 2000,
+    "sameAlertCooldownMs": 6000
+  },
+  "classCalibration": {
+    "person": { "referenceLinearSize": 0.55, "riskWeight": 0.60 },
+    "chair": { "referenceLinearSize": 0.45, "riskWeight": 1.00 },
+    "table": { "referenceLinearSize": 0.60, "riskWeight": 0.90 },
+    "backpack": { "referenceLinearSize": 0.30, "riskWeight": 0.75 }
+  }
+}

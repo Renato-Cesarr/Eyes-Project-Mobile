@@ -11,6 +11,11 @@ import 'package:eyes_mobile/features/assistive_feedback/application/assistive_fe
 import 'package:eyes_mobile/features/assistive_feedback/infrastructure/flutter_tts_speech_gateway.dart';
 import 'package:eyes_mobile/features/assistive_feedback/infrastructure/shared_preferences_feedback_repository.dart';
 import 'package:eyes_mobile/features/assistive_feedback/infrastructure/system_assistive_haptics.dart';
+import 'package:eyes_mobile/features/calibration/application/calibration_event_sink.dart';
+import 'package:eyes_mobile/features/calibration/application/calibration_recorder.dart';
+import 'package:eyes_mobile/features/calibration/domain/calibration_configuration.dart';
+import 'package:eyes_mobile/features/calibration/infrastructure/developer_log_calibration_event_sink.dart';
+import 'package:eyes_mobile/features/calibration/infrastructure/platform_calibration_configuration_source.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_controller.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_worker.dart';
 import 'package:eyes_mobile/features/object_detection/infrastructure/isolate_vision_worker.dart';
@@ -33,6 +38,24 @@ Future<void> bootstrap(AppEnvironment environment) async {
 
   final logger = SecureLogger(environment)..initialize();
   final errorReporter = AppErrorReporter(logger);
+  var calibrationConfiguration = const CalibrationConfiguration.disabled();
+  try {
+    calibrationConfiguration =
+        await const PlatformCalibrationConfigurationSource().load();
+  } on Object catch (error, stackTrace) {
+    errorReporter.capture(
+      error,
+      stackTrace,
+      source: 'calibration-configuration',
+      diagnosticCode: 'calibration-configuration-invalid',
+    );
+  }
+  final calibrationRecorder = CalibrationRecorder(
+    calibrationConfiguration,
+    calibrationConfiguration.enabled
+        ? const DeveloperLogCalibrationEventSink()
+        : const NoopCalibrationEventSink(),
+  )..start();
 
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
@@ -57,6 +80,10 @@ Future<void> bootstrap(AppEnvironment environment) async {
             appEnvironmentProvider.overrideWithValue(environment),
             secureLoggerProvider.overrideWithValue(logger),
             appErrorReporterProvider.overrideWithValue(errorReporter),
+            calibrationRecorderProvider.overrideWithValue(calibrationRecorder),
+            assistiveAlertObserverProvider.overrideWithValue(
+              calibrationRecorder,
+            ),
             accessibleFeedbackServiceProvider.overrideWith((Ref ref) {
               return SystemAccessibleFeedbackService(
                 hapticsEnabled: () =>
@@ -70,7 +97,9 @@ Future<void> bootstrap(AppEnvironment environment) async {
               );
             }),
             speechGatewayProvider.overrideWith((Ref ref) {
-              final gateway = FlutterTtsSpeechGateway();
+              final gateway = FlutterTtsSpeechGateway(
+                onPlaybackStarted: calibrationRecorder.recordSpeechStarted,
+              );
               ref.onDispose(() => unawaited(gateway.dispose()));
               return gateway;
             }),
@@ -118,7 +147,10 @@ Future<void> bootstrap(AppEnvironment environment) async {
                 final batch = await ref
                     .read(visionControllerProvider.notifier)
                     .process(adapter.adapt(frame));
-                ref.read(proximityControllerProvider.notifier).process(batch);
+                final evaluation = ref
+                    .read(proximityControllerProvider.notifier)
+                    .process(batch);
+                calibrationRecorder.recordEvaluation(batch, evaluation);
               };
             }),
           ],
