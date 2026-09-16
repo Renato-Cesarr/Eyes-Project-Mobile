@@ -27,7 +27,7 @@ import 'package:eyes_mobile/features/assistive_feedback/infrastructure/system_as
 import 'package:eyes_mobile/features/calibration/application/calibration_event_sink.dart';
 import 'package:eyes_mobile/features/calibration/application/calibration_recorder.dart';
 import 'package:eyes_mobile/features/calibration/domain/calibration_configuration.dart';
-import 'package:eyes_mobile/features/calibration/infrastructure/developer_log_calibration_event_sink.dart';
+import 'package:eyes_mobile/features/calibration/infrastructure/android_log_calibration_event_sink.dart';
 import 'package:eyes_mobile/features/calibration/infrastructure/platform_calibration_configuration_source.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_controller.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_worker.dart';
@@ -67,7 +67,7 @@ Future<void> bootstrap(AppEnvironment environment) async {
   final calibrationRecorder = CalibrationRecorder(
     calibrationConfiguration,
     calibrationConfiguration.enabled
-        ? const DeveloperLogCalibrationEventSink()
+        ? const AndroidLogCalibrationEventSink()
         : const NoopCalibrationEventSink(),
   )..start();
 

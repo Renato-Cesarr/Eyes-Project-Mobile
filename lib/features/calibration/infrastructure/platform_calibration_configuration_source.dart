@@ -12,24 +12,21 @@ final class CalibrationConfigurationException implements Exception {
 final class PlatformCalibrationConfigurationSource {
   const PlatformCalibrationConfigurationSource([
     this._channel = const MethodChannel(_channelName),
-    this.compiledForCalibration = _defaultCompiledForCalibration,
+    this.platformLookupEnabled = true,
   ]);
 
   static const _channelName = 'br.com.eyesproject.mobile/calibration';
-  static const _defaultCompiledForCalibration = bool.fromEnvironment(
-    'EYES_CALIBRATION',
-  );
+  static const _nativeRegistrationAttempts = 4;
+  static const _nativeRegistrationRetryDelay = Duration(milliseconds: 50);
 
   final MethodChannel _channel;
-  final bool compiledForCalibration;
+  final bool platformLookupEnabled;
 
   Future<CalibrationConfiguration> load() async {
-    if (!compiledForCalibration) {
+    if (!platformLookupEnabled) {
       return const CalibrationConfiguration.disabled();
     }
-    final raw = await _channel.invokeMapMethod<String, Object?>(
-      'getSessionConfiguration',
-    );
+    final raw = await _loadNativeConfiguration();
     if (raw == null || raw['enabled'] != true) {
       return const CalibrationConfiguration.disabled();
     }
@@ -63,6 +60,22 @@ final class PlatformCalibrationConfigurationSource {
         'invalid-calibration-configuration',
       );
     }
+  }
+
+  Future<Map<String, Object?>?> _loadNativeConfiguration() async {
+    for (var attempt = 1; attempt <= _nativeRegistrationAttempts; attempt++) {
+      try {
+        return await _channel.invokeMapMethod<String, Object?>(
+          'getSessionConfiguration',
+        );
+      } on MissingPluginException {
+        if (attempt == _nativeRegistrationAttempts) {
+          rethrow;
+        }
+        await Future<void>.delayed(_nativeRegistrationRetryDelay);
+      }
+    }
+    return null;
   }
 
   String _requiredString(Map<String, Object?> raw, String key) {

@@ -14,7 +14,7 @@ void main() {
         .setMockMethodCallHandler(channel, null);
   });
 
-  test('build comum não consulta configuração nativa', () async {
+  test('lookup desabilitado não consulta configuração nativa', () async {
     var calls = 0;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
@@ -31,7 +31,7 @@ void main() {
     expect(calls, 0);
   });
 
-  test('mapeia cenário nativo somente no build de calibração', () async {
+  test('mapeia cenário autorizado pelo canal nativo', () async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
           expect(call.method, 'getSessionConfiguration');

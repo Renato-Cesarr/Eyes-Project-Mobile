@@ -247,8 +247,11 @@ Nenhum consumidor de upload foi habilitado nesta entrega. Consulte o
 ## Calibração científica da proximidade
 
 A instrumentação da REN-37 é desabilitada por padrão e não faz parte da
-experiência do usuário. Ela exige simultaneamente um build Profile com
-`EYES_CALIBRATION=true` e um cenário estruturado iniciado por ADB. As coletas
+experiência do usuário. Ela exige simultaneamente um APK Android de diagnóstico
+(Profile/Debug, marcado como `debuggable`) e um cenário estruturado iniciado por
+ADB. O script usa Profile e mantém `EYES_CALIBRATION=true` como declaração
+explícita da finalidade do build. APKs Release rejeitam a ativação no código
+nativo, inclusive diante de uma intent forjada. As coletas
 contêm somente faixas, classes, caixas normalizadas e durações; imagens, vídeo,
 áudio, nomes e texto livre não são registrados.
 
