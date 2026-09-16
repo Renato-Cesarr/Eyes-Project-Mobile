@@ -60,7 +60,7 @@ $validEvents = [System.Collections.Generic.List[string]]::new()
 $rawLog = if (Test-Path -LiteralPath $rawLogPath) {
     Get-Content -LiteralPath $rawLogPath
 } else {
-    Invoke-Adb logcat -d -v raw
+    Invoke-Adb -Arguments @('logcat', '-d', '-v', 'raw')
 }
 foreach ($line in $rawLog) {
     $markerIndex = $line.IndexOf($marker, [System.StringComparison]::Ordinal)
@@ -83,8 +83,8 @@ $validEvents | Set-Content -LiteralPath $jsonlPath -Encoding utf8
 $batteryEndRaw = Invoke-Adb shell dumpsys battery | Out-String
 $thermalEnd = Invoke-Adb shell dumpsys thermalservice | Out-String
 $memoryEnd = Invoke-Adb shell dumpsys meminfo $package | Out-String
-$crashLog = Invoke-Adb logcat -d -b crash -v brief | Out-String
-$eventsLog = Invoke-Adb logcat -d -b events -v brief | Out-String
+$crashLog = Invoke-Adb -Arguments @('logcat', '-d', '-b', 'crash', '-v', 'brief') | Out-String
+$eventsLog = Invoke-Adb -Arguments @('logcat', '-d', '-b', 'events', '-v', 'brief') | Out-String
 $thermalStatusMatch = [regex]::Match($thermalEnd, '(?im)Thermal Status:\s*(\d+)')
 $totalPssMatch = [regex]::Match($memoryEnd, '(?im)TOTAL PSS:\s*(\d+)')
 $totalRssMatch = [regex]::Match($memoryEnd, '(?im)TOTAL RSS:\s*(\d+)')

@@ -1,19 +1,20 @@
 package br.com.eyesproject.mobile
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.media.AudioAttributes
 import android.os.Build
 import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.util.Log
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
-        super.configureFlutterEngine(flutterEngine)
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             HAPTICS_CHANNEL,
@@ -38,10 +39,27 @@ class MainActivity : FlutterActivity() {
             CALIBRATION_CHANNEL,
         ).setMethodCallHandler { call, result ->
             when (call.method) {
-                "getSessionConfiguration" -> result.success(calibrationConfiguration())
+                "getSessionConfiguration" -> {
+                    val configuration = calibrationConfiguration()
+                    result.success(configuration)
+                }
+                "emitEvent" -> {
+                    val payload = call.argument<String>("payload")
+                    if (payload.isNullOrBlank()) {
+                        result.error(
+                            "invalid_calibration_event",
+                            "Calibration payload must not be blank.",
+                            null,
+                        )
+                        return@setMethodCallHandler
+                    }
+                    Log.i(CALIBRATION_LOG_TAG, payload)
+                    result.success(null)
+                }
                 else -> result.notImplemented()
             }
         }
+        super.configureFlutterEngine(flutterEngine)
     }
 
     private fun systemVibrator(): Vibrator =
@@ -99,7 +117,10 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun calibrationConfiguration(): Map<String, Any?> = mapOf(
-        "enabled" to intent.getBooleanExtra("calibrationEnabled", false),
+        "enabled" to (
+            isDiagnosticsBuild() &&
+                intent.getBooleanExtra("calibrationEnabled", false)
+            ),
         "sessionId" to intent.getStringExtra("calibrationSessionId"),
         "scenarioId" to intent.getStringExtra("calibrationScenarioId"),
         "datasetSplit" to intent.getStringExtra("calibrationDatasetSplit"),
@@ -109,10 +130,14 @@ class MainActivity : FlutterActivity() {
         "occlusion" to intent.getStringExtra("calibrationOcclusion"),
     )
 
+    private fun isDiagnosticsBuild(): Boolean =
+        applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+
     private companion object {
         const val HAPTICS_CHANNEL =
             "br.com.eyesproject.mobile/assistive_haptics"
         const val CALIBRATION_CHANNEL =
             "br.com.eyesproject.mobile/calibration"
+        const val CALIBRATION_LOG_TAG = "EyesCalibration"
     }
 }

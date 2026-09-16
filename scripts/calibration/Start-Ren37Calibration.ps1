@@ -97,7 +97,7 @@ Invoke-Adb install -r $apkPath | Out-Null
 $batteryStartRaw = Invoke-Adb shell dumpsys battery | Out-String
 $adbExecutable = (Get-Command adb -ErrorAction Stop).Source
 Invoke-Adb logcat -c | Out-Null
-$logcatArguments = @('-s', $Serial, 'logcat', '-v', 'raw', 'flutter:I', '*:S')
+$logcatArguments = @('-s', $Serial, 'logcat', '-v', 'raw', 'EyesCalibration:I', 'flutter:I', '*:S')
 $logcatProcess = Start-Process `
     -FilePath $adbExecutable `
     -ArgumentList $logcatArguments `

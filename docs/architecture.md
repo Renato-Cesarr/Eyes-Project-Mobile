@@ -143,8 +143,9 @@ cartão semântico. Detecções brutas e telemetria continuam fora do TalkBack.
 ## Instrumentação de calibração
 
 A REN-37 adiciona um recorder opt-in que permanece inerte em builds comuns. Um
-APK compilado explicitamente para calibração ainda exige metadados estruturados
-de cenário fornecidos por ADB. O recorder observa somente batches de detecção,
+APK de diagnóstico (`debuggable`) ainda exige metadados estruturados de cenário
+fornecidos por ADB; APKs Release recusam a ativação no canal Android. O recorder
+observa somente batches de detecção,
 avaliações de proximidade, alertas e o callback nativo de início do TTS; ele
 nunca recebe pixels.
 

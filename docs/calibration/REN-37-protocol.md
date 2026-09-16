@@ -9,8 +9,9 @@ ao usuário.
 
 ## Princípios de validade
 
-1. Usar build Flutter **Profile**, flavor `dev`, com
-   `EYES_CALIBRATION=true`. Debug não é aceito para latência.
+1. Usar build Flutter **Profile**, flavor `dev`. O script também declara
+   `EYES_CALIBRATION=true` para identificar a finalidade do build. Debug não é
+   aceito para latência e Release rejeita a telemetria no canal Android.
 2. Manter o processamento offline e bloquear rede durante a sessão.
 3. Não registrar imagens, vídeo, áudio, nomes de pessoas ou texto livre.
 4. Separar fisicamente o conjunto de calibração do conjunto de avaliação:
