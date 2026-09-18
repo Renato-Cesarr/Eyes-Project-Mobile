@@ -183,6 +183,23 @@ final class _OnboardingContent extends ConsumerWidget {
                   const SizedBox(height: 24),
                   _FeedbackTests(feedback: feedback),
                 ],
+                if (state.step == OnboardingStep.privacy) ...<Widget>[
+                  const SizedBox(height: 20),
+                  OutlinedButton.icon(
+                    onPressed: state.isBusy
+                        ? null
+                        : () => context.pushNamed(
+                            AppRoutes.account,
+                            queryParameters: const <String, String>{
+                              'source': 'onboarding',
+                            },
+                          ),
+                    icon: const ExcludeSemantics(
+                      child: Icon(Icons.account_circle_outlined),
+                    ),
+                    label: Text(l10n.onboardingOptionalAccount),
+                  ),
+                ],
                 if (state.step == OnboardingStep.camera) ...<Widget>[
                   const SizedBox(height: 24),
                   _CameraPermissionStatus(state: state),

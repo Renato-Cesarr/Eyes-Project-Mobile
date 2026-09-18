@@ -103,6 +103,192 @@ abstract class AppLocalizations {
   /// **'Eyes'**
   String get appName;
 
+  /// No description provided for @accountTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conta e sincronização'**
+  String get accountTitle;
+
+  /// No description provided for @openAccountSettings.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conta e sincronização'**
+  String get openAccountSettings;
+
+  /// No description provided for @onboardingOptionalAccount.
+  ///
+  /// In pt, this message translates to:
+  /// **'Configurar conta opcional'**
+  String get onboardingOptionalAccount;
+
+  /// No description provided for @accountLoading.
+  ///
+  /// In pt, this message translates to:
+  /// **'Carregando conta e sincronização'**
+  String get accountLoading;
+
+  /// No description provided for @accountLoadError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível carregar a conta. A varredura offline continua disponível.'**
+  String get accountLoadError;
+
+  /// No description provided for @accountOptionalHeading.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conta opcional'**
+  String get accountOptionalHeading;
+
+  /// No description provided for @accountConnectedHeading.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conta conectada'**
+  String get accountConnectedHeading;
+
+  /// No description provided for @accountOfflineGuarantee.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entrar é opcional. A câmera, o reconhecimento, a voz e a vibração continuam funcionando localmente sem conta e sem internet.'**
+  String get accountOfflineGuarantee;
+
+  /// No description provided for @emailLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'E-mail'**
+  String get emailLabel;
+
+  /// No description provided for @emailHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'nome@exemplo.com'**
+  String get emailHint;
+
+  /// No description provided for @emailRequired.
+  ///
+  /// In pt, this message translates to:
+  /// **'Informe o e-mail.'**
+  String get emailRequired;
+
+  /// No description provided for @emailInvalid.
+  ///
+  /// In pt, this message translates to:
+  /// **'Informe um e-mail válido.'**
+  String get emailInvalid;
+
+  /// No description provided for @passwordLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Senha'**
+  String get passwordLabel;
+
+  /// No description provided for @passwordRequired.
+  ///
+  /// In pt, this message translates to:
+  /// **'Informe a senha.'**
+  String get passwordRequired;
+
+  /// No description provided for @showPassword.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mostrar senha'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ocultar senha'**
+  String get hidePassword;
+
+  /// No description provided for @accountSignIn.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entrar'**
+  String get accountSignIn;
+
+  /// No description provided for @accountSigningIn.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entrando'**
+  String get accountSigningIn;
+
+  /// No description provided for @accountContinueOffline.
+  ///
+  /// In pt, this message translates to:
+  /// **'Continuar para a varredura offline'**
+  String get accountContinueOffline;
+
+  /// No description provided for @accountReviewAndRetry.
+  ///
+  /// In pt, this message translates to:
+  /// **'Revisar dados e tentar novamente'**
+  String get accountReviewAndRetry;
+
+  /// No description provided for @accountSignedIn.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conta conectada. A varredura offline permanece disponível.'**
+  String get accountSignedIn;
+
+  /// No description provided for @accountSignedOut.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sessão remota encerrada. Seus recursos locais continuam disponíveis.'**
+  String get accountSignedOut;
+
+  /// No description provided for @accountSignOut.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sair da conta'**
+  String get accountSignOut;
+
+  /// No description provided for @syncConsentLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Permitir sincronização de metadados'**
+  String get syncConsentLabel;
+
+  /// No description provided for @syncConsentDescription.
+  ///
+  /// In pt, this message translates to:
+  /// **'Quando ativado, o Eyes poderá sincronizar apenas dados operacionais permitidos. Imagens, vídeos, áudios e senhas nunca entram na fila.'**
+  String get syncConsentDescription;
+
+  /// No description provided for @syncMetadataOnlyNotice.
+  ///
+  /// In pt, this message translates to:
+  /// **'A sincronização não altera o processamento offline da câmera e pode ser revogada a qualquer momento.'**
+  String get syncMetadataOnlyNotice;
+
+  /// No description provided for @syncConsentDialogTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Permitir sincronização?'**
+  String get syncConsentDialogTitle;
+
+  /// No description provided for @syncConsentDialogMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'Somente metadados permitidos poderão ser enviados quando houver conexão. Imagens, vídeos e áudios permanecem no aparelho.'**
+  String get syncConsentDialogMessage;
+
+  /// No description provided for @syncConsentConfirm.
+  ///
+  /// In pt, this message translates to:
+  /// **'Permitir'**
+  String get syncConsentConfirm;
+
+  /// No description provided for @syncConsentEnabled.
+  ///
+  /// In pt, this message translates to:
+  /// **'Consentimento de sincronização ativado.'**
+  String get syncConsentEnabled;
+
+  /// No description provided for @syncConsentRevoked.
+  ///
+  /// In pt, this message translates to:
+  /// **'Consentimento revogado e fila local de sincronização apagada.'**
+  String get syncConsentRevoked;
+
   /// No description provided for @onboardingTitle.
   ///
   /// In pt, this message translates to:
