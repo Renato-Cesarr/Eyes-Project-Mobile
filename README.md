@@ -205,6 +205,24 @@ Ao testar manualmente, habilite TalkBack e confirme que cada alerta é falado um
 vibração remove os haptics não essenciais. Consulte o
 [ADR 0007](docs/adr/0007-deterministic-multimodal-feedback.md).
 
+## Conta opcional e modo offline
+
+A conta nunca bloqueia o recurso assistivo. O usuário pode abrir a varredura
+sem login e, se desejar, acessar **Conta e sincronização** pelo onboarding,
+início ou configurações. O token retornado por `/api/v1/auth/login` fica no
+`flutter_secure_storage`; senhas não são armazenadas.
+
+Requisições autenticadas recebem o header Bearer por interceptor. Uma resposta
+`401` encerra somente a sessão remota e apresenta recuperação acessível, sem
+desligar câmera, IA, voz, vibração ou preferências locais. Não há refresh token
+no MVP.
+
+A sincronização permanece desativada até consentimento explícito. Sua fila
+local é idempotente, limitada a metadados escalares e rejeita imagens, frames,
+vídeos, áudios, senhas e tokens. Revogar o consentimento apaga itens pendentes.
+Nenhum consumidor de upload foi habilitado nesta entrega. Consulte o
+[ADR 0013](docs/adr/0013-optional-account-and-consented-sync.md).
+
 ## Fluxo Git
 
 As funcionalidades nascem de `dev`, usam `feat/<linear-id>-<nome-curto>` e

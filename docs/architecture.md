@@ -251,3 +251,26 @@ conteúdo e permanecer sem câmera até decidir concedê-la.
 Login e rede nunca bloqueiam a função local. A conclusão usa explicitamente a
 ação “continuar sem conta no modo offline”. Ajuda e Segurança permite repetir o
 onboarding e alcançar novamente os testes de feedback. Consulte o ADR 0010.
+
+## Conta opcional e sincronização consentida
+
+A feature `account` orquestra login, consentimento e apresentação, mas não é
+dependência das features `scanning`, `object_detection`, `proximity` ou
+`assistive_feedback`. O contrato de sessão fica em `core/session` porque também
+é consumido pelo interceptor HTTP:
+
+```text
+AccountPage → AccountController → AuthGateway → Dio
+                    │
+                    ├── RemoteSessionStore ← flutter_secure_storage
+                    ├── SyncPreferencesRepository ← SharedPreferences
+                    └── MetadataSyncQueue ← SharedPreferences
+
+Dio → BearerSessionInterceptor → RemoteSessionStore
+              401 ─────────────→ encerra só a sessão remota
+```
+
+O consentimento inicia desativado, exige confirmação explícita e pode ser
+revogado. A fila é idempotente e aceita apenas valores escalares; mídia,
+credenciais e tokens são recusados. Nenhum envio é realizado até que exista um
+contrato de sincronização aprovado no backend. Consulte o ADR 0013.
