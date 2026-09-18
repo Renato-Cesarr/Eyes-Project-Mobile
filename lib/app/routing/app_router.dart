@@ -1,3 +1,4 @@
+import 'package:eyes_mobile/features/account/presentation/account_page.dart';
 import 'package:eyes_mobile/features/assistive_feedback/presentation/feedback_settings_page.dart';
 import 'package:eyes_mobile/features/help/presentation/help_and_safety_page.dart';
 import 'package:eyes_mobile/features/home/presentation/home_page.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 abstract final class AppRoutes {
+  static const String account = 'account';
   static const String entry = 'entry';
   static const String home = 'home';
   static const String onboarding = 'onboarding';
@@ -41,6 +43,14 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
         path: '/onboarding',
         builder: (BuildContext context, GoRouterState state) => OnboardingPage(
           replay: state.uri.queryParameters['replay'] == 'true',
+        ),
+      ),
+      GoRoute(
+        name: AppRoutes.account,
+        path: '/account',
+        builder: (BuildContext context, GoRouterState state) => AccountPage(
+          returnToOnboarding:
+              state.uri.queryParameters['source'] == 'onboarding',
         ),
       ),
       GoRoute(

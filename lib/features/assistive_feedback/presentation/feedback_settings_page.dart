@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:eyes_mobile/app/routing/app_router.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_controller.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_state.dart';
 import 'package:eyes_mobile/features/assistive_feedback/domain/feedback_preferences.dart';
 import 'package:eyes_mobile/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 final class FeedbackSettingsPage extends ConsumerWidget {
   const FeedbackSettingsPage({super.key});
@@ -175,6 +177,14 @@ final class _SettingsContent extends ConsumerWidget {
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () => context.pushNamed(AppRoutes.account),
+                  icon: const ExcludeSemantics(
+                    child: Icon(Icons.account_circle_outlined),
+                  ),
+                  label: Text(l10n.openAccountSettings),
                 ),
                 const SizedBox(height: 24),
                 OutlinedButton(

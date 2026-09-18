@@ -78,6 +78,14 @@ final class _HomeContent extends ConsumerWidget {
                   label: Text(l10n.openFeedbackSettings),
                 ),
                 const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () => context.pushNamed(AppRoutes.account),
+                  icon: const ExcludeSemantics(
+                    child: Icon(Icons.account_circle_outlined),
+                  ),
+                  label: Text(l10n.openAccountSettings),
+                ),
+                const SizedBox(height: 12),
                 Semantics(
                   header: true,
                   child: Text(

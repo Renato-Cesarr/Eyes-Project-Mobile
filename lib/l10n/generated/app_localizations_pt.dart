@@ -12,6 +12,107 @@ class AppLocalizationsPt extends AppLocalizations {
   String get appName => 'Eyes';
 
   @override
+  String get accountTitle => 'Conta e sincronização';
+
+  @override
+  String get openAccountSettings => 'Conta e sincronização';
+
+  @override
+  String get onboardingOptionalAccount => 'Configurar conta opcional';
+
+  @override
+  String get accountLoading => 'Carregando conta e sincronização';
+
+  @override
+  String get accountLoadError =>
+      'Não foi possível carregar a conta. A varredura offline continua disponível.';
+
+  @override
+  String get accountOptionalHeading => 'Conta opcional';
+
+  @override
+  String get accountConnectedHeading => 'Conta conectada';
+
+  @override
+  String get accountOfflineGuarantee =>
+      'Entrar é opcional. A câmera, o reconhecimento, a voz e a vibração continuam funcionando localmente sem conta e sem internet.';
+
+  @override
+  String get emailLabel => 'E-mail';
+
+  @override
+  String get emailHint => 'nome@exemplo.com';
+
+  @override
+  String get emailRequired => 'Informe o e-mail.';
+
+  @override
+  String get emailInvalid => 'Informe um e-mail válido.';
+
+  @override
+  String get passwordLabel => 'Senha';
+
+  @override
+  String get passwordRequired => 'Informe a senha.';
+
+  @override
+  String get showPassword => 'Mostrar senha';
+
+  @override
+  String get hidePassword => 'Ocultar senha';
+
+  @override
+  String get accountSignIn => 'Entrar';
+
+  @override
+  String get accountSigningIn => 'Entrando';
+
+  @override
+  String get accountContinueOffline => 'Continuar para a varredura offline';
+
+  @override
+  String get accountReviewAndRetry => 'Revisar dados e tentar novamente';
+
+  @override
+  String get accountSignedIn =>
+      'Conta conectada. A varredura offline permanece disponível.';
+
+  @override
+  String get accountSignedOut =>
+      'Sessão remota encerrada. Seus recursos locais continuam disponíveis.';
+
+  @override
+  String get accountSignOut => 'Sair da conta';
+
+  @override
+  String get syncConsentLabel => 'Permitir sincronização de metadados';
+
+  @override
+  String get syncConsentDescription =>
+      'Quando ativado, o Eyes poderá sincronizar apenas dados operacionais permitidos. Imagens, vídeos, áudios e senhas nunca entram na fila.';
+
+  @override
+  String get syncMetadataOnlyNotice =>
+      'A sincronização não altera o processamento offline da câmera e pode ser revogada a qualquer momento.';
+
+  @override
+  String get syncConsentDialogTitle => 'Permitir sincronização?';
+
+  @override
+  String get syncConsentDialogMessage =>
+      'Somente metadados permitidos poderão ser enviados quando houver conexão. Imagens, vídeos e áudios permanecem no aparelho.';
+
+  @override
+  String get syncConsentConfirm => 'Permitir';
+
+  @override
+  String get syncConsentEnabled => 'Consentimento de sincronização ativado.';
+
+  @override
+  String get syncConsentRevoked =>
+      'Consentimento revogado e fila local de sincronização apagada.';
+
+  @override
   String get onboardingTitle => 'Primeiros passos';
 
   @override
@@ -705,6 +806,107 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get appName => 'Eyes';
+
+  @override
+  String get accountTitle => 'Conta e sincronização';
+
+  @override
+  String get openAccountSettings => 'Conta e sincronização';
+
+  @override
+  String get onboardingOptionalAccount => 'Configurar conta opcional';
+
+  @override
+  String get accountLoading => 'Carregando conta e sincronização';
+
+  @override
+  String get accountLoadError =>
+      'Não foi possível carregar a conta. A varredura offline continua disponível.';
+
+  @override
+  String get accountOptionalHeading => 'Conta opcional';
+
+  @override
+  String get accountConnectedHeading => 'Conta conectada';
+
+  @override
+  String get accountOfflineGuarantee =>
+      'Entrar é opcional. A câmera, o reconhecimento, a voz e a vibração continuam funcionando localmente sem conta e sem internet.';
+
+  @override
+  String get emailLabel => 'E-mail';
+
+  @override
+  String get emailHint => 'nome@exemplo.com';
+
+  @override
+  String get emailRequired => 'Informe o e-mail.';
+
+  @override
+  String get emailInvalid => 'Informe um e-mail válido.';
+
+  @override
+  String get passwordLabel => 'Senha';
+
+  @override
+  String get passwordRequired => 'Informe a senha.';
+
+  @override
+  String get showPassword => 'Mostrar senha';
+
+  @override
+  String get hidePassword => 'Ocultar senha';
+
+  @override
+  String get accountSignIn => 'Entrar';
+
+  @override
+  String get accountSigningIn => 'Entrando';
+
+  @override
+  String get accountContinueOffline => 'Continuar para a varredura offline';
+
+  @override
+  String get accountReviewAndRetry => 'Revisar dados e tentar novamente';
+
+  @override
+  String get accountSignedIn =>
+      'Conta conectada. A varredura offline permanece disponível.';
+
+  @override
+  String get accountSignedOut =>
+      'Sessão remota encerrada. Seus recursos locais continuam disponíveis.';
+
+  @override
+  String get accountSignOut => 'Sair da conta';
+
+  @override
+  String get syncConsentLabel => 'Permitir sincronização de metadados';
+
+  @override
+  String get syncConsentDescription =>
+      'Quando ativado, o Eyes poderá sincronizar apenas dados operacionais permitidos. Imagens, vídeos, áudios e senhas nunca entram na fila.';
+
+  @override
+  String get syncMetadataOnlyNotice =>
+      'A sincronização não altera o processamento offline da câmera e pode ser revogada a qualquer momento.';
+
+  @override
+  String get syncConsentDialogTitle => 'Permitir sincronização?';
+
+  @override
+  String get syncConsentDialogMessage =>
+      'Somente metadados permitidos poderão ser enviados quando houver conexão. Imagens, vídeos e áudios permanecem no aparelho.';
+
+  @override
+  String get syncConsentConfirm => 'Permitir';
+
+  @override
+  String get syncConsentEnabled => 'Consentimento de sincronização ativado.';
+
+  @override
+  String get syncConsentRevoked =>
+      'Consentimento revogado e fila local de sincronização apagada.';
 
   @override
   String get onboardingTitle => 'Primeiros passos';
