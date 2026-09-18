@@ -5,8 +5,11 @@ import 'package:eyes_mobile/app/config/app_environment.dart';
 import 'package:eyes_mobile/core/logging/secure_logger.dart';
 import 'package:eyes_mobile/core/network/dio_provider.dart';
 import 'package:eyes_mobile/core/network/safe_http_logging_interceptor.dart';
+import 'package:eyes_mobile/core/session/remote_session_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../support/fake_account.dart';
 
 final class _StaticAdapter implements HttpClientAdapter {
   _StaticAdapter(this.statusCode);
@@ -34,13 +37,15 @@ final class _StaticAdapter implements HttpClientAdapter {
 }
 
 void main() {
-  test('Dio provider applies safe defaults and logging interceptor', () {
+  test('Dio provider applies safe defaults and logging interceptor', () async {
     final environment = AppEnvironment.dev();
     final logger = SecureLogger(environment);
+    final sessionStore = InMemoryRemoteSessionStore();
     final container = ProviderContainer(
       overrides: [
         appEnvironmentProvider.overrideWithValue(environment),
         secureLoggerProvider.overrideWithValue(logger),
+        remoteSessionStoreProvider.overrideWithValue(sessionStore),
       ],
     );
 
@@ -57,6 +62,7 @@ void main() {
     );
 
     container.dispose();
+    await sessionStore.dispose();
   });
 
   test('safe interceptor handles successful and failed requests', () async {

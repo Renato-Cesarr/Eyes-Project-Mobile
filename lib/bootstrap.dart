@@ -6,7 +6,16 @@ import 'package:eyes_mobile/core/accessibility/accessible_feedback_service.dart'
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
 import 'package:eyes_mobile/core/error/global_error_view.dart';
 import 'package:eyes_mobile/core/logging/secure_logger.dart';
+import 'package:eyes_mobile/core/network/dio_provider.dart';
+import 'package:eyes_mobile/core/persistence/secure_remote_session_store.dart';
 import 'package:eyes_mobile/core/persistence/storage_providers.dart';
+import 'package:eyes_mobile/core/session/remote_session_store.dart';
+import 'package:eyes_mobile/features/account/application/auth_gateway.dart';
+import 'package:eyes_mobile/features/account/application/metadata_sync_queue.dart';
+import 'package:eyes_mobile/features/account/application/sync_preferences_repository.dart';
+import 'package:eyes_mobile/features/account/infrastructure/dio_auth_gateway.dart';
+import 'package:eyes_mobile/features/account/infrastructure/shared_preferences_metadata_sync_queue.dart';
+import 'package:eyes_mobile/features/account/infrastructure/shared_preferences_sync_preferences_repository.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_controller.dart';
 import 'package:eyes_mobile/features/assistive_feedback/infrastructure/flutter_tts_speech_gateway.dart';
 import 'package:eyes_mobile/features/assistive_feedback/infrastructure/shared_preferences_feedback_repository.dart';
@@ -57,6 +66,28 @@ Future<void> bootstrap(AppEnvironment environment) async {
             appEnvironmentProvider.overrideWithValue(environment),
             secureLoggerProvider.overrideWithValue(logger),
             appErrorReporterProvider.overrideWithValue(errorReporter),
+            remoteSessionStoreProvider.overrideWith((Ref ref) {
+              final store = SecureRemoteSessionStore(
+                ref.read(secureStorageProvider),
+                logger,
+              );
+              ref.onDispose(() => unawaited(store.dispose()));
+              return store;
+            }),
+            authGatewayProvider.overrideWith(
+              (Ref ref) => DioAuthGateway(ref.read(dioProvider)),
+            ),
+            syncPreferencesRepositoryProvider.overrideWith((Ref ref) {
+              return SharedPreferencesSyncPreferencesRepository(
+                ref.read(sharedPreferencesProvider),
+              );
+            }),
+            metadataSyncQueueProvider.overrideWith((Ref ref) {
+              return SharedPreferencesMetadataSyncQueue(
+                ref.read(sharedPreferencesProvider),
+                ref.read(syncPreferencesRepositoryProvider),
+              );
+            }),
             accessibleFeedbackServiceProvider.overrideWith((Ref ref) {
               return SystemAccessibleFeedbackService(
                 hapticsEnabled: () =>
