@@ -16,6 +16,8 @@ import 'package:eyes_mobile/features/scanning/application/camera_gateway.dart';
 import 'package:eyes_mobile/features/scanning/application/scan_transition_feedback.dart';
 import 'package:eyes_mobile/features/scanning/application/scan_wake_lock_gateway.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_permission_state.dart';
+import 'package:eyes_mobile/features/scanning/infrastructure/camera_preview_surface.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../../support/fake_assistive_feedback.dart';
@@ -359,6 +361,32 @@ void main() {
       ScanTransition.paused,
       ScanTransition.ended,
     ]);
+  });
+
+  testWidgets('uses a camera-first stage with compact persistent controls', (
+    WidgetTester tester,
+  ) async {
+    await pumpApp(tester, _WidgetCameraGateway());
+
+    await tester.tap(find.text('Iniciar varredura'));
+    await tester.pumpAndSettle();
+
+    final stage = find.byKey(const ValueKey<String>('assistive-scan-stage'));
+    final dock = find.byKey(const ValueKey<String>('scan-control-dock'));
+    expect(stage, findsOneWidget);
+    expect(dock, findsOneWidget);
+    expect(tester.getSize(stage).height, greaterThan(400));
+    expect(tester.getBottomRight(dock).dy, lessThanOrEqualTo(600));
+
+    final preview = tester.widget<CameraPreviewSurface>(
+      find.byType(CameraPreviewSurface),
+    );
+    expect(preview.fit, BoxFit.cover);
+    expect(preview.borderRadius, BorderRadius.zero);
+    expect(find.text('Recursos ativos'), findsNothing);
+    expect(find.textContaining('FPS'), findsNothing);
+    expect(find.text('Pausar varredura'), findsOneWidget);
+    expect(find.text('Encerrar varredura'), findsOneWidget);
   });
 
   testWidgets('remains usable with 200 percent text scaling', (
