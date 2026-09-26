@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:eyes_mobile/app/app.dart';
 import 'package:eyes_mobile/app/config/app_environment.dart';
 import 'package:eyes_mobile/core/accessibility/accessible_feedback_service.dart';
+import 'package:eyes_mobile/core/design_system/licenses/font_license_registry.dart';
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
 import 'package:eyes_mobile/core/error/global_error_view.dart';
 import 'package:eyes_mobile/core/logging/secure_logger.dart';
@@ -39,6 +40,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> bootstrap(AppEnvironment environment) async {
   WidgetsFlutterBinding.ensureInitialized();
+  await registerEyesFontLicenses();
 
   final logger = SecureLogger(environment)..initialize();
   final errorReporter = AppErrorReporter(logger);
