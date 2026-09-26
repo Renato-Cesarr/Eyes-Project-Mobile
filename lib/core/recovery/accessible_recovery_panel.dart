@@ -1,3 +1,6 @@
+import 'package:eyes_mobile/core/design_system/components/eyes_button.dart';
+import 'package:eyes_mobile/core/design_system/components/eyes_card.dart';
+import 'package:eyes_mobile/core/design_system/tokens/eyes_layout_tokens.dart';
 import 'package:flutter/material.dart';
 
 final class AccessibleRecoveryPanel extends StatefulWidget {
@@ -62,70 +65,72 @@ final class _AccessibleRecoveryPanelState
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Card(
-      color: widget.blocking
+    final layout = context.eyesLayout;
+    return EyesCard(
+      backgroundColor: widget.blocking
           ? colorScheme.errorContainer
           : colorScheme.secondaryContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Focus(
-              focusNode: _summaryFocus,
-              child: Semantics(
-                container: true,
-                header: true,
-                liveRegion: true,
-                label: '${widget.title}. ${widget.message}',
-                excludeSemantics: true,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Icon(
-                          widget.blocking
-                              ? Icons.error_outline
-                              : Icons.info_outline,
-                          color: widget.blocking
-                              ? colorScheme.onErrorContainer
-                              : colorScheme.onSecondaryContainer,
+      padding: EdgeInsets.all(layout.spaceXl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Focus(
+            focusNode: _summaryFocus,
+            child: Semantics(
+              container: true,
+              header: true,
+              liveRegion: true,
+              label: '${widget.title}. ${widget.message}',
+              excludeSemantics: true,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Icon(
+                        widget.blocking
+                            ? Icons.error_outline
+                            : Icons.info_outline,
+                        color: widget.blocking
+                            ? colorScheme.onErrorContainer
+                            : colorScheme.onSecondaryContainer,
+                      ),
+                      SizedBox(width: layout.spaceMd),
+                      Expanded(
+                        child: Text(
+                          widget.title,
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.w700),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            widget.title,
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      widget.message,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: layout.spaceSm),
+                  Text(
+                    widget.message,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
-            FilledButton(
-              onPressed: widget.onPrimaryAction,
-              child: Text(widget.primaryActionLabel),
+          ),
+          SizedBox(height: layout.spaceXl),
+          EyesButton(
+            label: widget.primaryActionLabel,
+            onPressed: widget.onPrimaryAction,
+            expand: true,
+          ),
+          if (widget.secondaryActionLabel case final label?) ...<Widget>[
+            SizedBox(height: layout.spaceSm),
+            EyesButton(
+              label: label,
+              onPressed: widget.onSecondaryAction,
+              variant: EyesButtonVariant.text,
+              expand: true,
             ),
-            if (widget.secondaryActionLabel case final label?) ...<Widget>[
-              const SizedBox(height: 8),
-              TextButton(
-                onPressed: widget.onSecondaryAction,
-                child: Text(label),
-              ),
-            ],
           ],
-        ),
+        ],
       ),
     );
   }

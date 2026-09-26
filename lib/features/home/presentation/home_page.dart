@@ -1,5 +1,6 @@
 import 'package:eyes_mobile/app/routing/app_router.dart';
 import 'package:eyes_mobile/core/accessibility/accessible_feedback_service.dart';
+import 'package:eyes_mobile/core/design_system/eyes_design_system.dart';
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
 import 'package:eyes_mobile/features/home/application/home_controller.dart';
 import 'package:eyes_mobile/features/home/domain/home_state.dart';
@@ -21,15 +22,12 @@ final class HomePage extends ConsumerWidget {
       body: SafeArea(
         child: state.when(
           data: (HomeState data) => _HomeContent(state: data),
-          error: (Object error, StackTrace stackTrace) =>
-              _HomeError(onRetry: () => ref.invalidate(homeControllerProvider)),
-          loading: () => Center(
-            child: Semantics(
-              label: l10n.loading,
-              liveRegion: true,
-              child: const CircularProgressIndicator(),
-            ),
+          error: (Object error, StackTrace stackTrace) => EyesStateView.error(
+            title: l10n.unexpectedError,
+            actionLabel: l10n.tryAgain,
+            onAction: () => ref.invalidate(homeControllerProvider),
           ),
+          loading: () => EyesStateView.loading(title: l10n.loading),
         ),
       ),
     );
@@ -62,28 +60,27 @@ final class _HomeContent extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                FilledButton.icon(
+                EyesButton(
+                  label: l10n.openCamera,
                   onPressed: () => context.pushNamed(AppRoutes.camera),
-                  icon: const ExcludeSemantics(
-                    child: Icon(Icons.camera_alt_outlined),
-                  ),
-                  label: Text(l10n.openCamera),
+                  icon: Icons.camera_alt_outlined,
+                  expand: true,
                 ),
                 const SizedBox(height: 12),
-                OutlinedButton.icon(
+                EyesButton(
+                  label: l10n.openFeedbackSettings,
                   onPressed: () => context.pushNamed(AppRoutes.settings),
-                  icon: const ExcludeSemantics(
-                    child: Icon(Icons.settings_outlined),
-                  ),
-                  label: Text(l10n.openFeedbackSettings),
+                  icon: Icons.settings_outlined,
+                  variant: EyesButtonVariant.outlined,
+                  expand: true,
                 ),
                 const SizedBox(height: 12),
-                OutlinedButton.icon(
+                EyesButton(
+                  label: l10n.openAccountSettings,
                   onPressed: () => context.pushNamed(AppRoutes.account),
-                  icon: const ExcludeSemantics(
-                    child: Icon(Icons.account_circle_outlined),
-                  ),
-                  label: Text(l10n.openAccountSettings),
+                  icon: Icons.account_circle_outlined,
+                  variant: EyesButtonVariant.outlined,
+                  expand: true,
                 ),
                 const SizedBox(height: 12),
                 Semantics(
@@ -101,25 +98,19 @@ final class _HomeContent extends ConsumerWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Text(
-                      l10n.accessibilityDescription,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
+                EyesCard(
+                  child: Text(
+                    l10n.accessibilityDescription,
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
                 const SizedBox(height: 24),
-                Semantics(
-                  button: true,
-                  hint: l10n.testFeedbackHint,
+                EyesButton(
                   label: l10n.testFeedbackLabel,
-                  child: FilledButton.icon(
-                    onPressed: () => _testFeedback(context, ref),
-                    icon: const ExcludeSemantics(child: Icon(Icons.vibration)),
-                    label: Text(l10n.testFeedbackLabel),
-                  ),
+                  semanticHint: l10n.testFeedbackHint,
+                  icon: Icons.vibration,
+                  expand: true,
+                  onPressed: () => _testFeedback(context, ref),
                 ),
                 if (state.feedbackMessage
                     case final String message) ...<Widget>[
@@ -157,32 +148,5 @@ final class _HomeContent extends ConsumerWidget {
           .read(homeControllerProvider.notifier)
           .markFeedbackDelivered(l10n.feedbackUnavailable);
     }
-  }
-}
-
-final class _HomeError extends StatelessWidget {
-  const _HomeError({required this.onRetry});
-
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Semantics(
-          liveRegion: true,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(l10n.unexpectedError, textAlign: TextAlign.center),
-              const SizedBox(height: 16),
-              FilledButton(onPressed: onRetry, child: Text(l10n.tryAgain)),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

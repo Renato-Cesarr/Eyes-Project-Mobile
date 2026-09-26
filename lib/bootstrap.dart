@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:eyes_mobile/app/app.dart';
 import 'package:eyes_mobile/app/config/app_environment.dart';
+import 'package:eyes_mobile/app/routing/app_router.dart';
 import 'package:eyes_mobile/core/accessibility/accessible_feedback_service.dart';
+import 'package:eyes_mobile/core/design_system/licenses/font_license_registry.dart';
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
 import 'package:eyes_mobile/core/error/global_error_view.dart';
 import 'package:eyes_mobile/core/logging/secure_logger.dart';
@@ -39,6 +41,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> bootstrap(AppEnvironment environment) async {
   WidgetsFlutterBinding.ensureInitialized();
+  await registerEyesFontLicenses();
 
   final logger = SecureLogger(environment)..initialize();
   final errorReporter = AppErrorReporter(logger);
@@ -64,6 +67,9 @@ Future<void> bootstrap(AppEnvironment environment) async {
         ProviderScope(
           overrides: [
             appEnvironmentProvider.overrideWithValue(environment),
+            designSystemGalleryEnabledProvider.overrideWithValue(
+              !environment.isProduction,
+            ),
             secureLoggerProvider.overrideWithValue(logger),
             appErrorReporterProvider.overrideWithValue(errorReporter),
             remoteSessionStoreProvider.overrideWith((Ref ref) {

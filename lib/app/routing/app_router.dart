@@ -1,3 +1,4 @@
+import 'package:eyes_mobile/core/design_system/gallery/design_system_gallery_page.dart';
 import 'package:eyes_mobile/features/account/presentation/account_page.dart';
 import 'package:eyes_mobile/features/assistive_feedback/presentation/feedback_settings_page.dart';
 import 'package:eyes_mobile/features/help/presentation/help_and_safety_page.dart';
@@ -18,9 +19,15 @@ abstract final class AppRoutes {
   static const String camera = 'camera';
   static const String settings = 'settings';
   static const String help = 'help';
+  static const String designSystem = 'design-system';
 }
 
+final Provider<bool> designSystemGalleryEnabledProvider = Provider<bool>(
+  (Ref ref) => false,
+);
+
 final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
+  final galleryEnabled = ref.watch(designSystemGalleryEnabledProvider);
   final router = GoRouter(
     errorBuilder: (BuildContext context, GoRouterState state) =>
         const NotFoundPage(),
@@ -71,6 +78,13 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext context, GoRouterState state) =>
             const AssistiveScanPage(),
       ),
+      if (galleryEnabled)
+        GoRoute(
+          name: AppRoutes.designSystem,
+          path: '/design-system',
+          builder: (BuildContext context, GoRouterState state) =>
+              const DesignSystemGalleryPage(),
+        ),
     ],
   );
 

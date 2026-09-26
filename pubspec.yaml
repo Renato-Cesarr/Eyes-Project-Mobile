@@ -67,8 +67,20 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/licenses/
     - assets/models/efficientdet-lite0.tflite
     - assets/models/model-manifest.v1.json
+
+  fonts:
+    - family: Lexend
+      fonts:
+        - asset: assets/fonts/Lexend-Variable.ttf
+    - family: Atkinson Hyperlegible
+      fonts:
+        - asset: assets/fonts/AtkinsonHyperlegible-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/AtkinsonHyperlegible-Bold.ttf
+          weight: 700
 
   # To add assets to your application, add an assets section, like this:
   # assets:

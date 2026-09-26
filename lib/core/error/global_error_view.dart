@@ -1,3 +1,5 @@
+import 'package:eyes_mobile/app/theme/app_theme.dart';
+import 'package:eyes_mobile/core/design_system/components/eyes_state_view.dart';
 import 'package:flutter/material.dart';
 
 final class GlobalErrorView extends StatelessWidget {
@@ -5,20 +7,13 @@ final class GlobalErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: const Color(0xFFFFFFFF),
-      child: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Semantics(
-              liveRegion: true,
-              label: 'Ocorreu um erro inesperado. Feche e abra o aplicativo.',
-              child: const Text(
-                'Ocorreu um erro inesperado.\nFeche e abra o aplicativo.',
-                textAlign: TextAlign.center,
-              ),
-            ),
+    return Theme(
+      data: AppTheme.light,
+      child: const Material(
+        child: SafeArea(
+          child: EyesStateView.error(
+            title: 'Ocorreu um erro inesperado',
+            message: 'Feche e abra o aplicativo.',
           ),
         ),
       ),
