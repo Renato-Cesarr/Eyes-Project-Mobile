@@ -207,6 +207,15 @@ telemetria ficam fora da árvore semântica; somente mudanças operacionais são
 regiões vivas. Ajuda, segurança e preferências ficam acessíveis diretamente na
 barra superior.
 
+A experiência visual usa um palco camera-first: o preview cobre a área útil sem
+deformação, o estado essencial aparece no topo, o último alerta estabilizado é
+destacado sem se tornar uma região viva e o dock de ações permanece na base. A
+proporção do sensor é alinhada à orientação do viewport antes do enquadramento.
+Com fonte ampliada ou altura reduzida, as sobreposições tornam-se roláveis e os
+botões são empilhados, sem retirar a câmera do plano de fundo. Falhas bloqueadoras
+substituem o palco; falhas degradáveis usam orientação compacta. Consulte o ADR
+0015.
+
 `AssistiveScanCoordinator` é o único proprietário da coordenação entre câmera,
 visão, proximidade, feedback de transição e tela ligada:
 
