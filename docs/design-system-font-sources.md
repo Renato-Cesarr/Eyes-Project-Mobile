@@ -19,4 +19,3 @@ Os arquivos foram obtidos do repositório oficial `google/fonts` e fixados por c
 - bold SHA-256: `5a3b0c8cc8ca545155150b4512a1fa248298df121c50d6557e651e61fbdab92f`.
 
 As licenças integrais ficam em `assets/licenses`, são incluídas no bundle e registradas no `LicenseRegistry` durante o bootstrap. Nenhuma fonte é baixada em tempo de execução.
-

@@ -141,6 +141,20 @@ Antes de concluir cada tela, valide manualmente com TalkBack, fonte no maior
 tamanho suportado, alto contraste e navegação apenas por gestos do leitor de
 tela.
 
+## Design system
+
+O Mobile usa o Eyes Design System compartilhado conceitualmente com a Web:
+Material 3, quatro temas, tokens semânticos, Lexend para títulos e Atkinson
+Hyperlegible para leitura. Fontes e licenças são empacotadas para manter o uso
+100% offline. Os componentes públicos ficam em
+`lib/core/design_system/eyes_design_system.dart`.
+
+No flavor `dev`, a rota interna `/design-system` apresenta a galeria de
+componentes. Ela não é registrada no flavor `prod`. Consulte o
+[guia de uso](docs/mobile-design-system.md) e o
+[ADR 0014](docs/adr/0014-accessible-mobile-design-system.md) antes de criar
+novas primitivas visuais.
+
 ## Câmera e varredura local
 
 A feature `scanning` mantém o domínio independente dos plugins nativos. A
