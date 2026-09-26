@@ -33,6 +33,10 @@ operação por pessoas cegas ou com baixa visão.
    flavor de produção não registra essa rota.
 8. A biblioteca é interna ao aplicativo neste MVP. Não será extraído um pacote
    Flutter antes de existir um segundo consumidor real.
+9. A tabela explícita de `ColorScheme` é excluída somente da detecção de
+   duplicação do Sonar. A simetria dos campos Material é intencional e manter os
+   pares de contraste legíveis é mais seguro do que ocultá-los em listas por
+   posição. Análise estática, cobertura e testes continuam ativos para o arquivo.
 
 ## Consequências
 
@@ -43,3 +47,5 @@ operação por pessoas cegas ou com baixa visão.
   às respectivas plataformas em vez de uma dependência de UI cruzada.
 - Exceções visuais precisam ser justificadas durante a revisão e não podem
   reduzir os requisitos de acessibilidade.
+- A exclusão CPD é restrita ao arquivo de esquemas; componentes e demais tokens
+  permanecem sujeitos ao Quality Gate completo.
