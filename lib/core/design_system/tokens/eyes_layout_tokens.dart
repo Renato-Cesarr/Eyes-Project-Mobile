@@ -107,5 +107,5 @@ final class EyesLayoutTokens extends ThemeExtension<EyesLayoutTokens> {
 
 extension EyesLayoutTokensContext on BuildContext {
   EyesLayoutTokens get eyesLayout =>
-      Theme.of(this).extension<EyesLayoutTokens>()!;
+      Theme.of(this).extension<EyesLayoutTokens>() ?? EyesLayoutTokens.standard;
 }
