@@ -192,7 +192,10 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Abrir câmera'));
+    final openCamera = find.text('Abrir câmera');
+    await tester.ensureVisible(openCamera);
+    await tester.pumpAndSettle();
+    await tester.tap(openCamera);
     await tester.pumpAndSettle();
   }
 

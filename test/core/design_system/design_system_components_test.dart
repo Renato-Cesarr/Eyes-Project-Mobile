@@ -88,6 +88,38 @@ void main() {
     expect(retries, 1);
   });
 
+  testWidgets('section and action tile expose a clear navigation hierarchy', (
+    WidgetTester tester,
+  ) async {
+    var taps = 0;
+    await tester.pumpWidget(
+      _TestApp(
+        child: EyesSection(
+          title: 'Ajustes e suporte',
+          description: 'Escolha uma opção.',
+          icon: Icons.tune_outlined,
+          children: <Widget>[
+            EyesActionTile(
+              title: 'Configurações de áudio',
+              subtitle: 'Voz e vibração',
+              onTap: () => taps += 1,
+            ),
+          ],
+        ),
+      ),
+    );
+
+    expect(
+      tester
+          .getSemantics(find.text('Ajustes e suporte'))
+          .flagsCollection
+          .isHeader,
+      isTrue,
+    );
+    await tester.tap(find.text('Configurações de áudio'));
+    expect(taps, 1);
+  });
+
   testWidgets('components support high contrast and 200 percent text', (
     WidgetTester tester,
   ) async {

@@ -118,7 +118,10 @@ void main() {
       ),
       findsOneWidget,
     );
-    await tester.tap(find.text('Continuar sem conta no modo offline'));
+    final continueOffline = find.text('Continuar sem conta no modo offline');
+    await tester.ensureVisible(continueOffline);
+    await tester.pumpAndSettle();
+    await tester.tap(continueOffline);
     await tester.pumpAndSettle();
 
     expect(repository.completed, isTrue);
@@ -144,7 +147,10 @@ void main() {
     expect(find.text('Abrir configurações do aparelho'), findsOneWidget);
     expect(find.text('Continuar sem câmera por enquanto'), findsOneWidget);
 
-    await tester.tap(find.text('Abrir configurações do aparelho'));
+    final openSettings = find.text('Abrir configurações do aparelho');
+    await tester.ensureVisible(openSettings);
+    await tester.pumpAndSettle();
+    await tester.tap(openSettings);
     await tester.pumpAndSettle();
     expect(camera.openSettingsCalls, 1);
 
@@ -178,7 +184,10 @@ void main() {
     expect(find.text('Solicitar câmera novamente'), findsOneWidget);
 
     camera.permission = CameraPermissionState.granted;
-    await tester.tap(find.text('Solicitar câmera novamente'));
+    final retryPermission = find.text('Solicitar câmera novamente');
+    await tester.ensureVisible(retryPermission);
+    await tester.pumpAndSettle();
+    await tester.tap(retryPermission);
     await tester.pumpAndSettle();
     expect(camera.requestCalls, 2);
     expect(

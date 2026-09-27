@@ -6,6 +6,7 @@ final class EyesPageScaffold extends StatelessWidget {
     required this.title,
     required this.child,
     this.actions = const <Widget>[],
+    this.leading,
     this.maxContentWidth,
     this.scrollable = true,
     super.key,
@@ -14,12 +15,13 @@ final class EyesPageScaffold extends StatelessWidget {
   final String title;
   final Widget child;
   final List<Widget> actions;
+  final Widget? leading;
   final double? maxContentWidth;
   final bool scrollable;
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(title), actions: actions),
+    appBar: AppBar(title: Text(title), leading: leading, actions: actions),
     body: SafeArea(
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {

@@ -17,18 +17,17 @@ final class HomePage extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(homeControllerProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.appName)),
-      body: SafeArea(
-        child: state.when(
-          data: (HomeState data) => _HomeContent(state: data),
-          error: (Object error, StackTrace stackTrace) => EyesStateView.error(
-            title: l10n.unexpectedError,
-            actionLabel: l10n.tryAgain,
-            onAction: () => ref.invalidate(homeControllerProvider),
-          ),
-          loading: () => EyesStateView.loading(title: l10n.loading),
+    return EyesPageScaffold(
+      title: l10n.appName,
+      maxContentWidth: 720,
+      child: state.when(
+        data: (HomeState data) => _HomeContent(state: data),
+        error: (Object error, StackTrace stackTrace) => EyesStateView.error(
+          title: l10n.unexpectedError,
+          actionLabel: l10n.tryAgain,
+          onAction: () => ref.invalidate(homeControllerProvider),
         ),
+        loading: () => EyesStateView.loading(title: l10n.loading),
       ),
     );
   }
@@ -43,92 +42,77 @@ final class _HomeContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
 
-    return ListView(
-      padding: const EdgeInsets.all(24),
+    final layout = context.eyesLayout;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 640),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                ExcludeSemantics(
-                  child: Icon(
-                    Icons.visibility_outlined,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 72,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                EyesButton(
-                  label: l10n.openCamera,
-                  onPressed: () => context.pushNamed(AppRoutes.camera),
-                  icon: Icons.camera_alt_outlined,
-                  expand: true,
-                ),
-                const SizedBox(height: 12),
-                EyesButton(
-                  label: l10n.openFeedbackSettings,
-                  onPressed: () => context.pushNamed(AppRoutes.settings),
-                  icon: Icons.settings_outlined,
-                  variant: EyesButtonVariant.outlined,
-                  expand: true,
-                ),
-                const SizedBox(height: 12),
-                EyesButton(
-                  label: l10n.openAccountSettings,
-                  onPressed: () => context.pushNamed(AppRoutes.account),
-                  icon: Icons.account_circle_outlined,
-                  variant: EyesButtonVariant.outlined,
-                  expand: true,
-                ),
-                const SizedBox(height: 12),
-                Semantics(
-                  header: true,
-                  child: Text(
-                    l10n.homeTitle,
-                    style: Theme.of(context).textTheme.headlineMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.foundationReady,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 32),
-                EyesCard(
-                  child: Text(
-                    l10n.accessibilityDescription,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                EyesButton(
-                  label: l10n.testFeedbackLabel,
-                  semanticHint: l10n.testFeedbackHint,
-                  icon: Icons.vibration,
-                  expand: true,
-                  onPressed: () => _testFeedback(context, ref),
-                ),
-                if (state.feedbackMessage
-                    case final String message) ...<Widget>[
-                  const SizedBox(height: 20),
-                  Semantics(
-                    label: message,
-                    liveRegion: true,
-                    child: Text(
-                      message,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ],
+        EyesPageHeader(
+          title: l10n.homeTitle,
+          description: l10n.foundationReady,
+          leading: ExcludeSemantics(
+            child: Icon(
+              Icons.visibility_outlined,
+              color: Theme.of(context).colorScheme.primary,
+              size: 48,
             ),
           ),
         ),
+        SizedBox(height: layout.spaceXl),
+        EyesButton(
+          label: l10n.openCamera,
+          semanticHint: l10n.scanStartHint,
+          onPressed: () => context.pushNamed(AppRoutes.camera),
+          icon: Icons.center_focus_strong_outlined,
+          expand: true,
+        ),
+        SizedBox(height: layout.spaceLg),
+        EyesStatusBanner(
+          title: l10n.homeOfflineTitle,
+          message: l10n.homeOfflineMessage,
+          tone: EyesStatusTone.success,
+        ),
+        SizedBox(height: layout.spaceLg),
+        EyesSection(
+          title: l10n.homeSupportTitle,
+          description: l10n.homeSupportDescription,
+          icon: Icons.tune_outlined,
+          children: <Widget>[
+            EyesActionTile(
+              title: l10n.openFeedbackSettings,
+              icon: Icons.volume_up_outlined,
+              onTap: () => context.pushNamed(AppRoutes.settings),
+            ),
+            EyesActionTile(
+              title: l10n.helpAndSafetyTitle,
+              icon: Icons.help_outline,
+              onTap: () => context.pushNamed(AppRoutes.help),
+            ),
+            EyesActionTile(
+              title: l10n.openAccountSettings,
+              subtitle: l10n.accountOptionalHeading,
+              icon: Icons.account_circle_outlined,
+              onTap: () => context.pushNamed(AppRoutes.account),
+            ),
+          ],
+        ),
+        SizedBox(height: layout.spaceLg),
+        EyesButton(
+          label: l10n.testFeedbackLabel,
+          semanticHint: l10n.testFeedbackHint,
+          icon: Icons.vibration,
+          variant: EyesButtonVariant.outlined,
+          expand: true,
+          onPressed: () => _testFeedback(context, ref),
+        ),
+        if (state.feedbackMessage case final String message) ...<Widget>[
+          SizedBox(height: layout.spaceLg),
+          EyesStatusBanner(
+            title: l10n.testFeedbackLabel,
+            message: message,
+            tone: EyesStatusTone.info,
+            liveRegion: true,
+          ),
+        ],
       ],
     );
   }

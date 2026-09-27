@@ -96,7 +96,10 @@ void main() {
     addTearDown(fixture.dispose);
 
     expect(find.text('Conta conectada'), findsOneWidget);
-    await tester.tap(find.byType(Switch));
+    final consentSwitch = find.byType(Switch);
+    await tester.ensureVisible(consentSwitch);
+    await tester.pumpAndSettle();
+    await tester.tap(consentSwitch);
     await tester.pumpAndSettle();
     expect(find.text('Permitir sincronização?'), findsOneWidget);
     expect(preferences.consent, isFalse);
@@ -109,7 +112,9 @@ void main() {
       findsOneWidget,
     );
 
-    await tester.tap(find.byType(Switch));
+    await tester.ensureVisible(consentSwitch);
+    await tester.pumpAndSettle();
+    await tester.tap(consentSwitch);
     await tester.pumpAndSettle();
     expect(preferences.consent, isFalse);
     expect(queue.clearCalls, 1);

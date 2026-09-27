@@ -454,8 +454,32 @@ abstract class AppLocalizations {
   /// No description provided for @foundationReady.
   ///
   /// In pt, this message translates to:
-  /// **'A fundação do aplicativo está pronta para receber as funcionalidades do MVP.'**
+  /// **'Reconheça objetos próximos com avisos por voz e vibração usando apenas este aparelho.'**
   String get foundationReady;
+
+  /// No description provided for @homeOfflineTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pronto para funcionar sem internet'**
+  String get homeOfflineTitle;
+
+  /// No description provided for @homeOfflineMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'A câmera e a inteligência artificial processam as imagens neste aparelho. Nenhuma foto ou vídeo é salvo.'**
+  String get homeOfflineMessage;
+
+  /// No description provided for @homeSupportTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ajustes e suporte'**
+  String get homeSupportTitle;
+
+  /// No description provided for @homeSupportDescription.
+  ///
+  /// In pt, this message translates to:
+  /// **'Personalize os avisos, consulte orientações de segurança ou conecte uma conta opcional.'**
+  String get homeSupportDescription;
 
   /// No description provided for @accessibilityDescription.
   ///
@@ -1159,6 +1183,12 @@ abstract class AppLocalizations {
   /// **'Ajuda e segurança'**
   String get helpAndSafetyTitle;
 
+  /// No description provided for @helpAndSafetyIntro.
+  ///
+  /// In pt, this message translates to:
+  /// **'Orientações rápidas para usar o Eyes com segurança, privacidade e autonomia.'**
+  String get helpAndSafetyIntro;
+
   /// No description provided for @helpSafetyHeading.
   ///
   /// In pt, this message translates to:
@@ -1224,6 +1254,66 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Escolha como o Eyes deve avisar sobre os objetos ao seu redor. Estas opções ficam somente neste aparelho.'**
   String get feedbackSettingsIntro;
+
+  /// No description provided for @appearanceSectionTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aparência e contraste'**
+  String get appearanceSectionTitle;
+
+  /// No description provided for @appearanceSectionDescription.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolha uma opção confortável para leitura. O alto contraste reforça bordas e diferenças entre as cores.'**
+  String get appearanceSectionDescription;
+
+  /// No description provided for @appearanceLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tema do aplicativo'**
+  String get appearanceLabel;
+
+  /// No description provided for @appearanceSystem.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seguir configuração do aparelho'**
+  String get appearanceSystem;
+
+  /// No description provided for @appearanceLight.
+  ///
+  /// In pt, this message translates to:
+  /// **'Claro'**
+  String get appearanceLight;
+
+  /// No description provided for @appearanceDark.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escuro'**
+  String get appearanceDark;
+
+  /// No description provided for @appearanceHighContrastLight.
+  ///
+  /// In pt, this message translates to:
+  /// **'Alto contraste claro'**
+  String get appearanceHighContrastLight;
+
+  /// No description provided for @appearanceHighContrastDark.
+  ///
+  /// In pt, this message translates to:
+  /// **'Alto contraste escuro'**
+  String get appearanceHighContrastDark;
+
+  /// No description provided for @appearanceSaved.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aparência atualizada.'**
+  String get appearanceSaved;
+
+  /// No description provided for @appearanceSaveFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível salvar a aparência. A configuração anterior foi mantida.'**
+  String get appearanceSaveFailed;
 
   /// No description provided for @loadingFeedbackSettings.
   ///
