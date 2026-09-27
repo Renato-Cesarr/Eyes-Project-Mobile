@@ -2,6 +2,8 @@ import 'package:eyes_mobile/app/config/app_environment.dart';
 import 'package:eyes_mobile/app/theme/app_theme.dart';
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
 import 'package:eyes_mobile/core/logging/secure_logger.dart';
+import 'package:eyes_mobile/features/appearance/application/appearance_repository.dart';
+import 'package:eyes_mobile/features/appearance/domain/appearance_preference.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_controller.dart';
 import 'package:eyes_mobile/features/assistive_feedback/presentation/feedback_settings_page.dart';
 import 'package:eyes_mobile/l10n/generated/app_localizations.dart';
@@ -10,6 +12,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/fake_appearance.dart';
 import '../../support/fake_assistive_feedback.dart';
 
 void main() {
@@ -26,7 +29,7 @@ void main() {
     expect(find.bySemanticsLabel('Volume da voz'), findsOneWidget);
 
     final attention = find.text('Avisar também objetos próximos');
-    await tester.drag(find.byType(ListView), const Offset(0, -260));
+    await tester.ensureVisible(attention);
     await tester.pumpAndSettle();
     await tester.tap(attention);
     await tester.pumpAndSettle();
@@ -39,7 +42,7 @@ void main() {
     expect(speech.spoken, contains('Teste de voz do Eyes concluído.'));
 
     final hapticTest = find.text('Testar vibração');
-    await tester.drag(find.byType(ListView), const Offset(0, -420));
+    await tester.ensureVisible(hapticTest);
     await tester.pumpAndSettle();
     await tester.tap(hapticTest);
     await tester.pumpAndSettle();
@@ -56,7 +59,7 @@ void main() {
     );
 
     final restore = find.text('Restaurar configurações padrão');
-    await tester.drag(find.byType(ListView), const Offset(0, -1100));
+    await tester.ensureVisible(restore);
     await tester.pumpAndSettle();
     await tester.tap(restore);
     await tester.pumpAndSettle();
@@ -67,6 +70,26 @@ void main() {
     await tester.pumpAndSettle();
     expect(repository.clears, 1);
     expect(find.text('Configurações padrão restauradas.'), findsOneWidget);
+  });
+
+  testWidgets('permite escolher e persistir alto contraste', (tester) async {
+    final appearance = InMemoryAppearanceRepository();
+    await _pumpPage(
+      tester,
+      InMemoryFeedbackPreferencesRepository(),
+      FakeSpeechGateway(),
+      FakeAssistiveHaptics(),
+      appearance: appearance,
+    );
+
+    await tester.tap(find.text('Seguir configuração do aparelho').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Alto contraste escuro').last);
+    await tester.pumpAndSettle();
+
+    expect(appearance.preference, AppearancePreference.highContrastDark);
+    expect(appearance.saveCalls, 1);
+    expect(find.text('Aparência atualizada.'), findsOneWidget);
   });
 
   testWidgets('mantém a tela utilizável com fonte em 200 por cento', (
@@ -82,7 +105,7 @@ void main() {
     );
 
     final restore = find.text('Restaurar configurações padrão');
-    await tester.drag(find.byType(ListView), const Offset(0, -1800));
+    await tester.ensureVisible(restore);
     await tester.pumpAndSettle();
     await tester.pumpAndSettle();
 
@@ -99,7 +122,7 @@ void main() {
     );
 
     final failure = find.textContaining('A voz está indisponível');
-    await tester.drag(find.byType(ListView), const Offset(0, -1400));
+    await tester.ensureVisible(failure);
     await tester.pumpAndSettle();
     await tester.pumpAndSettle();
 
@@ -112,13 +135,17 @@ Future<void> _pumpPage(
   WidgetTester tester,
   InMemoryFeedbackPreferencesRepository repository,
   FakeSpeechGateway speech,
-  FakeAssistiveHaptics haptics,
-) async {
+  FakeAssistiveHaptics haptics, {
+  InMemoryAppearanceRepository? appearance,
+}) async {
   final logger = SecureLogger(AppEnvironment.dev());
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
         appErrorReporterProvider.overrideWithValue(AppErrorReporter(logger)),
+        appearanceRepositoryProvider.overrideWithValue(
+          appearance ?? InMemoryAppearanceRepository(),
+        ),
         speechGatewayProvider.overrideWithValue(speech),
         assistiveHapticsProvider.overrideWithValue(haptics),
         feedbackPreferencesRepositoryProvider.overrideWithValue(repository),

@@ -29,10 +29,12 @@ arquivos internos de tokens quando um componente público já resolve o caso.
 
 | Componente | Uso |
 | --- | --- |
+| `EyesActionTile` | ação secundária de navegação com título e descrição opcional |
 | `EyesButton` | ações filled, outlined e text, inclusive loading |
 | `EyesCard` | agrupamento visual e semântico de conteúdo relacionado |
 | `EyesPageHeader` | título e descrição introdutória de página |
 | `EyesPageScaffold` | página rolável, segura e com largura de leitura limitada |
+| `EyesSection` | seção de conteúdo com cabeçalho semântico e espaçamento uniforme |
 | `EyesStatusBanner` | informação, sucesso, alerta e erro com texto explícito |
 | `EyesStateView` | loading, vazio e erro, com ação opcional preservada no TalkBack |
 | `EyesConfirmationDialog` | confirmação com ação principal e cancelamento claros |
@@ -41,8 +43,10 @@ arquivos internos de tokens quando um componente público já resolve o caso.
 ## Temas e tipografia
 
 `AppTheme` oferece `light`, `dark`, `highContrastLight` e
-`highContrastDark`. O Flutter seleciona o tema conforme as preferências do
-sistema. Lexend é reservada a títulos e Atkinson Hyperlegible aos textos de
+`highContrastDark`. A pessoa usuária pode seguir o tema do aparelho ou escolher
+explicitamente uma dessas opções em **Configurações de áudio e alertas >
+Aparência e contraste**. A preferência fica somente no aparelho e uma falha de
+persistência mantém o tema anterior. Lexend é reservada a títulos e Atkinson Hyperlegible aos textos de
 leitura. Os arquivos são locais e suas origens e hashes estão registrados em
 `docs/design-system-font-sources.md`.
 
