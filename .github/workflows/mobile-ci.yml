@@ -46,7 +46,10 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
-      - name: Test
+      - name: Validate Design System token usage
+        run: dart run tool/validate_design_tokens.dart
+
+      - name: Test behavior, Semantics and visual goldens
         run: flutter test --coverage
 
       - name: Validate coverage report

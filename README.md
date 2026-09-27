@@ -85,6 +85,11 @@ conexões acidentais quando a configuração não for fornecida.
 
 ## Qualidade
 
+Os gates de regressão visual, Semantics, texto ampliado, alvos de toque e uso de
+tokens estão descritos em
+[docs/quality/ui-accessibility-gates.md](docs/quality/ui-accessibility-gates.md).
+As referências visuais só podem ser atualizadas com revisão explícita no PR.
+
 ```powershell
 dart format --output=none --set-exit-if-changed .
 fvm flutter analyze
