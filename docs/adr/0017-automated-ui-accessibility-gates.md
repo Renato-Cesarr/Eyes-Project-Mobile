@@ -11,6 +11,11 @@ testes de Semantics, escala de texto e tamanho de alvos na mesma suíte bloquean
 O CI também valida que cores literais permaneçam nos tokens, com exceção explícita
 do preto e branco necessários ao contraste do preview da câmera.
 
+As fontes utilizadas nas imagens de referência devem ser determinísticas. As
+fontes do produto são carregadas dos assets e o Material Icons é mantido como
+fixture de teste versionado, acompanhado da licença e sem entrar no bundle do
+aplicativo. O teste não pode depender de caminhos privados do SDK Flutter.
+
 ## Consequências
 
 Mudanças acidentais de tema, espaçamento, tipografia ou hierarquia passam a

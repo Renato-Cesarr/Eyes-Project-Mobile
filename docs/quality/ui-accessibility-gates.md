@@ -17,6 +17,11 @@ O catálogo contém cabeçalho, estado, ação principal e navegação auxiliar.
 dos goldens, o teste verifica Semantics, ausência de overflow e alvos de pelo
 menos 48 dp. Câmera ao vivo, relógio e dados voláteis ficam fora dos snapshots.
 
+As fontes do produto são carregadas dos assets reais. A fonte Material Icons
+usada pelo catálogo fica fixada exclusivamente em `test/fixtures/fonts`, com a
+respectiva licença, para que os resultados não dependam do caminho interno do
+SDK instalado no computador ou no CI. Esse fixture não integra o bundle do app.
+
 ## Comandos
 
 - `flutter test`: executa comportamento, Semantics e comparação dos goldens.

@@ -105,13 +105,7 @@ Future<void> _loadFont(String family, String asset) async {
 }
 
 Future<void> _loadMaterialIcons() async {
-  final executable = File(Platform.resolvedExecutable);
-  final flutterRoot =
-      Platform.environment['FLUTTER_ROOT'] ??
-      executable.parent.parent.parent.parent.parent.path;
-  final font = File(
-    '$flutterRoot/bin/cache/artifacts/material_fonts/materialicons-regular.otf',
-  );
+  final font = File('test/fixtures/fonts/MaterialIcons-Regular.otf');
   final bytes = await font.readAsBytes();
   final loader = FontLoader('MaterialIcons')
     ..addFont(Future<ByteData>.value(ByteData.sublistView(bytes)));
