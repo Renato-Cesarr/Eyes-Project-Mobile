@@ -4,16 +4,17 @@ final RegExp _literalColor = RegExp(r'\bColor\s*\(\s*0x[0-9a-fA-F]{8}\s*\)');
 final RegExp _namedColor = RegExp(r'\bColors\.([A-Za-z0-9_]+)');
 
 const Set<String> _globalNamedColors = <String>{'transparent'};
-const Map<String, Set<String>> _cameraSurfaceExceptions =
-    <String, Set<String>>{
-      'lib/features/scanning/presentation/assistive_scan_page.dart': <String>{
-        'black',
-        'black54',
-        'black87',
-      },
-      'lib/features/scanning/infrastructure/camera_preview_surface.dart':
-          <String>{'black', 'white'},
-    };
+const Map<String, Set<String>> _cameraSurfaceExceptions = <String, Set<String>>{
+  'lib/features/scanning/presentation/assistive_scan_page.dart': <String>{
+    'black',
+    'black54',
+    'black87',
+  },
+  'lib/features/scanning/infrastructure/camera_preview_surface.dart': <String>{
+    'black',
+    'white',
+  },
+};
 
 void main() {
   final failures = <String>[];
@@ -28,7 +29,9 @@ void main() {
 
     final source = file.readAsStringSync();
     if (_literalColor.hasMatch(source)) {
-      failures.add('$path declara Color(0x...). Use um token do Eyes Design System.');
+      failures.add(
+        '$path declara Color(0x...). Use um token do Eyes Design System.',
+      );
     }
 
     final allowed = <String>{
@@ -38,9 +41,7 @@ void main() {
     for (final match in _namedColor.allMatches(source)) {
       final colorName = match.group(1)!;
       if (!allowed.contains(colorName)) {
-        failures.add(
-          '$path usa Colors.$colorName fora dos tokens canônicos.',
-        );
+        failures.add('$path usa Colors.$colorName fora dos tokens canônicos.');
       }
     }
   }
