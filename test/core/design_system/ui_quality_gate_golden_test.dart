@@ -58,7 +58,9 @@ void main() {
       expect(tester.takeException(), isNull);
       await expectLater(
         find.byKey(_goldenBoundaryKey),
-        matchesGoldenFile('goldens/ui_quality_gate/${goldenCase.name}.png'),
+        matchesGoldenFile(
+          'goldens/ui_quality_gate/${Platform.operatingSystem}/${goldenCase.name}.png',
+        ),
       );
     });
   }

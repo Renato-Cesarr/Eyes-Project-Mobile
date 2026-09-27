@@ -22,11 +22,20 @@ usada pelo catálogo fica fixada exclusivamente em `test/fixtures/fonts`, com a
 respectiva licença, para que os resultados não dependam do caminho interno do
 SDK instalado no computador ou no CI. Esse fixture não integra o bundle do app.
 
+As referências ficam separadas em `windows` e `linux`, pois o rasterizador do
+Flutter pode produzir pixels diferentes entre os sistemas mesmo com fontes e
+SDK idênticos. Ambas são geradas com Flutter 3.44 e revisadas; não se amplia a
+tolerância para esconder divergências entre plataformas.
+
 ## Comandos
 
 - `flutter test`: executa comportamento, Semantics e comparação dos goldens.
 - `flutter test --update-goldens test/core/design_system/ui_quality_gate_golden_test.dart`:
-  atualiza referências visuais após aprovação da mudança.
+  atualiza as referências do sistema operacional atual após aprovação da
+  mudança. As referências Linux devem ser geradas no ambiente reproduzível
+  descrito abaixo.
+- `docker run --rm -v "${PWD}:/workspace" -w /workspace ghcr.io/cirruslabs/flutter:3.44.0 flutter test --update-goldens test/core/design_system/ui_quality_gate_golden_test.dart`:
+  atualiza as referências Linux com a mesma versão usada pelo CI.
 - `dart run tool/validate_design_tokens.dart`: impede novas cores literais fora
   dos tokens. Preto e branco permanecem permitidos somente nas superfícies de
   câmera documentadas.
