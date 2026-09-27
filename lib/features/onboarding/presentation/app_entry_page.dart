@@ -1,3 +1,4 @@
+import 'package:eyes_mobile/core/design_system/eyes_design_system.dart';
 import 'package:eyes_mobile/features/home/presentation/home_page.dart';
 import 'package:eyes_mobile/features/onboarding/application/onboarding_controller.dart';
 import 'package:eyes_mobile/features/onboarding/application/onboarding_state.dart';
@@ -19,11 +20,9 @@ final class AppEntryPage extends ConsumerWidget {
         onRetry: () => ref.invalidate(onboardingControllerProvider),
       ),
       loading: () => Scaffold(
-        body: Center(
-          child: Semantics(
-            liveRegion: true,
-            label: AppLocalizations.of(context).loading,
-            child: const CircularProgressIndicator(),
+        body: SafeArea(
+          child: EyesStateView.loading(
+            title: AppLocalizations.of(context).loading,
           ),
         ),
       ),
@@ -39,24 +38,13 @@ final class _EntryError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Semantics(
-              liveRegion: true,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(l10n.onboardingLoadError, textAlign: TextAlign.center),
-                  const SizedBox(height: 16),
-                  FilledButton(onPressed: onRetry, child: Text(l10n.tryAgain)),
-                ],
-              ),
-            ),
-          ),
-        ),
+    return EyesPageScaffold(
+      title: l10n.appName,
+      scrollable: false,
+      child: EyesStateView.error(
+        title: l10n.onboardingLoadError,
+        actionLabel: l10n.tryAgain,
+        onAction: onRetry,
       ),
     );
   }

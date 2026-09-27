@@ -1,6 +1,10 @@
 import 'dart:async';
 
 import 'package:eyes_mobile/app/routing/app_router.dart';
+import 'package:eyes_mobile/core/design_system/eyes_design_system.dart';
+import 'package:eyes_mobile/features/appearance/application/appearance_controller.dart';
+import 'package:eyes_mobile/features/appearance/application/appearance_state.dart';
+import 'package:eyes_mobile/features/appearance/domain/appearance_preference.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_controller.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_state.dart';
 import 'package:eyes_mobile/features/assistive_feedback/domain/feedback_preferences.dart';
@@ -16,22 +20,18 @@ final class FeedbackSettingsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(assistiveFeedbackControllerProvider);
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.feedbackSettingsTitle)),
-      body: SafeArea(
-        child: state.when(
-          data: (settings) => _SettingsContent(settings: settings),
-          error: (error, stackTrace) => _SettingsError(
-            onRetry: () => ref.invalidate(assistiveFeedbackControllerProvider),
-          ),
-          loading: () => Center(
-            child: Semantics(
-              liveRegion: true,
-              label: l10n.loadingFeedbackSettings,
-              child: const CircularProgressIndicator(),
-            ),
-          ),
+    return EyesPageScaffold(
+      title: l10n.appName,
+      maxContentWidth: 720,
+      child: state.when(
+        data: (settings) => _SettingsContent(settings: settings),
+        error: (error, stackTrace) => EyesStateView.error(
+          title: l10n.feedbackSettingsLoadError,
+          actionLabel: l10n.tryAgain,
+          onAction: () => ref.invalidate(assistiveFeedbackControllerProvider),
         ),
+        loading: () =>
+            EyesStateView.loading(title: l10n.loadingFeedbackSettings),
       ),
     );
   }
@@ -48,165 +48,198 @@ final class _SettingsContent extends ConsumerWidget {
     final preferences = settings.preferences;
     final controller = ref.read(assistiveFeedbackControllerProvider.notifier);
     final notice = _noticeText(l10n, settings.notice);
+    final appearance = ref.watch(appearanceControllerProvider);
+    final appearanceState = appearance.asData?.value;
+    final appearanceNotice = appearanceState == null
+        ? null
+        : _appearanceNoticeText(l10n, appearanceState.notice);
+    final layout = context.eyesLayout;
 
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: [
-        Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 720),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  l10n.feedbackSettingsIntro,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                const SizedBox(height: 28),
-                _SectionTitle(l10n.voiceSectionTitle),
-                const SizedBox(height: 12),
-                _AccessibleSlider(
-                  label: l10n.speechRateLabel,
-                  value: preferences.speechRate,
-                  min: 0.30,
-                  max: 0.70,
-                  divisions: 8,
-                  valueText: l10n.speechRateValue(
-                    (preferences.speechRate * 100).round(),
-                  ),
-                  rangeHint: l10n.speechRateRange,
-                  onChanged: (value) => controller.updatePreferences(
-                    preferences.copyWith(speechRate: value),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                _AccessibleSlider(
-                  label: l10n.speechVolumeLabel,
-                  value: preferences.volume,
-                  min: 0,
-                  max: 1,
-                  divisions: 10,
-                  valueText: l10n.percentValue(
-                    (preferences.volume * 100).round(),
-                  ),
-                  rangeHint: l10n.speechVolumeRange,
-                  onChanged: (value) => controller.updatePreferences(
-                    preferences.copyWith(volume: value),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                _AccessibleDropdown<VoiceDetailLevel>(
-                  label: l10n.voiceDetailLabel,
-                  value: preferences.detailLevel,
-                  items: {
-                    VoiceDetailLevel.concise: l10n.voiceDetailConcise,
-                    VoiceDetailLevel.detailed: l10n.voiceDetailDetailed,
-                  },
-                  onChanged: (value) => controller.updatePreferences(
-                    preferences.copyWith(detailLevel: value),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                OutlinedButton.icon(
-                  onPressed: () => controller.testVoice(l10n.voiceTestPhrase),
-                  icon: const ExcludeSemantics(
-                    child: Icon(Icons.record_voice_over_outlined),
-                  ),
-                  label: Text(l10n.testVoice),
-                ),
-                const SizedBox(height: 32),
-                _SectionTitle(l10n.alertsSectionTitle),
-                const SizedBox(height: 12),
-                SwitchListTile.adaptive(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(l10n.announceAttentionLabel),
-                  subtitle: Text(l10n.announceAttentionDescription),
-                  value: preferences.announceAttention,
-                  onChanged: (value) => controller.updatePreferences(
-                    preferences.copyWith(announceAttention: value),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _AccessibleDropdown<AlertSensitivityPreset>(
-                  label: l10n.sensitivityLabel,
-                  value: preferences.sensitivity,
-                  items: {
-                    AlertSensitivityPreset.conservative:
-                        l10n.sensitivityConservative,
-                    AlertSensitivityPreset.balanced: l10n.sensitivityBalanced,
-                    AlertSensitivityPreset.fewerAlerts:
-                        l10n.sensitivityFewerAlerts,
-                  },
-                  onChanged: (value) => controller.updatePreferences(
-                    preferences.copyWith(sensitivity: value),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _sensitivityDescription(l10n, preferences.sensitivity),
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 32),
-                _SectionTitle(l10n.hapticsSectionTitle),
-                const SizedBox(height: 12),
-                SwitchListTile.adaptive(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(l10n.hapticsEnabledLabel),
-                  subtitle: Text(l10n.hapticsDescription),
-                  value: preferences.hapticsEnabled,
-                  onChanged: (value) => controller.updatePreferences(
-                    preferences.copyWith(hapticsEnabled: value),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                OutlinedButton.icon(
-                  onPressed: preferences.hapticsEnabled
-                      ? controller.testHaptics
-                      : null,
-                  icon: const ExcludeSemantics(child: Icon(Icons.vibration)),
-                  label: Text(l10n.testHaptics),
-                ),
-                const SizedBox(height: 32),
-                _SectionTitle(l10n.privacySectionTitle),
-                const SizedBox(height: 12),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Text(
-                      l10n.feedbackPrivacyDescription,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                OutlinedButton.icon(
-                  onPressed: () => context.pushNamed(AppRoutes.account),
-                  icon: const ExcludeSemantics(
-                    child: Icon(Icons.account_circle_outlined),
-                  ),
-                  label: Text(l10n.openAccountSettings),
-                ),
-                const SizedBox(height: 24),
-                OutlinedButton(
-                  onPressed: () => _confirmRestore(context, controller),
-                  child: Text(l10n.restoreDefaults),
-                ),
-                if (notice != null) ...[
-                  const SizedBox(height: 20),
-                  Semantics(
-                    container: true,
-                    liveRegion: true,
-                    child: Text(
-                      notice,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ],
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        EyesPageHeader(
+          title: l10n.feedbackSettingsTitle,
+          description: l10n.feedbackSettingsIntro,
+          leading: const ExcludeSemantics(
+            child: Icon(Icons.tune_outlined, size: 44),
           ),
         ),
+        SizedBox(height: layout.spaceXl),
+        EyesSection(
+          title: l10n.appearanceSectionTitle,
+          description: l10n.appearanceSectionDescription,
+          icon: Icons.contrast_outlined,
+          children: <Widget>[
+            if (appearanceState == null)
+              Semantics(
+                liveRegion: true,
+                label: l10n.loading,
+                child: const LinearProgressIndicator(),
+              )
+            else
+              _AccessibleDropdown<AppearancePreference>(
+                label: l10n.appearanceLabel,
+                value: appearanceState.preference,
+                items: <AppearancePreference, String>{
+                  AppearancePreference.system: l10n.appearanceSystem,
+                  AppearancePreference.light: l10n.appearanceLight,
+                  AppearancePreference.dark: l10n.appearanceDark,
+                  AppearancePreference.highContrastLight:
+                      l10n.appearanceHighContrastLight,
+                  AppearancePreference.highContrastDark:
+                      l10n.appearanceHighContrastDark,
+                },
+                onChanged: ref
+                    .read(appearanceControllerProvider.notifier)
+                    .select,
+              ),
+          ],
+        ),
+        SizedBox(height: layout.spaceLg),
+        EyesSection(
+          title: l10n.voiceSectionTitle,
+          icon: Icons.record_voice_over_outlined,
+          children: <Widget>[
+            _AccessibleSlider(
+              label: l10n.speechRateLabel,
+              value: preferences.speechRate,
+              min: 0.30,
+              max: 0.70,
+              divisions: 8,
+              valueText: l10n.speechRateValue(
+                (preferences.speechRate * 100).round(),
+              ),
+              rangeHint: l10n.speechRateRange,
+              onChanged: (value) => controller.updatePreferences(
+                preferences.copyWith(speechRate: value),
+              ),
+            ),
+            _AccessibleSlider(
+              label: l10n.speechVolumeLabel,
+              value: preferences.volume,
+              min: 0,
+              max: 1,
+              divisions: 10,
+              valueText: l10n.percentValue((preferences.volume * 100).round()),
+              rangeHint: l10n.speechVolumeRange,
+              onChanged: (value) => controller.updatePreferences(
+                preferences.copyWith(volume: value),
+              ),
+            ),
+            _AccessibleDropdown<VoiceDetailLevel>(
+              label: l10n.voiceDetailLabel,
+              value: preferences.detailLevel,
+              items: <VoiceDetailLevel, String>{
+                VoiceDetailLevel.concise: l10n.voiceDetailConcise,
+                VoiceDetailLevel.detailed: l10n.voiceDetailDetailed,
+              },
+              onChanged: (value) => controller.updatePreferences(
+                preferences.copyWith(detailLevel: value),
+              ),
+            ),
+            EyesButton(
+              label: l10n.testVoice,
+              onPressed: () => controller.testVoice(l10n.voiceTestPhrase),
+              icon: Icons.record_voice_over_outlined,
+              variant: EyesButtonVariant.outlined,
+              expand: true,
+            ),
+          ],
+        ),
+        SizedBox(height: layout.spaceLg),
+        EyesSection(
+          title: l10n.alertsSectionTitle,
+          icon: Icons.notifications_active_outlined,
+          children: <Widget>[
+            SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.announceAttentionLabel),
+              subtitle: Text(l10n.announceAttentionDescription),
+              value: preferences.announceAttention,
+              onChanged: (value) => controller.updatePreferences(
+                preferences.copyWith(announceAttention: value),
+              ),
+            ),
+            _AccessibleDropdown<AlertSensitivityPreset>(
+              label: l10n.sensitivityLabel,
+              value: preferences.sensitivity,
+              items: <AlertSensitivityPreset, String>{
+                AlertSensitivityPreset.conservative:
+                    l10n.sensitivityConservative,
+                AlertSensitivityPreset.balanced: l10n.sensitivityBalanced,
+                AlertSensitivityPreset.fewerAlerts: l10n.sensitivityFewerAlerts,
+              },
+              onChanged: (value) => controller.updatePreferences(
+                preferences.copyWith(sensitivity: value),
+              ),
+            ),
+            Text(
+              _sensitivityDescription(l10n, preferences.sensitivity),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ],
+        ),
+        SizedBox(height: layout.spaceLg),
+        EyesSection(
+          title: l10n.hapticsSectionTitle,
+          icon: Icons.vibration_outlined,
+          children: <Widget>[
+            SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.hapticsEnabledLabel),
+              subtitle: Text(l10n.hapticsDescription),
+              value: preferences.hapticsEnabled,
+              onChanged: (value) => controller.updatePreferences(
+                preferences.copyWith(hapticsEnabled: value),
+              ),
+            ),
+            EyesButton(
+              label: l10n.testHaptics,
+              onPressed: preferences.hapticsEnabled
+                  ? controller.testHaptics
+                  : null,
+              icon: Icons.vibration,
+              variant: EyesButtonVariant.outlined,
+              expand: true,
+            ),
+          ],
+        ),
+        SizedBox(height: layout.spaceLg),
+        EyesSection(
+          title: l10n.privacySectionTitle,
+          description: l10n.feedbackPrivacyDescription,
+          icon: Icons.privacy_tip_outlined,
+          children: <Widget>[
+            EyesButton(
+              label: l10n.openAccountSettings,
+              onPressed: () => context.pushNamed(AppRoutes.account),
+              icon: Icons.account_circle_outlined,
+              variant: EyesButtonVariant.outlined,
+              expand: true,
+            ),
+          ],
+        ),
+        SizedBox(height: layout.spaceXl),
+        EyesButton(
+          label: l10n.restoreDefaults,
+          onPressed: () => _confirmRestore(context, controller),
+          variant: EyesButtonVariant.text,
+          expand: true,
+        ),
+        if (notice != null || appearanceNotice != null) ...<Widget>[
+          SizedBox(height: layout.spaceLg),
+          EyesStatusBanner(
+            title: l10n.feedbackSettingsTitle,
+            message: appearanceNotice ?? notice!,
+            tone:
+                appearanceState?.notice == AppearanceNotice.saveFailed ||
+                    settings.notice == FeedbackNotice.persistenceFailed
+                ? EyesStatusTone.error
+                : EyesStatusTone.success,
+            liveRegion: true,
+          ),
+        ],
       ],
     );
   }
@@ -216,22 +249,12 @@ final class _SettingsContent extends ConsumerWidget {
     AssistiveFeedbackController controller,
   ) async {
     final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.restoreDefaultsTitle),
-        content: Text(l10n.restoreDefaultsDescription),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l10n.confirmRestore),
-          ),
-        ],
-      ),
+    final confirmed = await EyesConfirmationDialog.show(
+      context,
+      title: l10n.restoreDefaultsTitle,
+      message: l10n.restoreDefaultsDescription,
+      confirmLabel: l10n.confirmRestore,
+      cancelLabel: l10n.cancel,
     );
     if (confirmed ?? false) {
       await controller.restoreDefaults();
@@ -360,47 +383,6 @@ final class _AccessibleDropdown<T extends Enum> extends StatelessWidget {
   }
 }
 
-final class _SectionTitle extends StatelessWidget {
-  const _SectionTitle(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      header: true,
-      child: Text(text, style: Theme.of(context).textTheme.titleLarge),
-    );
-  }
-}
-
-final class _SettingsError extends StatelessWidget {
-  const _SettingsError({required this.onRetry});
-
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Semantics(
-          liveRegion: true,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(l10n.feedbackSettingsLoadError),
-              const SizedBox(height: 16),
-              FilledButton(onPressed: onRetry, child: Text(l10n.tryAgain)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 String? _noticeText(AppLocalizations l10n, FeedbackNotice notice) {
   return switch (notice) {
     FeedbackNotice.none => null,
@@ -413,6 +395,13 @@ String? _noticeText(AppLocalizations l10n, FeedbackNotice notice) {
     FeedbackNotice.persistenceFailed => l10n.preferencesSaveFailed,
   };
 }
+
+String? _appearanceNoticeText(AppLocalizations l10n, AppearanceNotice notice) =>
+    switch (notice) {
+      AppearanceNotice.none => null,
+      AppearanceNotice.saved => l10n.appearanceSaved,
+      AppearanceNotice.saveFailed => l10n.appearanceSaveFailed,
+    };
 
 String _sensitivityDescription(
   AppLocalizations l10n,

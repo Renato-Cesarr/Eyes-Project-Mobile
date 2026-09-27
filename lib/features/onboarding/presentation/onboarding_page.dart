@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:eyes_mobile/app/routing/app_router.dart';
+import 'package:eyes_mobile/core/design_system/eyes_design_system.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_controller.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_state.dart';
 import 'package:eyes_mobile/features/onboarding/application/onboarding_controller.dart';
@@ -68,54 +69,30 @@ final class _OnboardingPageState extends ConsumerState<OnboardingPage>
     final onboarding = ref.watch(onboardingControllerProvider);
     final feedback = ref.watch(assistiveFeedbackControllerProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.onboardingTitle),
-        leading: widget.replay
-            ? IconButton(
-                tooltip: l10n.close,
-                onPressed: () => context.canPop()
-                    ? context.pop()
-                    : context.goNamed(AppRoutes.home),
-                icon: const Icon(Icons.close),
-              )
-            : null,
-      ),
-      body: SafeArea(
-        child: onboarding.when(
-          data: (OnboardingState state) => _OnboardingContent(
-            state: state,
-            feedback: feedback,
-            headingFocus: _headingFocus,
-          ),
-          error: (Object error, StackTrace stackTrace) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Semantics(
-                liveRegion: true,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(l10n.onboardingLoadError, textAlign: TextAlign.center),
-                    const SizedBox(height: 16),
-                    FilledButton(
-                      onPressed: () =>
-                          ref.invalidate(onboardingControllerProvider),
-                      child: Text(l10n.tryAgain),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          loading: () => Center(
-            child: Semantics(
-              liveRegion: true,
-              label: l10n.loading,
-              child: const CircularProgressIndicator(),
-            ),
-          ),
+    return EyesPageScaffold(
+      title: l10n.onboardingTitle,
+      leading: widget.replay
+          ? IconButton(
+              tooltip: l10n.close,
+              onPressed: () => context.canPop()
+                  ? context.pop()
+                  : context.goNamed(AppRoutes.home),
+              icon: const Icon(Icons.close),
+            )
+          : null,
+      maxContentWidth: context.eyesLayout.readingMaxWidth,
+      child: onboarding.when(
+        data: (OnboardingState state) => _OnboardingContent(
+          state: state,
+          feedback: feedback,
+          headingFocus: _headingFocus,
         ),
+        error: (Object error, StackTrace stackTrace) => EyesStateView.error(
+          title: l10n.onboardingLoadError,
+          actionLabel: l10n.tryAgain,
+          onAction: () => ref.invalidate(onboardingControllerProvider),
+        ),
+        loading: () => EyesStateView.loading(title: l10n.loading),
       ),
     );
   }
@@ -138,96 +115,77 @@ final class _OnboardingContent extends ConsumerWidget {
     final content = _contentFor(l10n, state.step);
     final controller = ref.read(onboardingControllerProvider.notifier);
 
-    return ListView(
-      padding: const EdgeInsets.all(24),
+    final layout = context.eyesLayout;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 640),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Semantics(
-                  container: true,
-                  label: l10n.onboardingProgress(
-                    state.step.index + 1,
-                    OnboardingStep.values.length,
-                  ),
-                  excludeSemantics: true,
-                  child: LinearProgressIndicator(
-                    value:
-                        (state.step.index + 1) / OnboardingStep.values.length,
-                  ),
-                ),
-                const SizedBox(height: 28),
-                ExcludeSemantics(child: Icon(content.icon, size: 64)),
-                const SizedBox(height: 20),
-                Focus(
-                  focusNode: headingFocus,
-                  child: Semantics(
-                    header: true,
-                    child: Text(
-                      content.title,
-                      style: Theme.of(context).textTheme.headlineMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  content.body,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
-                ),
-                if (state.step == OnboardingStep.feedback) ...<Widget>[
-                  const SizedBox(height: 24),
-                  _FeedbackTests(feedback: feedback),
-                ],
-                if (state.step == OnboardingStep.privacy) ...<Widget>[
-                  const SizedBox(height: 20),
-                  OutlinedButton.icon(
-                    onPressed: state.isBusy
-                        ? null
-                        : () => context.pushNamed(
-                            AppRoutes.account,
-                            queryParameters: const <String, String>{
-                              'source': 'onboarding',
-                            },
-                          ),
-                    icon: const ExcludeSemantics(
-                      child: Icon(Icons.account_circle_outlined),
-                    ),
-                    label: Text(l10n.onboardingOptionalAccount),
-                  ),
-                ],
-                if (state.step == OnboardingStep.camera) ...<Widget>[
-                  const SizedBox(height: 24),
-                  _CameraPermissionStatus(state: state),
-                ],
-                const SizedBox(height: 32),
-                _PrimaryOnboardingAction(state: state),
-                if (state.step.index > 0) ...<Widget>[
-                  const SizedBox(height: 12),
-                  OutlinedButton(
-                    onPressed: state.isBusy ? null : controller.back,
-                    child: Text(l10n.back),
-                  ),
-                ],
-                if (state.step == OnboardingStep.camera &&
-                    state.cameraPermission !=
-                        CameraPermissionState.granted) ...<Widget>[
-                  const SizedBox(height: 12),
-                  TextButton(
-                    onPressed: state.isBusy
-                        ? null
-                        : () => _complete(context, ref),
-                    child: Text(l10n.onboardingContinueWithoutCamera),
-                  ),
-                ],
-              ],
-            ),
+        Semantics(
+          container: true,
+          label: l10n.onboardingProgress(
+            state.step.index + 1,
+            OnboardingStep.values.length,
+          ),
+          excludeSemantics: true,
+          child: LinearProgressIndicator(
+            value: (state.step.index + 1) / OnboardingStep.values.length,
           ),
         ),
+        SizedBox(height: layout.spaceXl),
+        Focus(
+          focusNode: headingFocus,
+          child: EyesPageHeader(
+            title: content.title,
+            description: content.body,
+            leading: ExcludeSemantics(child: Icon(content.icon, size: 48)),
+          ),
+        ),
+        if (state.step == OnboardingStep.feedback) ...<Widget>[
+          SizedBox(height: layout.spaceXl),
+          _FeedbackTests(feedback: feedback),
+        ],
+        if (state.step == OnboardingStep.privacy) ...<Widget>[
+          SizedBox(height: layout.spaceXl),
+          EyesButton(
+            label: l10n.onboardingOptionalAccount,
+            onPressed: state.isBusy
+                ? null
+                : () => context.pushNamed(
+                    AppRoutes.account,
+                    queryParameters: const <String, String>{
+                      'source': 'onboarding',
+                    },
+                  ),
+            icon: Icons.account_circle_outlined,
+            variant: EyesButtonVariant.outlined,
+            expand: true,
+          ),
+        ],
+        if (state.step == OnboardingStep.camera) ...<Widget>[
+          SizedBox(height: layout.spaceXl),
+          _CameraPermissionStatus(state: state),
+        ],
+        SizedBox(height: layout.spaceXxl),
+        _PrimaryOnboardingAction(state: state),
+        if (state.step.index > 0) ...<Widget>[
+          SizedBox(height: layout.spaceMd),
+          EyesButton(
+            label: l10n.back,
+            onPressed: state.isBusy ? null : controller.back,
+            variant: EyesButtonVariant.outlined,
+            expand: true,
+          ),
+        ],
+        if (state.step == OnboardingStep.camera &&
+            state.cameraPermission !=
+                CameraPermissionState.granted) ...<Widget>[
+          SizedBox(height: layout.spaceMd),
+          EyesButton(
+            label: l10n.onboardingContinueWithoutCamera,
+            onPressed: state.isBusy ? null : () => _complete(context, ref),
+            variant: EyesButtonVariant.text,
+            expand: true,
+          ),
+        ],
       ],
     );
   }
@@ -246,30 +204,35 @@ final class _FeedbackTests extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        FilledButton.tonalIcon(
+        EyesButton(
+          label: l10n.testVoice,
           onPressed: feedback.isLoading
               ? null
               : () => ref
                     .read(assistiveFeedbackControllerProvider.notifier)
                     .testVoice(l10n.voiceTestPhrase),
-          icon: const ExcludeSemantics(child: Icon(Icons.volume_up_outlined)),
-          label: Text(l10n.testVoice),
+          icon: Icons.volume_up_outlined,
+          variant: EyesButtonVariant.outlined,
+          expand: true,
         ),
-        const SizedBox(height: 12),
-        FilledButton.tonalIcon(
+        SizedBox(height: context.eyesLayout.spaceMd),
+        EyesButton(
+          label: l10n.testHaptics,
           onPressed: feedback.isLoading
               ? null
               : ref
                     .read(assistiveFeedbackControllerProvider.notifier)
                     .testHaptics,
-          icon: const ExcludeSemantics(child: Icon(Icons.vibration_outlined)),
-          label: Text(l10n.testHaptics),
+          icon: Icons.vibration_outlined,
+          variant: EyesButtonVariant.outlined,
+          expand: true,
         ),
         if (noticeText != null) ...<Widget>[
-          const SizedBox(height: 16),
-          Semantics(
+          SizedBox(height: context.eyesLayout.spaceLg),
+          EyesStatusBanner(
+            title: l10n.onboardingFeedbackTitle,
+            message: noticeText,
             liveRegion: true,
-            child: Text(noticeText, textAlign: TextAlign.center),
           ),
         ],
       ],
@@ -302,24 +265,13 @@ final class _CameraPermissionStatus extends StatelessWidget {
       liveRegion: true,
       label: text,
       excludeSemantics: true,
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              ExcludeSemantics(
-                child: Icon(
-                  permission == CameraPermissionState.granted
-                      ? Icons.check_circle_outline
-                      : Icons.info_outline,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(child: Text(text)),
-            ],
-          ),
-        ),
+      child: EyesStatusBanner(
+        title: l10n.onboardingCameraTitle,
+        message: text,
+        tone: permission == CameraPermissionState.granted
+            ? EyesStatusTone.success
+            : EyesStatusTone.warning,
+        liveRegion: true,
       ),
     );
   }
@@ -365,26 +317,12 @@ final class _PrimaryOnboardingAction extends ConsumerWidget {
       },
     };
 
-    return Semantics(
-      button: true,
-      enabled: !state.isBusy,
+    return EyesButton(
       label: action.label,
-      excludeSemantics: true,
-      child: FilledButton.icon(
-        onPressed: state.isBusy ? null : action.onPressed,
-        style: FilledButton.styleFrom(
-          minimumSize: const Size(double.infinity, 64),
-        ),
-        icon: ExcludeSemantics(
-          child: state.isBusy
-              ? const SizedBox.square(
-                  dimension: 22,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : Icon(action.icon),
-        ),
-        label: Text(action.label),
-      ),
+      onPressed: state.isBusy ? null : action.onPressed,
+      icon: action.icon,
+      loading: state.isBusy,
+      expand: true,
     );
   }
 }
