@@ -208,7 +208,21 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get foundationReady =>
-      'A fundação do aplicativo está pronta para receber as funcionalidades do MVP.';
+      'Reconheça objetos próximos com avisos por voz e vibração usando apenas este aparelho.';
+
+  @override
+  String get homeOfflineTitle => 'Pronto para funcionar sem internet';
+
+  @override
+  String get homeOfflineMessage =>
+      'A câmera e a inteligência artificial processam as imagens neste aparelho. Nenhuma foto ou vídeo é salvo.';
+
+  @override
+  String get homeSupportTitle => 'Ajustes e suporte';
+
+  @override
+  String get homeSupportDescription =>
+      'Personalize os avisos, consulte orientações de segurança ou conecte uma conta opcional.';
 
   @override
   String get accessibilityDescription =>
@@ -607,6 +621,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get helpAndSafetyTitle => 'Ajuda e segurança';
 
   @override
+  String get helpAndSafetyIntro =>
+      'Orientações rápidas para usar o Eyes com segurança, privacidade e autonomia.';
+
+  @override
   String get helpSafetyHeading => 'Uso seguro';
 
   @override
@@ -643,6 +661,38 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get feedbackSettingsIntro =>
       'Escolha como o Eyes deve avisar sobre os objetos ao seu redor. Estas opções ficam somente neste aparelho.';
+
+  @override
+  String get appearanceSectionTitle => 'Aparência e contraste';
+
+  @override
+  String get appearanceSectionDescription =>
+      'Escolha uma opção confortável para leitura. O alto contraste reforça bordas e diferenças entre as cores.';
+
+  @override
+  String get appearanceLabel => 'Tema do aplicativo';
+
+  @override
+  String get appearanceSystem => 'Seguir configuração do aparelho';
+
+  @override
+  String get appearanceLight => 'Claro';
+
+  @override
+  String get appearanceDark => 'Escuro';
+
+  @override
+  String get appearanceHighContrastLight => 'Alto contraste claro';
+
+  @override
+  String get appearanceHighContrastDark => 'Alto contraste escuro';
+
+  @override
+  String get appearanceSaved => 'Aparência atualizada.';
+
+  @override
+  String get appearanceSaveFailed =>
+      'Não foi possível salvar a aparência. A configuração anterior foi mantida.';
 
   @override
   String get loadingFeedbackSettings =>
@@ -1004,7 +1054,21 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get foundationReady =>
-      'A fundação do aplicativo está pronta para receber as funcionalidades do MVP.';
+      'Reconheça objetos próximos com avisos por voz e vibração usando apenas este aparelho.';
+
+  @override
+  String get homeOfflineTitle => 'Pronto para funcionar sem internet';
+
+  @override
+  String get homeOfflineMessage =>
+      'A câmera e a inteligência artificial processam as imagens neste aparelho. Nenhuma foto ou vídeo é salvo.';
+
+  @override
+  String get homeSupportTitle => 'Ajustes e suporte';
+
+  @override
+  String get homeSupportDescription =>
+      'Personalize os avisos, consulte orientações de segurança ou conecte uma conta opcional.';
 
   @override
   String get accessibilityDescription =>
@@ -1403,6 +1467,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get helpAndSafetyTitle => 'Ajuda e segurança';
 
   @override
+  String get helpAndSafetyIntro =>
+      'Orientações rápidas para usar o Eyes com segurança, privacidade e autonomia.';
+
+  @override
   String get helpSafetyHeading => 'Uso seguro';
 
   @override
@@ -1439,6 +1507,38 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get feedbackSettingsIntro =>
       'Escolha como o Eyes deve avisar sobre os objetos ao seu redor. Estas opções ficam somente neste aparelho.';
+
+  @override
+  String get appearanceSectionTitle => 'Aparência e contraste';
+
+  @override
+  String get appearanceSectionDescription =>
+      'Escolha uma opção confortável para leitura. O alto contraste reforça bordas e diferenças entre as cores.';
+
+  @override
+  String get appearanceLabel => 'Tema do aplicativo';
+
+  @override
+  String get appearanceSystem => 'Seguir configuração do aparelho';
+
+  @override
+  String get appearanceLight => 'Claro';
+
+  @override
+  String get appearanceDark => 'Escuro';
+
+  @override
+  String get appearanceHighContrastLight => 'Alto contraste claro';
+
+  @override
+  String get appearanceHighContrastDark => 'Alto contraste escuro';
+
+  @override
+  String get appearanceSaved => 'Aparência atualizada.';
+
+  @override
+  String get appearanceSaveFailed =>
+      'Não foi possível salvar a aparência. A configuração anterior foi mantida.';
 
   @override
   String get loadingFeedbackSettings =>

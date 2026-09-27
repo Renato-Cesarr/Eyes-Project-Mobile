@@ -18,6 +18,8 @@ import 'package:eyes_mobile/features/account/application/sync_preferences_reposi
 import 'package:eyes_mobile/features/account/infrastructure/dio_auth_gateway.dart';
 import 'package:eyes_mobile/features/account/infrastructure/shared_preferences_metadata_sync_queue.dart';
 import 'package:eyes_mobile/features/account/infrastructure/shared_preferences_sync_preferences_repository.dart';
+import 'package:eyes_mobile/features/appearance/application/appearance_repository.dart';
+import 'package:eyes_mobile/features/appearance/infrastructure/shared_preferences_appearance_repository.dart';
 import 'package:eyes_mobile/features/assistive_feedback/application/assistive_feedback_controller.dart';
 import 'package:eyes_mobile/features/assistive_feedback/infrastructure/flutter_tts_speech_gateway.dart';
 import 'package:eyes_mobile/features/assistive_feedback/infrastructure/shared_preferences_feedback_repository.dart';
@@ -116,6 +118,11 @@ Future<void> bootstrap(AppEnvironment environment) async {
             ),
             feedbackPreferencesRepositoryProvider.overrideWith((Ref ref) {
               return SharedPreferencesFeedbackRepository(
+                ref.read(sharedPreferencesProvider),
+              );
+            }),
+            appearanceRepositoryProvider.overrideWith((Ref ref) {
+              return SharedPreferencesAppearanceRepository(
                 ref.read(sharedPreferencesProvider),
               );
             }),
