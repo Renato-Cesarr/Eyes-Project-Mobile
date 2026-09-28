@@ -207,6 +207,7 @@
   "appearanceSectionDescription": "Escolha uma opção confortável para leitura. O alto contraste reforça bordas e diferenças entre as cores.",
   "appearanceLabel": "Tema do aplicativo",
   "appearanceSystem": "Seguir configuração do aparelho",
+  "appearanceSystemShort": "Padrão do aparelho",
   "appearanceLight": "Claro",
   "appearanceDark": "Escuro",
   "appearanceHighContrastLight": "Alto contraste claro",
