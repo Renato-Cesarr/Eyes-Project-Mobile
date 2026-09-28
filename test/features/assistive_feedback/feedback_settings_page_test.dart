@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:eyes_mobile/app/config/app_environment.dart';
 import 'package:eyes_mobile/app/theme/app_theme.dart';
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
@@ -8,6 +10,7 @@ import 'package:eyes_mobile/features/assistive_feedback/application/assistive_fe
 import 'package:eyes_mobile/features/assistive_feedback/presentation/feedback_settings_page.dart';
 import 'package:eyes_mobile/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,6 +19,56 @@ import '../../support/fake_appearance.dart';
 import '../../support/fake_assistive_feedback.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() async {
+    final iconBytes = await File(
+      'test/fixtures/fonts/MaterialIcons-Regular.otf',
+    ).readAsBytes();
+    await Future.wait(<Future<void>>[
+      (FontLoader('MaterialIcons')
+            ..addFont(Future<ByteData>.value(ByteData.sublistView(iconBytes))))
+          .load(),
+      (FontLoader(
+        'Lexend',
+      )..addFont(rootBundle.load('assets/fonts/Lexend-Variable.ttf'))).load(),
+      (FontLoader('Atkinson Hyperlegible')..addFont(
+            rootBundle.load('assets/fonts/AtkinsonHyperlegible-Regular.ttf'),
+          ))
+          .load(),
+      (FontLoader('Atkinson Hyperlegible')..addFont(
+            rootBundle.load('assets/fonts/AtkinsonHyperlegible-Bold.ttf'),
+          ))
+          .load(),
+    ]);
+  });
+
+  testWidgets('settings has a compact, continuous reading flow', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+    await _pumpPage(
+      tester,
+      InMemoryFeedbackPreferencesRepository(),
+      FakeSpeechGateway(),
+      FakeAssistiveHaptics(),
+    );
+    expect(find.text('Áudio, alertas e vibração'), findsOneWidget);
+    expect(find.text('Voz'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    if (Platform.isWindows) {
+      await expectLater(
+        find.byType(MaterialApp),
+        matchesGoldenFile('goldens/windows/feedback-settings-light.png'),
+      );
+    }
+  });
+
   testWidgets('expõe controles acessíveis e persiste alterações', (
     tester,
   ) async {
@@ -82,7 +135,7 @@ void main() {
       appearance: appearance,
     );
 
-    await tester.tap(find.text('Seguir configuração do aparelho').last);
+    await tester.tap(find.text('Padrão do aparelho').last);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Alto contraste escuro').last);
     await tester.pumpAndSettle();
@@ -151,6 +204,7 @@ Future<void> _pumpPage(
         feedbackPreferencesRepositoryProvider.overrideWithValue(repository),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         locale: const Locale('pt', 'BR'),
         localizationsDelegates: const [
           AppLocalizations.delegate,

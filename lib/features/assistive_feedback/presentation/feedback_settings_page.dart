@@ -61,14 +61,10 @@ final class _SettingsContent extends ConsumerWidget {
         EyesPageHeader(
           title: l10n.feedbackSettingsTitle,
           description: l10n.feedbackSettingsIntro,
-          leading: const ExcludeSemantics(
-            child: Icon(Icons.tune_outlined, size: 44),
-          ),
         ),
-        SizedBox(height: layout.spaceXl),
-        EyesSection(
+        SizedBox(height: layout.spaceLg),
+        _SettingsGroup(
           title: l10n.appearanceSectionTitle,
-          description: l10n.appearanceSectionDescription,
           icon: Icons.contrast_outlined,
           children: <Widget>[
             if (appearanceState == null)
@@ -90,14 +86,16 @@ final class _SettingsContent extends ConsumerWidget {
                   AppearancePreference.highContrastDark:
                       l10n.appearanceHighContrastDark,
                 },
+                selectedLabels: <AppearancePreference, String>{
+                  AppearancePreference.system: l10n.appearanceSystemShort,
+                },
                 onChanged: ref
                     .read(appearanceControllerProvider.notifier)
                     .select,
               ),
           ],
         ),
-        SizedBox(height: layout.spaceLg),
-        EyesSection(
+        _SettingsGroup(
           title: l10n.voiceSectionTitle,
           icon: Icons.record_voice_over_outlined,
           children: <Widget>[
@@ -147,8 +145,7 @@ final class _SettingsContent extends ConsumerWidget {
             ),
           ],
         ),
-        SizedBox(height: layout.spaceLg),
-        EyesSection(
+        _SettingsGroup(
           title: l10n.alertsSectionTitle,
           icon: Icons.notifications_active_outlined,
           children: <Widget>[
@@ -180,8 +177,7 @@ final class _SettingsContent extends ConsumerWidget {
             ),
           ],
         ),
-        SizedBox(height: layout.spaceLg),
-        EyesSection(
+        _SettingsGroup(
           title: l10n.hapticsSectionTitle,
           icon: Icons.vibration_outlined,
           children: <Widget>[
@@ -205,8 +201,7 @@ final class _SettingsContent extends ConsumerWidget {
             ),
           ],
         ),
-        SizedBox(height: layout.spaceLg),
-        EyesSection(
+        _SettingsGroup(
           title: l10n.privacySectionTitle,
           description: l10n.feedbackPrivacyDescription,
           icon: Icons.privacy_tip_outlined,
@@ -259,6 +254,62 @@ final class _SettingsContent extends ConsumerWidget {
     if (confirmed ?? false) {
       await controller.restoreDefaults();
     }
+  }
+}
+
+/// Keeps settings in one continuous reading flow instead of stacking large cards.
+final class _SettingsGroup extends StatelessWidget {
+  const _SettingsGroup({
+    required this.title,
+    required this.children,
+    this.description,
+    this.icon,
+  });
+
+  final String title;
+  final String? description;
+  final IconData? icon;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final layout = context.eyesLayout;
+    return Padding(
+      padding: EdgeInsets.only(bottom: layout.spaceXl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          const Divider(),
+          SizedBox(height: layout.spaceLg),
+          Row(
+            children: <Widget>[
+              if (icon != null) ...<Widget>[
+                ExcludeSemantics(child: Icon(icon, size: 24)),
+                SizedBox(width: layout.spaceMd),
+              ],
+              Expanded(
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (description != null) ...<Widget>[
+            SizedBox(height: layout.spaceSm),
+            Text(description!, style: Theme.of(context).textTheme.bodyMedium),
+          ],
+          SizedBox(height: layout.spaceLg),
+          for (var index = 0; index < children.length; index++) ...<Widget>[
+            children[index],
+            if (index < children.length - 1) SizedBox(height: layout.spaceMd),
+          ],
+        ],
+      ),
+    );
   }
 }
 
@@ -349,12 +400,14 @@ final class _AccessibleDropdown<T extends Enum> extends StatelessWidget {
     required this.label,
     required this.value,
     required this.items,
+    this.selectedLabels,
     required this.onChanged,
   });
 
   final String label;
   final T value;
   final Map<T, String> items;
+  final Map<T, String>? selectedLabels;
   final ValueChanged<T> onChanged;
 
   @override
@@ -362,6 +415,19 @@ final class _AccessibleDropdown<T extends Enum> extends StatelessWidget {
     return DropdownButtonFormField<T>(
       initialValue: value,
       isExpanded: true,
+      selectedItemBuilder: (context) => items.entries
+          .map(
+            (entry) => Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                selectedLabels?[entry.key] ?? entry.value,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                semanticsLabel: entry.value,
+              ),
+            ),
+          )
+          .toList(growable: false),
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: label,

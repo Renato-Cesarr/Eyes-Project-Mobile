@@ -1279,6 +1279,12 @@ abstract class AppLocalizations {
   /// **'Seguir configuração do aparelho'**
   String get appearanceSystem;
 
+  /// No description provided for @appearanceSystemShort.
+  ///
+  /// In pt, this message translates to:
+  /// **'Padrão do aparelho'**
+  String get appearanceSystemShort;
+
   /// No description provided for @appearanceLight.
   ///
   /// In pt, this message translates to:

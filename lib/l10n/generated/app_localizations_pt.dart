@@ -676,6 +676,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get appearanceSystem => 'Seguir configuração do aparelho';
 
   @override
+  String get appearanceSystemShort => 'Padrão do aparelho';
+
+  @override
   String get appearanceLight => 'Claro';
 
   @override
@@ -1520,6 +1523,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get appearanceSystem => 'Seguir configuração do aparelho';
+
+  @override
+  String get appearanceSystemShort => 'Padrão do aparelho';
 
   @override
   String get appearanceLight => 'Claro';
