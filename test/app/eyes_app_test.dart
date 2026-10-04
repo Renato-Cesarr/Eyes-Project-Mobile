@@ -59,10 +59,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Assistência visual ao seu alcance'), findsOneWidget);
-    expect(find.bySemanticsLabel('Testar vibração e som'), findsWidgets);
+    expect(find.text('Reconhecer objetos'), findsOneWidget);
+    expect(find.bySemanticsLabel('Testar som e vibração'), findsWidgets);
 
-    final feedbackButton = find.text('Testar vibração e som');
+    final feedbackButton = find.text('Testar som e vibração');
     await tester.ensureVisible(feedbackButton);
     await tester.pumpAndSettle();
     await tester.tap(feedbackButton);
@@ -104,7 +104,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.text('Assistência visual ao seu alcance'), findsOneWidget);
+    expect(find.text('Reconhecer objetos'), findsOneWidget);
   });
 
   testWidgets('announces an accessible fallback when device feedback fails', (
@@ -130,7 +130,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final feedbackButton = find.text('Testar vibração e som');
+    final feedbackButton = find.text('Testar som e vibração');
     await tester.ensureVisible(feedbackButton);
     await tester.pumpAndSettle();
     await tester.tap(feedbackButton);

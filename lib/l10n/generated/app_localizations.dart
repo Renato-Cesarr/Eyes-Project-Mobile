@@ -448,19 +448,19 @@ abstract class AppLocalizations {
   /// No description provided for @homeTitle.
   ///
   /// In pt, this message translates to:
-  /// **'Assistência visual ao seu alcance'**
+  /// **'Reconhecer objetos'**
   String get homeTitle;
 
   /// No description provided for @foundationReady.
   ///
   /// In pt, this message translates to:
-  /// **'Reconheça objetos próximos com avisos por voz e vibração usando apenas este aparelho.'**
+  /// **'Abra a câmera para ouvir o que está à sua frente.'**
   String get foundationReady;
 
   /// No description provided for @homeOfflineTitle.
   ///
   /// In pt, this message translates to:
-  /// **'Pronto para funcionar sem internet'**
+  /// **'Funciona sem internet.'**
   String get homeOfflineTitle;
 
   /// No description provided for @homeOfflineMessage.
@@ -490,7 +490,7 @@ abstract class AppLocalizations {
   /// No description provided for @testFeedbackLabel.
   ///
   /// In pt, this message translates to:
-  /// **'Testar vibração e som'**
+  /// **'Testar som e vibração'**
   String get testFeedbackLabel;
 
   /// No description provided for @testFeedbackHint.
@@ -1240,19 +1240,19 @@ abstract class AppLocalizations {
   /// No description provided for @openFeedbackSettings.
   ///
   /// In pt, this message translates to:
-  /// **'Configurações de áudio e alertas'**
+  /// **'Áudio e alertas'**
   String get openFeedbackSettings;
 
   /// No description provided for @feedbackSettingsTitle.
   ///
   /// In pt, this message translates to:
-  /// **'Áudio, alertas e vibração'**
+  /// **'Áudio e alertas'**
   String get feedbackSettingsTitle;
 
   /// No description provided for @feedbackSettingsIntro.
   ///
   /// In pt, this message translates to:
-  /// **'Escolha como o Eyes deve avisar sobre os objetos ao seu redor. Estas opções ficam somente neste aparelho.'**
+  /// **'Seus ajustes ficam salvos apenas neste aparelho.'**
   String get feedbackSettingsIntro;
 
   /// No description provided for @appearanceSectionTitle.
@@ -1584,6 +1584,18 @@ abstract class AppLocalizations {
     int dropped,
     int processingMs,
   );
+
+  /// No description provided for @homeSettingsAction.
+  ///
+  /// In pt, this message translates to:
+  /// **'Abrir configurações'**
+  String get homeSettingsAction;
+
+  /// No description provided for @homePrivacyNote.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhuma foto ou vídeo é salvo.'**
+  String get homePrivacyNote;
 }
 
 class _AppLocalizationsDelegate

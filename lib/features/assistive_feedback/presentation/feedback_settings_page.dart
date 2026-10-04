@@ -21,8 +21,12 @@ final class FeedbackSettingsPage extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(assistiveFeedbackControllerProvider);
     return EyesPageScaffold(
-      title: l10n.appName,
+      title: l10n.feedbackSettingsTitle,
       maxContentWidth: 720,
+      adaptiveTitle: true,
+      contentPadding: EdgeInsets.all(
+        MediaQuery.sizeOf(context).width < 360 ? 20 : 24,
+      ),
       child: state.when(
         data: (settings) => _SettingsContent(settings: settings),
         error: (error, stackTrace) => EyesStateView.error(
@@ -58,45 +62,14 @@ final class _SettingsContent extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        EyesPageHeader(
-          title: l10n.feedbackSettingsTitle,
-          description: l10n.feedbackSettingsIntro,
+        Text(
+          l10n.feedbackSettingsIntro,
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
         SizedBox(height: layout.spaceLg),
         _SettingsGroup(
-          title: l10n.appearanceSectionTitle,
-          icon: Icons.contrast_outlined,
-          children: <Widget>[
-            if (appearanceState == null)
-              Semantics(
-                liveRegion: true,
-                label: l10n.loading,
-                child: const LinearProgressIndicator(),
-              )
-            else
-              _AccessibleDropdown<AppearancePreference>(
-                label: l10n.appearanceLabel,
-                value: appearanceState.preference,
-                items: <AppearancePreference, String>{
-                  AppearancePreference.system: l10n.appearanceSystem,
-                  AppearancePreference.light: l10n.appearanceLight,
-                  AppearancePreference.dark: l10n.appearanceDark,
-                  AppearancePreference.highContrastLight:
-                      l10n.appearanceHighContrastLight,
-                  AppearancePreference.highContrastDark:
-                      l10n.appearanceHighContrastDark,
-                },
-                selectedLabels: <AppearancePreference, String>{
-                  AppearancePreference.system: l10n.appearanceSystemShort,
-                },
-                onChanged: ref
-                    .read(appearanceControllerProvider.notifier)
-                    .select,
-              ),
-          ],
-        ),
-        _SettingsGroup(
           title: l10n.voiceSectionTitle,
+          first: true,
           icon: Icons.record_voice_over_outlined,
           children: <Widget>[
             _AccessibleSlider(
@@ -105,9 +78,6 @@ final class _SettingsContent extends ConsumerWidget {
               min: 0.30,
               max: 0.70,
               divisions: 8,
-              valueText: l10n.speechRateValue(
-                (preferences.speechRate * 100).round(),
-              ),
               rangeHint: l10n.speechRateRange,
               onChanged: (value) => controller.updatePreferences(
                 preferences.copyWith(speechRate: value),
@@ -119,7 +89,6 @@ final class _SettingsContent extends ConsumerWidget {
               min: 0,
               max: 1,
               divisions: 10,
-              valueText: l10n.percentValue((preferences.volume * 100).round()),
               rangeHint: l10n.speechVolumeRange,
               onChanged: (value) => controller.updatePreferences(
                 preferences.copyWith(volume: value),
@@ -202,6 +171,38 @@ final class _SettingsContent extends ConsumerWidget {
           ],
         ),
         _SettingsGroup(
+          title: l10n.appearanceSectionTitle,
+          icon: Icons.contrast_outlined,
+          children: <Widget>[
+            if (appearanceState == null)
+              Semantics(
+                liveRegion: true,
+                label: l10n.loading,
+                child: const LinearProgressIndicator(),
+              )
+            else
+              _AccessibleDropdown<AppearancePreference>(
+                label: l10n.appearanceLabel,
+                value: appearanceState.preference,
+                items: <AppearancePreference, String>{
+                  AppearancePreference.system: l10n.appearanceSystem,
+                  AppearancePreference.light: l10n.appearanceLight,
+                  AppearancePreference.dark: l10n.appearanceDark,
+                  AppearancePreference.highContrastLight:
+                      l10n.appearanceHighContrastLight,
+                  AppearancePreference.highContrastDark:
+                      l10n.appearanceHighContrastDark,
+                },
+                selectedLabels: <AppearancePreference, String>{
+                  AppearancePreference.system: l10n.appearanceSystemShort,
+                },
+                onChanged: ref
+                    .read(appearanceControllerProvider.notifier)
+                    .select,
+              ),
+          ],
+        ),
+        _SettingsGroup(
           title: l10n.privacySectionTitle,
           description: l10n.feedbackPrivacyDescription,
           icon: Icons.privacy_tip_outlined,
@@ -264,11 +265,13 @@ final class _SettingsGroup extends StatelessWidget {
     required this.children,
     this.description,
     this.icon,
+    this.first = false,
   });
 
   final String title;
   final String? description;
   final IconData? icon;
+  final bool first;
   final List<Widget> children;
 
   @override
@@ -279,8 +282,7 @@ final class _SettingsGroup extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          const Divider(),
-          SizedBox(height: layout.spaceLg),
+          if (!first) ...[const Divider(), SizedBox(height: layout.spaceLg)],
           Row(
             children: <Widget>[
               if (icon != null) ...<Widget>[
@@ -292,7 +294,7 @@ final class _SettingsGroup extends StatelessWidget {
                   header: true,
                   child: Text(
                     title,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
               ),
@@ -320,7 +322,6 @@ final class _AccessibleSlider extends StatefulWidget {
     required this.min,
     required this.max,
     required this.divisions,
-    required this.valueText,
     required this.rangeHint,
     required this.onChanged,
   });
@@ -330,7 +331,6 @@ final class _AccessibleSlider extends StatefulWidget {
   final double min;
   final double max;
   final int divisions;
-  final String valueText;
   final String rangeHint;
   final ValueChanged<double> onChanged;
 
@@ -360,7 +360,7 @@ final class _AccessibleSliderState extends State<_AccessibleSlider> {
       container: true,
       slider: true,
       label: widget.label,
-      value: widget.valueText,
+      value: AppLocalizations.of(context).percentValue((_value * 100).round()),
       increasedValue:
           '${((_value + step).clamp(widget.min, widget.max) * 100).round()} por cento',
       decreasedValue:
@@ -378,14 +378,30 @@ final class _AccessibleSliderState extends State<_AccessibleSlider> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.label, style: Theme.of(context).textTheme.titleMedium),
-          Text(widget.valueText),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  widget.label,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+                ),
+              ),
+              SizedBox(width: context.eyesLayout.spaceSm),
+              Text(
+                '${(_value * 100).round()}%',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
           Slider(
             value: _value,
             min: widget.min,
             max: widget.max,
             divisions: widget.divisions,
-            label: widget.valueText,
+            label: '${(_value * 100).round()}%',
             onChanged: change,
             onChangeEnd: widget.onChanged,
           ),
@@ -415,14 +431,14 @@ final class _AccessibleDropdown<T extends Enum> extends StatelessWidget {
     return DropdownButtonFormField<T>(
       initialValue: value,
       isExpanded: true,
+      itemHeight: null,
       selectedItemBuilder: (context) => items.entries
           .map(
             (entry) => Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 selectedLabels?[entry.key] ?? entry.value,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                overflow: TextOverflow.visible,
                 semanticsLabel: entry.value,
               ),
             ),

@@ -64,7 +64,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Abrir câmera'), findsOneWidget);
-    expect(find.text('Configurações de áudio e alertas'), findsOneWidget);
+    expect(find.text('Áudio e alertas'), findsOneWidget);
     if (Platform.isWindows) {
       await expectLater(
         find.byType(EyesApp),

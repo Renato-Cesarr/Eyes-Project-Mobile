@@ -58,7 +58,7 @@ void main() {
       FakeSpeechGateway(),
       FakeAssistiveHaptics(),
     );
-    expect(find.text('Áudio, alertas e vibração'), findsOneWidget);
+    expect(find.text('Áudio e alertas'), findsOneWidget);
     expect(find.text('Voz'), findsOneWidget);
     expect(tester.takeException(), isNull);
     if (Platform.isWindows) {
@@ -77,7 +77,7 @@ void main() {
     final haptics = FakeAssistiveHaptics();
     await _pumpPage(tester, repository, speech, haptics);
 
-    expect(find.text('Áudio, alertas e vibração'), findsOneWidget);
+    expect(find.text('Áudio e alertas'), findsOneWidget);
     expect(find.bySemanticsLabel('Velocidade da voz'), findsOneWidget);
     expect(find.bySemanticsLabel('Volume da voz'), findsOneWidget);
 
@@ -135,6 +135,8 @@ void main() {
       appearance: appearance,
     );
 
+    await tester.ensureVisible(find.text('Padrão do aparelho').last);
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Padrão do aparelho').last);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Alto contraste escuro').last);

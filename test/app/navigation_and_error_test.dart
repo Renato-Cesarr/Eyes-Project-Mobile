@@ -44,7 +44,7 @@ void main() {
     await tester.tap(find.text('Voltar ao início'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Assistência visual ao seu alcance'), findsOneWidget);
+    expect(find.text('Reconhecer objetos'), findsOneWidget);
   });
 
   testWidgets('global error fallback exposes an accessible live message', (

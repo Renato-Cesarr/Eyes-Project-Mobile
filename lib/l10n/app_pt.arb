@@ -59,14 +59,14 @@
   "next": "Avançar",
   "back": "Voltar",
   "close": "Fechar",
-  "homeTitle": "Assistência visual ao seu alcance",
-  "foundationReady": "Reconheça objetos próximos com avisos por voz e vibração usando apenas este aparelho.",
-  "homeOfflineTitle": "Pronto para funcionar sem internet",
+  "homeTitle": "Reconhecer objetos",
+  "foundationReady": "Abra a câmera para ouvir o que está à sua frente.",
+  "homeOfflineTitle": "Funciona sem internet.",
   "homeOfflineMessage": "A câmera e a inteligência artificial processam as imagens neste aparelho. Nenhuma foto ou vídeo é salvo.",
   "homeSupportTitle": "Ajustes e suporte",
   "homeSupportDescription": "Personalize os avisos, consulte orientações de segurança ou conecte uma conta opcional.",
   "accessibilityDescription": "Este aplicativo respeita o tamanho de fonte do sistema, oferece alto contraste e foi estruturado para funcionar com o TalkBack.",
-  "testFeedbackLabel": "Testar vibração e som",
+  "testFeedbackLabel": "Testar som e vibração",
   "testFeedbackHint": "Ativa uma confirmação tátil e sonora do aparelho",
   "feedbackConfirmed": "Feedback tátil e sonoro confirmado.",
   "feedbackUnavailable": "Não foi possível reproduzir o feedback neste aparelho.",
@@ -200,9 +200,9 @@
   "helpScanningBody": "Mantenha a câmera traseira livre. Inicie a varredura e siga os avisos curtos de voz e vibração. Pause ou encerre quando não precisar dos alertas.",
   "helpPermissionHeading": "Permissão da câmera",
   "helpPermissionBody": "A câmera é solicitada somente ao iniciar. Se a permissão estiver bloqueada, use a ação para abrir as configurações do aparelho.",
-  "openFeedbackSettings": "Configurações de áudio e alertas",
-  "feedbackSettingsTitle": "Áudio, alertas e vibração",
-  "feedbackSettingsIntro": "Escolha como o Eyes deve avisar sobre os objetos ao seu redor. Estas opções ficam somente neste aparelho.",
+  "openFeedbackSettings": "Áudio e alertas",
+  "feedbackSettingsTitle": "Áudio e alertas",
+  "feedbackSettingsIntro": "Seus ajustes ficam salvos apenas neste aparelho.",
   "appearanceSectionTitle": "Aparência e contraste",
   "appearanceSectionDescription": "Escolha uma opção confortável para leitura. O alto contraste reforça bordas e diferenças entre as cores.",
   "appearanceLabel": "Tema do aplicativo",
@@ -268,5 +268,7 @@
       "dropped": {"type": "int"},
       "processingMs": {"type": "int"}
     }
-  }
+  },
+  "homeSettingsAction": "Abrir configurações",
+  "homePrivacyNote": "Nenhuma foto ou vídeo é salvo."
 }
