@@ -204,14 +204,14 @@ class AppLocalizationsPt extends AppLocalizations {
   String get close => 'Fechar';
 
   @override
-  String get homeTitle => 'Assistência visual ao seu alcance';
+  String get homeTitle => 'Reconhecer objetos';
 
   @override
   String get foundationReady =>
-      'Reconheça objetos próximos com avisos por voz e vibração usando apenas este aparelho.';
+      'Abra a câmera para ouvir o que está à sua frente.';
 
   @override
-  String get homeOfflineTitle => 'Pronto para funcionar sem internet';
+  String get homeOfflineTitle => 'Funciona sem internet.';
 
   @override
   String get homeOfflineMessage =>
@@ -229,7 +229,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'Este aplicativo respeita o tamanho de fonte do sistema, oferece alto contraste e foi estruturado para funcionar com o TalkBack.';
 
   @override
-  String get testFeedbackLabel => 'Testar vibração e som';
+  String get testFeedbackLabel => 'Testar som e vibração';
 
   @override
   String get testFeedbackHint =>
@@ -653,14 +653,14 @@ class AppLocalizationsPt extends AppLocalizations {
       'A câmera é solicitada somente ao iniciar. Se a permissão estiver bloqueada, use a ação para abrir as configurações do aparelho.';
 
   @override
-  String get openFeedbackSettings => 'Configurações de áudio e alertas';
+  String get openFeedbackSettings => 'Áudio e alertas';
 
   @override
-  String get feedbackSettingsTitle => 'Áudio, alertas e vibração';
+  String get feedbackSettingsTitle => 'Áudio e alertas';
 
   @override
   String get feedbackSettingsIntro =>
-      'Escolha como o Eyes deve avisar sobre os objetos ao seu redor. Estas opções ficam somente neste aparelho.';
+      'Seus ajustes ficam salvos apenas neste aparelho.';
 
   @override
   String get appearanceSectionTitle => 'Aparência e contraste';
@@ -851,6 +851,12 @@ class AppLocalizationsPt extends AppLocalizations {
   ) {
     return '$fps FPS • recebidos: $received • processados: $processed • descartados: $dropped • processamento: $processingMs ms';
   }
+
+  @override
+  String get homeSettingsAction => 'Abrir configurações';
+
+  @override
+  String get homePrivacyNote => 'Nenhuma foto ou vídeo é salvo.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1053,14 +1059,14 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get close => 'Fechar';
 
   @override
-  String get homeTitle => 'Assistência visual ao seu alcance';
+  String get homeTitle => 'Reconhecer objetos';
 
   @override
   String get foundationReady =>
-      'Reconheça objetos próximos com avisos por voz e vibração usando apenas este aparelho.';
+      'Abra a câmera para ouvir o que está à sua frente.';
 
   @override
-  String get homeOfflineTitle => 'Pronto para funcionar sem internet';
+  String get homeOfflineTitle => 'Funciona sem internet.';
 
   @override
   String get homeOfflineMessage =>
@@ -1078,7 +1084,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'Este aplicativo respeita o tamanho de fonte do sistema, oferece alto contraste e foi estruturado para funcionar com o TalkBack.';
 
   @override
-  String get testFeedbackLabel => 'Testar vibração e som';
+  String get testFeedbackLabel => 'Testar som e vibração';
 
   @override
   String get testFeedbackHint =>
@@ -1502,14 +1508,14 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'A câmera é solicitada somente ao iniciar. Se a permissão estiver bloqueada, use a ação para abrir as configurações do aparelho.';
 
   @override
-  String get openFeedbackSettings => 'Configurações de áudio e alertas';
+  String get openFeedbackSettings => 'Áudio e alertas';
 
   @override
-  String get feedbackSettingsTitle => 'Áudio, alertas e vibração';
+  String get feedbackSettingsTitle => 'Áudio e alertas';
 
   @override
   String get feedbackSettingsIntro =>
-      'Escolha como o Eyes deve avisar sobre os objetos ao seu redor. Estas opções ficam somente neste aparelho.';
+      'Seus ajustes ficam salvos apenas neste aparelho.';
 
   @override
   String get appearanceSectionTitle => 'Aparência e contraste';
@@ -1700,4 +1706,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   ) {
     return '$fps FPS • recebidos: $received • processados: $processed • descartados: $dropped • processamento: $processingMs ms';
   }
+
+  @override
+  String get homeSettingsAction => 'Abrir configurações';
+
+  @override
+  String get homePrivacyNote => 'Nenhuma foto ou vídeo é salvo.';
 }

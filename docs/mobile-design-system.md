@@ -82,6 +82,8 @@ desenvolvimento e não substitui testes com TalkBack em aparelho real.
 
 ## Acabamento das telas principais (REN-60)
 
+Atualização em 04/10/2026: [composição aprovada e implementação real](approved-composition-2026-10-04.md). Voz passa a abrir as configurações; aparência permanece disponível após os ajustes assistivos. As oito referências adicionais dos quatro temas estão em `test/features/design/goldens/windows/`.
+
 A tela inicial tem uma única ação dominante: abrir a câmera. O estado offline é
 explicado perto dela, sem competir visualmente com a ação; ajustes, ajuda e conta
 opcional aparecem como navegação secundária contínua. As configurações deixam

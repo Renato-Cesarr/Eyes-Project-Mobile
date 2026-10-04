@@ -126,7 +126,7 @@ void main() {
 
     expect(repository.completed, isTrue);
     expect(repository.completionWrites, 1);
-    expect(find.text('Assistência visual ao seu alcance'), findsOneWidget);
+    expect(find.text('Reconhecer objetos'), findsOneWidget);
     semantics.dispose();
   });
 
@@ -162,7 +162,7 @@ void main() {
     await tester.tap(continueWithoutCamera);
     await tester.pumpAndSettle();
     expect(repository.completed, isTrue);
-    expect(find.text('Assistência visual ao seu alcance'), findsOneWidget);
+    expect(find.text('Reconhecer objetos'), findsOneWidget);
   });
 
   testWidgets('temporary denial can be retried without leaving the flow', (
@@ -208,7 +208,7 @@ void main() {
       camera: camera,
     );
 
-    expect(find.text('Assistência visual ao seu alcance'), findsOneWidget);
+    expect(find.text('Reconhecer objetos'), findsOneWidget);
     expect(find.text('Bem-vindo ao Eyes'), findsNothing);
     expect(camera.requestCalls, 0);
   });
@@ -222,7 +222,7 @@ void main() {
       camera: _OnboardingCameraGateway(),
     );
     final container = ProviderScope.containerOf(
-      tester.element(find.text('Assistência visual ao seu alcance')),
+      tester.element(find.text('Reconhecer objetos')),
     );
     container.read(appRouterProvider).goNamed(AppRoutes.help);
     await tester.pumpAndSettle();
