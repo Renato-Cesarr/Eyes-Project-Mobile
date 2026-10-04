@@ -1,0 +1,46 @@
+# ADR 0012 — Telemetria opt-in para calibração assistiva
+
+- Status: aceito
+- Data: 2026-09-11
+- Issue: REN-37
+
+## Contexto
+
+A calibração precisa correlacionar câmera, inferência, decisão e início do TTS,
+mas a aplicação normal não deve registrar cenas nem expor métricas técnicas ao
+usuário ou ao TalkBack. Medir somente a duração da chamada de inferência não
+representa a latência percebida.
+
+## Decisão
+
+Introduzir um recorder inerte por padrão. Após a integração REN-62 de 04/10/2026,
+ele só é ativado quando as condições independentes são verdadeiras:
+
+1. o flavor é `dev` e o build declara `EYES_CALIBRATION=true`;
+2. o APK Android é de diagnóstico (`debuggable`), nunca Release;
+3. o avaliador iniciou o app por ADB com metadados estruturados de um cenário.
+
+O recorder recebe somente `DetectionBatch`, `ProximityEvaluation`, eventos de
+alerta e o callback nativo de início do `flutter_tts`. Ele emite JSON Lines com
+classes, faixas, caixas normalizadas e durações. Frames, pixels, áudio, nomes,
+tokens e mensagens de erro nativas são proibidos.
+
+Os metadados de ground truth usam enumerações fechadas e identificadores sem
+texto livre. O canal nativo valida o tipo do APK antes de aceitar a intent; uma
+versão Release sempre retorna a configuração desabilitada. Nenhuma métrica
+entra na árvore semântica ou na UI.
+
+O bootstrap desabilita a consulta nativa no flavor `prod` e em builds sem opt-in.
+O handler Android de emissão também rejeita gravação se o cenário nativo não
+estiver habilitado. Uma coleta deve indicar separadamente a versão integrada,
+o modelo, o aparelho e os dados de entrada.
+
+## Consequências
+
+- a latência câmera → início do TTS pode ser medida em Profile no aparelho;
+- uma mesma coleta alimenta matriz de confusão e relatório reproduzível;
+- o APK Release permanece incapaz de ativar telemetria de calibração;
+- o operador precisa seguir o protocolo e rotular corretamente cada cenário;
+- logs de calibração são artefatos locais temporários e não devem ser
+  versionados, enquanto relatórios agregados e configurações podem ser
+  publicados.
