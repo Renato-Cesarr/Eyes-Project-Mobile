@@ -54,7 +54,11 @@ final class EyesPageScaffold extends StatelessWidget {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text(title, maxLines: adaptiveTitle ? null : 1),
+        title: Text(
+          title,
+          maxLines: adaptiveTitle ? 3 : 1,
+          softWrap: adaptiveTitle,
+        ),
         leading: leading,
         leadingWidth: leadingWidth,
         titleSpacing: titleSpacing,

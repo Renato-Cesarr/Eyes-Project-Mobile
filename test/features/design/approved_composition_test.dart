@@ -13,6 +13,7 @@ import 'package:eyes_mobile/features/assistive_feedback/presentation/feedback_se
 import 'package:eyes_mobile/features/home/presentation/home_page.dart';
 import 'package:eyes_mobile/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -84,6 +85,18 @@ void main() {
               );
               await tester.pumpAndSettle();
               expect(tester.takeException(), isNull);
+              final title = find.descendant(
+                of: find.byType(AppBar),
+                matching: find.text(
+                  screen == 'home' ? 'Eyes' : 'Áudio e alertas',
+                ),
+              );
+              final paragraph = tester.renderObject<RenderParagraph>(title);
+              expect(paragraph.didExceedMaxLines, isFalse);
+              final toolbar = tester.getRect(find.byType(AppBar));
+              final titleRect = tester.getRect(title);
+              expect(titleRect.top, greaterThanOrEqualTo(toolbar.top));
+              expect(titleRect.bottom, lessThanOrEqualTo(toolbar.bottom));
               await expectLater(
                 tester,
                 meetsGuideline(androidTapTargetGuideline),
