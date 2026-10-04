@@ -44,6 +44,10 @@ class MainActivity : FlutterActivity() {
                     result.success(configuration)
                 }
                 "emitEvent" -> {
+                    if (calibrationConfiguration()["enabled"] != true) {
+                        result.success(null)
+                        return@setMethodCallHandler
+                    }
                     val payload = call.argument<String>("payload")
                     if (payload.isNullOrBlank()) {
                         result.error(

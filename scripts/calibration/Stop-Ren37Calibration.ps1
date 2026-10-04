@@ -98,6 +98,7 @@ $device = [ordered]@{
     model = $startMetadata.model
     androidVersion = $startMetadata.androidVersion
     androidApi = $startMetadata.androidApi
+    buildIdentity = $startMetadata.buildIdentity
     batteryStart = $startMetadata.batteryStart
     batteryEnd = Convert-BatterySnapshot $batteryEndRaw
     thermalStatus = if ($thermalStatusMatch.Success) { [int]$thermalStatusMatch.Groups[1].Value } else { $null }

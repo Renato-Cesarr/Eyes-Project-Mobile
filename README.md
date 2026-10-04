@@ -242,15 +242,13 @@ vídeos, áudios, senhas e tokens. Revogar o consentimento apaga itens pendentes
 Nenhum consumidor de upload foi habilitado nesta entrega. Consulte o
 [ADR 0013](docs/adr/0013-optional-account-and-consented-sync.md).
 
-## Fluxo Git
-
 ## Calibração científica da proximidade
 
 A instrumentação da REN-37 é desabilitada por padrão e não faz parte da
-experiência do usuário. Ela exige simultaneamente um APK Android de diagnóstico
-(Profile/Debug, marcado como `debuggable`) e um cenário estruturado iniciado por
-ADB. O script usa Profile e mantém `EYES_CALIBRATION=true` como declaração
-explícita da finalidade do build. APKs Release rejeitam a ativação no código
+experiência do usuário. Ela exige simultaneamente flavor `dev`, opt-in de build
+`EYES_CALIBRATION=true`, APK Android de diagnóstico (Profile/Debug, marcado como
+`debuggable`) e um cenário estruturado iniciado por ADB. O script usa Profile.
+Flavor `prod` não consulta a configuração nativa; APKs Release rejeitam a ativação no código
 nativo, inclusive diante de uma intent forjada. As coletas
 contêm somente faixas, classes, caixas normalizadas e durações; imagens, vídeo,
 áudio, nomes e texto livre não são registrados.
@@ -262,6 +260,9 @@ parâmetros executados pelo app são espelhados no manifesto
 `config/proximity-policy.v1.json`, com teste automático contra divergências.
 Os dados brutos permanecem em `artifacts/calibration/`, ignorados pelo Git;
 somente relatórios agregados e sem dados pessoais devem ser publicados.
+
+A integração na arquitetura atual e os limites de validação estão registrados
+em [docs/calibration/REN-62-integration.md](docs/calibration/REN-62-integration.md).
 
 ## Fluxo Git
 

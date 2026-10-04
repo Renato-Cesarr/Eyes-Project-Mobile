@@ -24,7 +24,10 @@ void main() {
         });
     const sink = AndroidLogCalibrationEventSink(channel: channel);
 
-    sink.emit(<String, Object?>{'type': 'session_started', 'schema_version': 1});
+    sink.emit(<String, Object?>{
+      'type': 'session_started',
+      'schema_version': 1,
+    });
 
     final call = await received.future;
     expect(call.method, 'emitEvent');
@@ -32,7 +35,9 @@ void main() {
     final payload = arguments['payload']! as String;
     expect(payload, startsWith(AndroidLogCalibrationEventSink.marker));
     expect(
-      jsonDecode(payload.substring(AndroidLogCalibrationEventSink.marker.length)),
+      jsonDecode(
+        payload.substring(AndroidLogCalibrationEventSink.marker.length),
+      ),
       <String, Object?>{'type': 'session_started', 'schema_version': 1},
     );
   });

@@ -8,11 +8,62 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   const channel = MethodChannel('calibration-test');
+  const buildChannel = MethodChannel('br.com.eyesproject.mobile/calibration');
 
   tearDown(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(buildChannel, null);
   });
+
+  for (final scenario in [
+    (enabled: false, production: false),
+    (enabled: false, production: true),
+    (enabled: true, production: true),
+  ]) {
+    test(
+      'normal/production build ignores native scenario: $scenario',
+      () async {
+        var calls = 0;
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(buildChannel, (call) async {
+              calls++;
+              return {'enabled': true};
+            });
+
+        final configuration =
+            await PlatformCalibrationConfigurationSource.forBuild(
+              calibrationEnabled: scenario.enabled,
+              isProduction: scenario.production,
+            ).load();
+
+        expect(configuration.enabled, isFalse);
+        expect(calls, 0);
+      },
+    );
+  }
+
+  test(
+    'opt-in dev build still requires an authorized native scenario',
+    () async {
+      var calls = 0;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(buildChannel, (call) async {
+            calls++;
+            return {'enabled': false};
+          });
+
+      final configuration =
+          await const PlatformCalibrationConfigurationSource.forBuild(
+            calibrationEnabled: true,
+            isProduction: false,
+          ).load();
+
+      expect(configuration.enabled, isFalse);
+      expect(calls, 1);
+    },
+  );
 
   test('lookup desabilitado não consulta configuração nativa', () async {
     var calls = 0;

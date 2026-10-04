@@ -36,7 +36,30 @@ $ErrorActionPreference = 'Stop'
 $repositoryRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $artifactDirectory = Join-Path $repositoryRoot 'artifacts\calibration'
 $apkPath = Join-Path $repositoryRoot 'build\app\outputs\flutter-apk\app-dev-profile.apk'
+$buildIdentityPath = "$apkPath.calibration.json"
 $component = 'br.com.eyesproject.mobile.dev/br.com.eyesproject.mobile.MainActivity'
+
+function Get-CalibrationBuildIdentity {
+    param([string]$RepositoryRoot, [string]$ApkPath)
+    $sourceCommit = (& git -C $RepositoryRoot rev-parse HEAD | Out-String).Trim()
+    if ($LASTEXITCODE -ne 0) {
+        throw 'Não foi possível identificar o commit da coleta.'
+    }
+    $sourceChanges = & git -C $RepositoryRoot status --porcelain
+    if ($LASTEXITCODE -ne 0) {
+        throw 'Não foi possível identificar alterações locais da coleta.'
+    }
+    return [ordered]@{
+        sourceCommit = $sourceCommit
+        sourceDirty = [bool]$sourceChanges
+        flavor = 'dev'
+        buildMode = 'profile'
+        calibrationEnabled = $true
+        apkSha256 = (Get-FileHash -LiteralPath $ApkPath -Algorithm SHA256).Hash.ToLowerInvariant()
+        modelSha256 = (Get-FileHash -LiteralPath (Join-Path $RepositoryRoot 'assets/models/efficientdet-lite0.tflite') -Algorithm SHA256).Hash.ToLowerInvariant()
+        policySha256 = (Get-FileHash -LiteralPath (Join-Path $RepositoryRoot 'config/proximity-policy.v1.json') -Algorithm SHA256).Hash.ToLowerInvariant()
+    }
+}
 
 function Invoke-Adb {
     param([Parameter(ValueFromRemainingArguments = $true)][string[]]$Arguments)
@@ -88,6 +111,19 @@ if (-not $SkipBuild) {
 if (-not (Test-Path -LiteralPath $apkPath)) {
     throw "APK de calibração não encontrado em '$apkPath'."
 }
+if (-not $SkipBuild) {
+    Get-CalibrationBuildIdentity -RepositoryRoot $repositoryRoot -ApkPath $apkPath |
+        ConvertTo-Json -Depth 5 |
+        Set-Content -LiteralPath $buildIdentityPath -Encoding utf8
+}
+if (-not (Test-Path -LiteralPath $buildIdentityPath)) {
+    throw 'A identidade do APK não foi registrada. Execute uma vez sem -SkipBuild.'
+}
+$buildIdentity = Get-Content -Raw -LiteralPath $buildIdentityPath | ConvertFrom-Json
+$currentApkHash = (Get-FileHash -LiteralPath $apkPath -Algorithm SHA256).Hash.ToLowerInvariant()
+if ($buildIdentity.apkSha256 -ne $currentApkHash) {
+    throw 'O APK foi alterado após o registro da identidade. Recompile sem -SkipBuild.'
+}
 
 New-Item -ItemType Directory -Force -Path $artifactDirectory | Out-Null
 $metadataPath = Join-Path $artifactDirectory "$SessionId.start.json"
@@ -114,6 +150,7 @@ $metadata = [ordered]@{
     model = (Invoke-Adb shell getprop ro.product.model | Out-String).Trim()
     androidVersion = (Invoke-Adb shell getprop ro.build.version.release | Out-String).Trim()
     androidApi = (Invoke-Adb shell getprop ro.build.version.sdk | Out-String).Trim()
+    buildIdentity = $buildIdentity
     batteryStart = Convert-BatterySnapshot $batteryStartRaw
     logcatProcessId = $logcatProcess.Id
 }

@@ -13,11 +13,12 @@ representa a latência percebida.
 
 ## Decisão
 
-Introduzir um recorder inerte por padrão. Ele só é ativado quando duas
-condições independentes são verdadeiras:
+Introduzir um recorder inerte por padrão. Após a integração REN-62 de 04/10/2026,
+ele só é ativado quando as condições independentes são verdadeiras:
 
-1. o APK Android é de diagnóstico (`debuggable`), nunca Release;
-2. o avaliador iniciou o app por ADB com metadados estruturados de um cenário.
+1. o flavor é `dev` e o build declara `EYES_CALIBRATION=true`;
+2. o APK Android é de diagnóstico (`debuggable`), nunca Release;
+3. o avaliador iniciou o app por ADB com metadados estruturados de um cenário.
 
 O recorder recebe somente `DetectionBatch`, `ProximityEvaluation`, eventos de
 alerta e o callback nativo de início do `flutter_tts`. Ele emite JSON Lines com
@@ -28,6 +29,11 @@ Os metadados de ground truth usam enumerações fechadas e identificadores sem
 texto livre. O canal nativo valida o tipo do APK antes de aceitar a intent; uma
 versão Release sempre retorna a configuração desabilitada. Nenhuma métrica
 entra na árvore semântica ou na UI.
+
+O bootstrap desabilita a consulta nativa no flavor `prod` e em builds sem opt-in.
+O handler Android de emissão também rejeita gravação se o cenário nativo não
+estiver habilitado. Uma coleta deve indicar separadamente a versão integrada,
+o modelo, o aparelho e os dados de entrada.
 
 ## Consequências
 

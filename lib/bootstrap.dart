@@ -55,7 +55,10 @@ Future<void> bootstrap(AppEnvironment environment) async {
   var calibrationConfiguration = const CalibrationConfiguration.disabled();
   try {
     calibrationConfiguration =
-        await const PlatformCalibrationConfigurationSource().load();
+        await PlatformCalibrationConfigurationSource.forBuild(
+          calibrationEnabled: const bool.fromEnvironment('EYES_CALIBRATION'),
+          isProduction: environment.isProduction,
+        ).load();
   } on Object catch (error, stackTrace) {
     errorReporter.capture(
       error,

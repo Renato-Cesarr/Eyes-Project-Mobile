@@ -15,6 +15,12 @@ final class PlatformCalibrationConfigurationSource {
     this.platformLookupEnabled = true,
   ]);
 
+  const PlatformCalibrationConfigurationSource.forBuild({
+    required bool calibrationEnabled,
+    required bool isProduction,
+  }) : _channel = const MethodChannel(_channelName),
+       platformLookupEnabled = calibrationEnabled && !isProduction;
+
   static const _channelName = 'br.com.eyesproject.mobile/calibration';
   static const _nativeRegistrationAttempts = 4;
   static const _nativeRegistrationRetryDelay = Duration(milliseconds: 50);

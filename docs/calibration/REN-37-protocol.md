@@ -9,8 +9,8 @@ ao usuário.
 
 ## Princípios de validade
 
-1. Usar build Flutter **Profile**, flavor `dev`. O script também declara
-   `EYES_CALIBRATION=true` para identificar a finalidade do build. Debug não é
+1. Usar build Flutter **Profile**, flavor `dev`. O script declara
+   `EYES_CALIBRATION=true`, exigido pelo bootstrap. Debug não é
    aceito para latência e Release rejeita a telemetria no canal Android.
 2. Manter o processamento offline e bloquear rede durante a sessão.
 3. Não registrar imagens, vídeo, áudio, nomes de pessoas ou texto livre.
@@ -92,14 +92,17 @@ O relatório é gerado por:
 
 ```powershell
 dart run tool/calibration_report.dart `
-  --input artifacts/calibration `
+  --input artifacts/calibration/ren37-cal-001.jsonl `
   --output docs/benchmarks/REN-37-resultados.md `
   --device-metrics artifacts/calibration/ren37-cal-001.device.json
 ```
 
 Quando `--input` aponta para uma pasta, o gerador agrega todos os arquivos
-`.jsonl` encontrados nela. Isso permite produzir uma única matriz a partir de
-segmentos separados, sem juntar arquivos manualmente.
+`.jsonl` diretamente nela (sem percorrer subpastas). Usar apenas diretórios
+dedicados ao mesmo split, versão e finalidade; nunca juntar calibração, avaliação
+ou fixtures em um relatório de validação. Preferir o arquivo exato do segmento
+até que a seleção/validação de entradas seja consolidada na REN-68. Os dados
+físicos históricos não são migrados automaticamente para a nova versão.
 
 ## Política de ajuste
 
