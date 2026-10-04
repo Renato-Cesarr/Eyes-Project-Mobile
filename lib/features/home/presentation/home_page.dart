@@ -162,7 +162,9 @@ final class _HomeContent extends ConsumerWidget {
         SizedBox(height: layout.spaceLg),
         Text(
           l10n.homePrivacyNote,
-          style: Theme.of(context).textTheme.bodySmall,
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: colors.onSurface),
         ),
       ],
     );
