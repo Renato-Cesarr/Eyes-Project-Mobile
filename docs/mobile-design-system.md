@@ -79,3 +79,18 @@ desenvolvimento e não substitui testes com TalkBack em aparelho real.
 6. Respeitar redução de movimento.
 7. Cobrir estados carregando, vazio, erro, offline e sucesso aplicáveis.
 8. Adicionar testes de widget para semântica e comportamento, não apenas pixels.
+
+## Acabamento das telas principais (REN-60)
+
+A tela inicial tem uma única ação dominante: abrir a câmera. O estado offline é
+explicado perto dela, sem competir visualmente com a ação; ajustes, ajuda e conta
+opcional aparecem como navegação secundária contínua. As configurações deixam
+de empilhar cartões independentes e passam a usar seções separadas por divisores,
+mantendo a ordem de leitura, os alvos de toque e os controles nativos.
+
+O texto abreviado do tema selecionado é apenas visual: o TalkBack recebe o nome
+completo da opção. As capturas de referência em
+`test/features/home/goldens/windows/` e
+`test/features/assistive_feedback/goldens/windows/` foram inspecionadas em
+390 × 844; os testes de comportamento e Semantics rodam em todas as plataformas.
+Essas capturas não substituem a homologação em aparelho com TalkBack ativado.
