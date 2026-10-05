@@ -89,23 +89,25 @@ final class _AssistiveScanPageState extends ConsumerState<AssistiveScanPage>
       }
     });
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.assistiveScanTitle),
-        actions: [
-          IconButton(
-            tooltip: l10n.openHelpAndSafety,
-            onPressed: () => unawaited(context.pushNamed(AppRoutes.help)),
-            icon: const Icon(Icons.help_outline),
-          ),
-          IconButton(
-            tooltip: l10n.openFeedbackSettings,
-            onPressed: () => unawaited(context.pushNamed(AppRoutes.settings)),
-            icon: const Icon(Icons.settings_outlined),
-          ),
-        ],
-      ),
-      body: camera.when(
+    return EyesPageScaffold(
+      title: l10n.cameraPageTitle,
+      adaptiveTitle: true,
+      scrollable: false,
+      contentPadding: EdgeInsets.zero,
+      maxContentWidth: double.infinity,
+      actions: [
+        IconButton(
+          tooltip: l10n.openHelpAndSafety,
+          onPressed: () => unawaited(context.pushNamed(AppRoutes.help)),
+          icon: const Icon(Icons.help_outline),
+        ),
+        IconButton(
+          tooltip: l10n.openFeedbackSettings,
+          onPressed: () => unawaited(context.pushNamed(AppRoutes.settings)),
+          icon: const Icon(Icons.settings_outlined),
+        ),
+      ],
+      child: camera.when(
         data: (session) => _AssistiveScanContent(
           session: session,
           vision: vision,
@@ -397,11 +399,9 @@ final class _OperationalStatusOverlay extends StatelessWidget {
           label: '${l10n.scanStatusLabel}: $statusText',
           excludeSemantics: true,
           child: Material(
-            color: scheme.surface.withValues(alpha: 0.94),
-            elevation: 3,
-            shadowColor: Colors.black54,
+            color: scheme.surface,
             shape: RoundedRectangleBorder(
-              side: BorderSide(color: scheme.outlineVariant),
+              side: BorderSide(color: scheme.outline),
               borderRadius: BorderRadius.circular(layout.radiusLg),
             ),
             child: Padding(
@@ -451,8 +451,7 @@ final class _DegradedRecoveryBanner extends StatelessWidget {
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: layout.readingMaxWidth),
         child: Material(
-          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.96),
-          elevation: 3,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(layout.radiusLg),
           child: Padding(
             padding: EdgeInsets.all(layout.spaceMd),
@@ -509,11 +508,9 @@ final class _ScanControlDock extends StatelessWidget {
         key: const ValueKey<String>('scan-control-dock'),
         constraints: BoxConstraints(maxWidth: layout.readingMaxWidth),
         child: Material(
-          color: scheme.surface.withValues(alpha: 0.96),
-          elevation: 6,
-          shadowColor: Colors.black87,
+          color: scheme.surface,
           shape: RoundedRectangleBorder(
-            side: BorderSide(color: scheme.outlineVariant),
+            side: BorderSide(color: scheme.outline),
             borderRadius: BorderRadius.circular(layout.radiusLg),
           ),
           child: Padding(
@@ -593,7 +590,7 @@ final class _ControlDockContent extends StatelessWidget {
           Text(
             l10n.cameraPrivacyNotice,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall,
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
         ],
       ],
@@ -619,6 +616,7 @@ final class _BlockingRecoveryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final layout = context.eyesLayout;
+    final l10n = AppLocalizations.of(context);
     return ColoredBox(
       color: Theme.of(context).colorScheme.surface,
       child: Center(
@@ -629,12 +627,23 @@ final class _BlockingRecoveryView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                _OperationalStatusOverlay(phase: phase, statusText: statusText),
-                SizedBox(height: layout.spaceLg),
-                _RecoveryPanel(
-                  failure: failure,
-                  visionFailure: visionFailure,
-                  coordinator: coordinator,
+                if (!visionFailure) ...<Widget>[
+                  _OperationalStatusOverlay(
+                    phase: phase,
+                    statusText: statusText,
+                  ),
+                  SizedBox(height: layout.spaceLg),
+                ],
+                Semantics(
+                  container: visionFailure,
+                  label: visionFailure
+                      ? '${l10n.scanStatusLabel}: $statusText'
+                      : null,
+                  child: _RecoveryPanel(
+                    failure: failure,
+                    visionFailure: visionFailure,
+                    coordinator: coordinator,
+                  ),
                 ),
               ],
             ),

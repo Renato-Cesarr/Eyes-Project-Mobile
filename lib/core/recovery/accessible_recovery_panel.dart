@@ -66,6 +66,7 @@ final class _AccessibleRecoveryPanelState
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final layout = context.eyesLayout;
+    final showIcon = MediaQuery.textScalerOf(context).scale(1) <= 1.4;
     return EyesCard(
       backgroundColor: widget.blocking
           ? colorScheme.errorContainer
@@ -88,15 +89,17 @@ final class _AccessibleRecoveryPanelState
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Icon(
-                        widget.blocking
-                            ? Icons.error_outline
-                            : Icons.info_outline,
-                        color: widget.blocking
-                            ? colorScheme.onErrorContainer
-                            : colorScheme.onSecondaryContainer,
-                      ),
-                      SizedBox(width: layout.spaceMd),
+                      if (showIcon) ...<Widget>[
+                        Icon(
+                          widget.blocking
+                              ? Icons.error_outline
+                              : Icons.info_outline,
+                          color: widget.blocking
+                              ? colorScheme.onErrorContainer
+                              : colorScheme.onSecondaryContainer,
+                        ),
+                        SizedBox(width: layout.spaceMd),
+                      ],
                       Expanded(
                         child: Text(
                           widget.title,

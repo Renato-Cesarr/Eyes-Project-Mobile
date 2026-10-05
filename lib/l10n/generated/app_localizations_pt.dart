@@ -12,16 +12,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get appName => 'Eyes';
 
   @override
-  String get accountTitle => 'Conta e sincronização';
+  String get accountTitle => 'Conta opcional';
 
   @override
-  String get openAccountSettings => 'Conta e sincronização';
+  String get openAccountSettings => 'Conta opcional';
 
   @override
   String get onboardingOptionalAccount => 'Configurar conta opcional';
 
   @override
-  String get accountLoading => 'Carregando conta e sincronização';
+  String get accountLoading => 'Carregando conta';
 
   @override
   String get accountLoadError =>
@@ -35,7 +35,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get accountOfflineGuarantee =>
-      'Entrar é opcional. A câmera, o reconhecimento, a voz e a vibração continuam funcionando localmente sem conta e sem internet.';
+      'A câmera e os avisos continuam funcionando localmente, sem conta e sem internet.';
 
   @override
   String get emailLabel => 'E-mail';
@@ -89,18 +89,18 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get syncConsentDescription =>
-      'Quando ativado, o Eyes poderá sincronizar apenas dados operacionais permitidos. Imagens, vídeos, áudios e senhas nunca entram na fila.';
+      'Salve sua preferência para o futuro envio de metadados operacionais. Imagens, vídeos, áudios e senhas não entram na fila.';
 
   @override
   String get syncMetadataOnlyNotice =>
-      'A sincronização não altera o processamento offline da câmera e pode ser revogada a qualquer momento.';
+      'O consentimento fica salvo neste aparelho. O envio de metadados ainda não está disponível. Nenhuma imagem, vídeo ou áudio é enviado.';
 
   @override
   String get syncConsentDialogTitle => 'Permitir sincronização?';
 
   @override
   String get syncConsentDialogMessage =>
-      'Somente metadados permitidos poderão ser enviados quando houver conexão. Imagens, vídeos e áudios permanecem no aparelho.';
+      'Esta ação salva sua preferência neste aparelho. O envio de metadados ainda não está disponível. Imagens, vídeos, áudios e senhas não entram na fila.';
 
   @override
   String get syncConsentConfirm => 'Permitir';
@@ -139,7 +139,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get onboardingPrivacyBody =>
-      'A câmera é processada localmente durante a varredura. O Eyes não salva fotos ou vídeos e a função assistiva opera sem internet e sem conta. Nenhum dado é sincronizado no MVP.';
+      'A câmera é processada localmente durante a varredura. O Eyes não salva fotos ou vídeos e a função assistiva opera sem internet e sem conta. Nenhum metadado é enviado.';
 
   @override
   String get onboardingFeedbackTitle => 'Prepare voz e vibração';
@@ -264,7 +264,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get openCamera => 'Abrir câmera';
 
   @override
-  String get cameraPageTitle => 'Câmera e varredura';
+  String get cameraPageTitle => 'Câmera';
 
   @override
   String get cameraPrivacyNotice =>
@@ -287,11 +287,11 @@ class AppLocalizationsPt extends AppLocalizations {
   String get visionPaused => 'Varredura pausada e recursos liberados.';
 
   @override
-  String get visionFailed => 'Erro ao iniciar inteligência artificial.';
+  String get visionFailed => 'Não foi possível iniciar.';
 
   @override
   String get visionFailedHelp =>
-      'A varredura não foi iniciada. Tente preparar a inteligência artificial novamente.';
+      'A varredura não foi iniciada. Tente novamente.';
 
   @override
   String get visionRetry => 'Tentar iniciar inteligência artificial novamente';
@@ -453,8 +453,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'A varredura permaneceu desligada. Tente preparar a inteligência artificial novamente.';
 
   @override
-  String get recoveryModelUnavailableTitle =>
-      'Inteligência artificial indisponível';
+  String get recoveryModelUnavailableTitle => 'Não foi possível iniciar.';
 
   @override
   String get recoveryModelInvalidMessage =>
@@ -462,7 +461,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get recoveryModelMemoryMessage =>
-      'O aparelho não conseguiu reservar memória para o reconhecimento. Feche outros aplicativos e tente novamente.';
+      'Faltou memória para iniciar. Feche outros aplicativos e tente novamente.';
 
   @override
   String get recoveryModelDelegateMessage =>
@@ -622,7 +621,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpAndSafetyIntro =>
-      'Orientações rápidas para usar o Eyes com segurança, privacidade e autonomia.';
+      'Orientações para usar a câmera e os avisos com segurança.';
 
   @override
   String get helpSafetyHeading => 'Uso seguro';
@@ -867,16 +866,16 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get appName => 'Eyes';
 
   @override
-  String get accountTitle => 'Conta e sincronização';
+  String get accountTitle => 'Conta opcional';
 
   @override
-  String get openAccountSettings => 'Conta e sincronização';
+  String get openAccountSettings => 'Conta opcional';
 
   @override
   String get onboardingOptionalAccount => 'Configurar conta opcional';
 
   @override
-  String get accountLoading => 'Carregando conta e sincronização';
+  String get accountLoading => 'Carregando conta';
 
   @override
   String get accountLoadError =>
@@ -890,7 +889,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get accountOfflineGuarantee =>
-      'Entrar é opcional. A câmera, o reconhecimento, a voz e a vibração continuam funcionando localmente sem conta e sem internet.';
+      'A câmera e os avisos continuam funcionando localmente, sem conta e sem internet.';
 
   @override
   String get emailLabel => 'E-mail';
@@ -944,18 +943,18 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get syncConsentDescription =>
-      'Quando ativado, o Eyes poderá sincronizar apenas dados operacionais permitidos. Imagens, vídeos, áudios e senhas nunca entram na fila.';
+      'Salve sua preferência para o futuro envio de metadados operacionais. Imagens, vídeos, áudios e senhas não entram na fila.';
 
   @override
   String get syncMetadataOnlyNotice =>
-      'A sincronização não altera o processamento offline da câmera e pode ser revogada a qualquer momento.';
+      'O consentimento fica salvo neste aparelho. O envio de metadados ainda não está disponível. Nenhuma imagem, vídeo ou áudio é enviado.';
 
   @override
   String get syncConsentDialogTitle => 'Permitir sincronização?';
 
   @override
   String get syncConsentDialogMessage =>
-      'Somente metadados permitidos poderão ser enviados quando houver conexão. Imagens, vídeos e áudios permanecem no aparelho.';
+      'Esta ação salva sua preferência neste aparelho. O envio de metadados ainda não está disponível. Imagens, vídeos, áudios e senhas não entram na fila.';
 
   @override
   String get syncConsentConfirm => 'Permitir';
@@ -994,7 +993,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get onboardingPrivacyBody =>
-      'A câmera é processada localmente durante a varredura. O Eyes não salva fotos ou vídeos e a função assistiva opera sem internet e sem conta. Nenhum dado é sincronizado no MVP.';
+      'A câmera é processada localmente durante a varredura. O Eyes não salva fotos ou vídeos e a função assistiva opera sem internet e sem conta. Nenhum metadado é enviado.';
 
   @override
   String get onboardingFeedbackTitle => 'Prepare voz e vibração';
@@ -1119,7 +1118,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get openCamera => 'Abrir câmera';
 
   @override
-  String get cameraPageTitle => 'Câmera e varredura';
+  String get cameraPageTitle => 'Câmera';
 
   @override
   String get cameraPrivacyNotice =>
@@ -1142,11 +1141,11 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get visionPaused => 'Varredura pausada e recursos liberados.';
 
   @override
-  String get visionFailed => 'Erro ao iniciar inteligência artificial.';
+  String get visionFailed => 'Não foi possível iniciar.';
 
   @override
   String get visionFailedHelp =>
-      'A varredura não foi iniciada. Tente preparar a inteligência artificial novamente.';
+      'A varredura não foi iniciada. Tente novamente.';
 
   @override
   String get visionRetry => 'Tentar iniciar inteligência artificial novamente';
@@ -1308,8 +1307,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'A varredura permaneceu desligada. Tente preparar a inteligência artificial novamente.';
 
   @override
-  String get recoveryModelUnavailableTitle =>
-      'Inteligência artificial indisponível';
+  String get recoveryModelUnavailableTitle => 'Não foi possível iniciar.';
 
   @override
   String get recoveryModelInvalidMessage =>
@@ -1317,7 +1315,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get recoveryModelMemoryMessage =>
-      'O aparelho não conseguiu reservar memória para o reconhecimento. Feche outros aplicativos e tente novamente.';
+      'Faltou memória para iniciar. Feche outros aplicativos e tente novamente.';
 
   @override
   String get recoveryModelDelegateMessage =>
@@ -1477,7 +1475,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get helpAndSafetyIntro =>
-      'Orientações rápidas para usar o Eyes com segurança, privacidade e autonomia.';
+      'Orientações para usar a câmera e os avisos com segurança.';
 
   @override
   String get helpSafetyHeading => 'Uso seguro';

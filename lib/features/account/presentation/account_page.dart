@@ -58,7 +58,8 @@ final class _AccountPageState extends ConsumerState<AccountPage> {
     final state = ref.watch(accountControllerProvider);
     final l10n = AppLocalizations.of(context);
     return EyesPageScaffold(
-      title: l10n.appName,
+      title: l10n.accountTitle,
+      adaptiveTitle: true,
       maxContentWidth: context.eyesLayout.readingMaxWidth,
       child: state.when(
         data: (value) => _buildContent(context, value),
@@ -79,14 +80,9 @@ final class _AccountPageState extends ConsumerState<AccountPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        EyesPageHeader(
-          title: state.isSignedIn
-              ? l10n.accountConnectedHeading
-              : l10n.accountOptionalHeading,
-          description: l10n.accountOfflineGuarantee,
-          leading: const ExcludeSemantics(
-            child: Icon(Icons.account_circle_outlined, size: 44),
-          ),
+        Text(
+          l10n.accountOfflineGuarantee,
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
         if (state.failure case final failure?) ...<Widget>[
           SizedBox(height: layout.spaceXl),
@@ -274,17 +270,25 @@ final class _ConnectedAccount extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        EyesCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(userName, style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 4),
-              Text(userEmail),
-            ],
+        Semantics(
+          header: true,
+          child: Text(
+            l10n.accountConnectedHeading,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: context.eyesLayout.spaceMd),
+        Text(userName, style: Theme.of(context).textTheme.titleMedium),
+        SizedBox(height: context.eyesLayout.spaceXs),
+        Text(userEmail, style: Theme.of(context).textTheme.bodyLarge),
+        SizedBox(height: context.eyesLayout.spaceLg),
+        const Divider(),
+        SizedBox(height: context.eyesLayout.spaceLg),
+        Text(
+          l10n.syncMetadataOnlyNotice,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        SizedBox(height: context.eyesLayout.spaceMd),
         SwitchListTile.adaptive(
           contentPadding: EdgeInsets.zero,
           title: Text(l10n.syncConsentLabel),
@@ -292,9 +296,7 @@ final class _ConnectedAccount extends StatelessWidget {
           value: syncConsent,
           onChanged: isSubmitting ? null : onConsentChanged,
         ),
-        const SizedBox(height: 8),
-        Text(l10n.syncMetadataOnlyNotice),
-        const SizedBox(height: 24),
+        SizedBox(height: context.eyesLayout.spaceXl),
         EyesButton(
           label: l10n.accountSignOut,
           onPressed: isSubmitting ? null : onSignOut,

@@ -1,0 +1,164 @@
+{
+  "issue": "REN-67",
+  "baseCommit": "5e8919f7ac0b2d1acbfe8a95f26aed96344512c0",
+  "branch": "feat/REN-67-remaining-mobile-composition",
+  "generatedAtUtc": "2026-10-05T02:12:16.816Z",
+  "platform": "Windows",
+  "flutter": "3.44.0",
+  "review": "Assistant inspected all 19 PNGs; human acceptance and physical review pending.",
+  "camera": "Fake gateway; no real scene frames. Opacity separately tested against white/black.",
+  "captures": [
+    {
+      "path": "test/features/design/goldens/windows/account-connected-dark.png",
+      "bytes": 52966,
+      "sha256": "ff1e33aa148933cdc6b55d07a72e1a617dfbb95ba9ef882014c00ea83493fa4d"
+    },
+    {
+      "path": "test/features/design/goldens/windows/account-optional-light.png",
+      "bytes": 23707,
+      "sha256": "2c34147663aca4ea457f27faacbd080a464a2445069e935e634c77f437b071d3"
+    },
+    {
+      "path": "test/features/design/goldens/windows/help-light.png",
+      "bytes": 61309,
+      "sha256": "9bf63c28a7dba524dc08ca27fed03a069a804d34178c774c7104faa3d3d04e59"
+    },
+    {
+      "path": "test/features/design/goldens/windows/home-dark.png",
+      "bytes": 34284,
+      "sha256": "b12b71394f1a48556678710e08c007f6b71fe32e6d407ac62b3a84ec40e2cf51"
+    },
+    {
+      "path": "test/features/design/goldens/windows/home-high-contrast-dark.png",
+      "bytes": 27938,
+      "sha256": "f2b53ba65faedd00e85a92b8f6dbcbb994950bf0860b2b0e593c4fcd1825f044"
+    },
+    {
+      "path": "test/features/design/goldens/windows/home-high-contrast-light.png",
+      "bytes": 31742,
+      "sha256": "ec495acda3dc9d13b2c4efcca1984f0e3cf586dab719c43b576e7f8cec74218a"
+    },
+    {
+      "path": "test/features/design/goldens/windows/home-light.png",
+      "bytes": 34003,
+      "sha256": "20a9f66b7a9f7729eb7365eff25106f35182918de51670f24c2ceba45adbf2e6"
+    },
+    {
+      "path": "test/features/design/goldens/windows/onboarding-camera-high-contrast-light.png",
+      "bytes": 28433,
+      "sha256": "a73576eb66befa6e568a723a5732c5e4f255fc23633b4ece5a9f45bcbcd70814"
+    },
+    {
+      "path": "test/features/design/goldens/windows/onboarding-feedback-light.png",
+      "bytes": 30329,
+      "sha256": "75b51605cd4abbfa362a1921d67707b2850222c620b171a73a6d6ae508cb254d"
+    },
+    {
+      "path": "test/features/design/goldens/windows/onboarding-privacy-dark.png",
+      "bytes": 39952,
+      "sha256": "8ef067f408a5ff9fd8be9603eaa71b2337d9c3b0c6c96fb33d4460a5f8ca182e"
+    },
+    {
+      "path": "test/features/design/goldens/windows/onboarding-safety-high-contrast-dark.png",
+      "bytes": 23685,
+      "sha256": "8104d1a5a1628f2ee754580c882a0fc2d16b4581e2d17904aabab9307cd383d0"
+    },
+    {
+      "path": "test/features/design/goldens/windows/onboarding-welcome-light.png",
+      "bytes": 23868,
+      "sha256": "b020dc43c3145f87416841e746ce58965dfd3e858ef5acc0aeacb8768080f3f0"
+    },
+    {
+      "path": "test/features/design/goldens/windows/scan-active-light.png",
+      "bytes": 30185,
+      "sha256": "c8f9f4b5fc4070da79be9e160a2e71cb14bb1da038eb6f0f40d48eef18d11f3d"
+    },
+    {
+      "path": "test/features/design/goldens/windows/scan-denied-high-contrast-light.png",
+      "bytes": 27952,
+      "sha256": "e896332ab7ca9f40928b6467fe2ef788d55684baf6e36e7acf6d5d4ee6b25483"
+    },
+    {
+      "path": "test/features/design/goldens/windows/scan-ended-high-contrast-dark.png",
+      "bytes": 22951,
+      "sha256": "7b38152786ae50a1d48ecf1c64d08a96480054c7b266a700006ae5749b7cb37c"
+    },
+    {
+      "path": "test/features/design/goldens/windows/scan-memory-error-high-contrast-dark-text-200.png",
+      "bytes": 30410,
+      "sha256": "66994321b72f9a05eba1921177934e6afc1c1d0a9dffe88f8fb8270bcedfe2b3"
+    },
+    {
+      "path": "test/features/design/goldens/windows/scan-paused-dark.png",
+      "bytes": 35340,
+      "sha256": "e6cd9eb27367122e6a71e9cad4ca457cc0c85fdd715789b8f63af0bd58f0697b"
+    },
+    {
+      "path": "test/features/design/goldens/windows/scan-runtime-error-high-contrast-dark-text-200.png",
+      "bytes": 30042,
+      "sha256": "35519ff70aea97631843b651e8cb06e171fe185148e695e5adfcc7b7c2492a37"
+    },
+    {
+      "path": "test/features/home/goldens/windows/home-compact-light.png",
+      "bytes": 34003,
+      "sha256": "20a9f66b7a9f7729eb7365eff25106f35182918de51670f24c2ceba45adbf2e6"
+    }
+  ],
+  "sources": [
+    {
+      "path": "lib/core/design_system/components/eyes_page_scaffold.dart",
+      "bytes": 3499,
+      "sha256": "cc3d837466f93b050c9be5e56f860abacd1d5593c0def5d979d5ebd88681d990"
+    },
+    {
+      "path": "lib/core/recovery/accessible_recovery_panel.dart",
+      "bytes": 4582,
+      "sha256": "fba7c26020c2aeb045bed2bf0f7675d6abb5bad30a4a679163cb87caa09f1ffb"
+    },
+    {
+      "path": "lib/features/account/presentation/account_page.dart",
+      "bytes": 12518,
+      "sha256": "93dab4b019184bfe5c8de12640cf906c6a07eb1d2b21fbb5d97bd72db32e9ccb"
+    },
+    {
+      "path": "lib/features/help/presentation/help_and_safety_page.dart",
+      "bytes": 3829,
+      "sha256": "86803a447f502178d52d988a7a2ba0318fbda521d208d4e012edd765ff082a9e"
+    },
+    {
+      "path": "lib/features/home/presentation/home_page.dart",
+      "bytes": 6434,
+      "sha256": "859042bcd9970424f0e40e705754a99f8a1ced3dc2cda957a3f7a860a1f026a5"
+    },
+    {
+      "path": "lib/features/onboarding/presentation/onboarding_page.dart",
+      "bytes": 13399,
+      "sha256": "d1399f5c410841ee6bd96436efe0549bcc0721235b8b53340e4183c489fc9184"
+    },
+    {
+      "path": "lib/features/scanning/presentation/assistive_scan_page.dart",
+      "bytes": 33507,
+      "sha256": "05e9f40723e7b2c6ab82376bd7bb0e5956c34432cd2c645ab48a57d6dce877e8"
+    },
+    {
+      "path": "lib/l10n/app_pt.arb",
+      "bytes": 18496,
+      "sha256": "04e5b09b0fb93a4ba71c756ca374a7899cc23c7b7394dd7f977dab2fe37608af"
+    },
+    {
+      "path": "lib/l10n/app_pt_BR.arb",
+      "bytes": 18499,
+      "sha256": "8804c08ba6e21af0eb614c5e933264f0942e323136063575a28370b04509e1f4"
+    },
+    {
+      "path": "test/features/design/remaining_composition_test.dart",
+      "bytes": 16661,
+      "sha256": "9e73682aac1f8a25e04013d33d290417b4e7e94743ef9f544bd0009785016066"
+    },
+    {
+      "path": "test/support/composition_fixture.dart",
+      "bytes": 6995,
+      "sha256": "6959ddae912d0b1a90963ed1f77b9b577990e4c7da010fa85200f4f567ae36f9"
+    }
+  ]
+}

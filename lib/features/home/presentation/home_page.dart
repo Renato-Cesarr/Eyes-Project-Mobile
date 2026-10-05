@@ -155,7 +155,6 @@ final class _HomeContent extends ConsumerWidget {
         const Divider(height: 1),
         EyesActionTile(
           title: l10n.openAccountSettings,
-          subtitle: l10n.accountOptionalHeading,
           icon: Icons.account_circle_outlined,
           onTap: () => context.pushNamed(AppRoutes.account),
         ),
