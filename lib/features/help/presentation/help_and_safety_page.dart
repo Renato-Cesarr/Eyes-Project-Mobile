@@ -14,17 +14,22 @@ final class HelpAndSafetyPage extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final layout = context.eyesLayout;
     return EyesPageScaffold(
-      title: l10n.appName,
+      title: l10n.helpAndSafetyTitle,
+      adaptiveTitle: true,
       maxContentWidth: layout.readingMaxWidth,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          EyesPageHeader(
-            title: l10n.helpAndSafetyTitle,
-            description: l10n.helpAndSafetyIntro,
-            leading: const ExcludeSemantics(
-              child: Icon(Icons.help_outline, size: 40),
-            ),
+          Text(
+            l10n.helpAndSafetyIntro,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          SizedBox(height: layout.spaceLg),
+          EyesButton(
+            label: l10n.repeatFeedbackTests,
+            onPressed: () => unawaited(context.pushNamed(AppRoutes.settings)),
+            icon: Icons.volume_up_outlined,
+            expand: true,
           ),
           SizedBox(height: layout.spaceXl),
           _HelpSection(
@@ -32,19 +37,19 @@ final class HelpAndSafetyPage extends StatelessWidget {
             body: l10n.helpSafetyBody,
             icon: Icons.health_and_safety_outlined,
           ),
-          SizedBox(height: layout.spaceLg),
+          const Divider(),
           _HelpSection(
             title: l10n.helpPrivacyHeading,
             body: l10n.helpPrivacyBody,
             icon: Icons.privacy_tip_outlined,
           ),
-          SizedBox(height: layout.spaceLg),
+          const Divider(),
           _HelpSection(
             title: l10n.helpScanningHeading,
             body: l10n.helpScanningBody,
             icon: Icons.center_focus_strong_outlined,
           ),
-          SizedBox(height: layout.spaceLg),
+          const Divider(),
           _HelpSection(
             title: l10n.helpPermissionHeading,
             body: l10n.helpPermissionBody,
@@ -60,13 +65,6 @@ final class HelpAndSafetyPage extends StatelessWidget {
               ),
             ),
             icon: Icons.replay_outlined,
-            expand: true,
-          ),
-          SizedBox(height: layout.spaceMd),
-          EyesButton(
-            label: l10n.repeatFeedbackTests,
-            onPressed: () => unawaited(context.pushNamed(AppRoutes.settings)),
-            icon: Icons.volume_up_outlined,
             variant: EyesButtonVariant.outlined,
             expand: true,
           ),
@@ -89,11 +87,34 @@ final class _HelpSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EyesSection(
-      title: title,
-      description: body,
-      icon: icon,
-      children: const <Widget>[],
+    final layout = context.eyesLayout;
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: layout.spaceLg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              ExcludeSemantics(
+                child: Icon(icon, color: Theme.of(context).colorScheme.primary),
+              ),
+              SizedBox(width: layout.spaceMd),
+              Expanded(
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: layout.spaceSm),
+          Text(body, style: Theme.of(context).textTheme.bodyLarge),
+        ],
+      ),
     );
   }
 }

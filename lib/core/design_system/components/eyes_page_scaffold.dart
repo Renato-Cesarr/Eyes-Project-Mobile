@@ -30,35 +30,48 @@ final class EyesPageScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var toolbarHeight = kToolbarHeight;
+    var titleLines = 1;
     if (adaptiveTitle) {
+      final appBarTheme = Theme.of(context).appBarTheme;
+      final hasLeading =
+          leading != null || (ModalRoute.of(context)?.canPop ?? false);
+      final leadingExtent = hasLeading
+          ? leadingWidth ?? appBarTheme.leadingWidth ?? kToolbarHeight
+          : 0.0;
+      final spacing =
+          titleSpacing ??
+          appBarTheme.titleSpacing ??
+          NavigationToolbar.kMiddleSpacing;
       final painter =
           TextPainter(
             text: TextSpan(
               text: title,
               style:
-                  Theme.of(context).appBarTheme.titleTextStyle ??
+                  appBarTheme.titleTextStyle ??
                   Theme.of(context).textTheme.titleLarge,
             ),
             textDirection: Directionality.of(context),
             textScaler: MediaQuery.textScalerOf(context),
           )..layout(
             maxWidth:
-                (MediaQuery.sizeOf(context).width - 112 - actions.length * 48)
+                (MediaQuery.sizeOf(context).width -
+                        MediaQuery.paddingOf(context).horizontal -
+                        leadingExtent -
+                        spacing * 2 -
+                        actions.length * context.eyesLayout.minimumTapTarget)
                     .clamp(1, double.infinity),
           );
       toolbarHeight = (painter.height + 16).clamp(
         kToolbarHeight,
         double.infinity,
       );
+      final lines = painter.computeLineMetrics();
+      titleLines = lines.isEmpty ? 1 : lines.length;
       painter.dispose();
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          title,
-          maxLines: adaptiveTitle ? 3 : 1,
-          softWrap: adaptiveTitle,
-        ),
+        title: Text(title, maxLines: titleLines, softWrap: adaptiveTitle),
         leading: leading,
         leadingWidth: leadingWidth,
         titleSpacing: titleSpacing,

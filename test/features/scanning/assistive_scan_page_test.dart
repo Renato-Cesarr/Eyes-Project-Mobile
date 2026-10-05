@@ -477,14 +477,11 @@ void main() {
       feedback: feedback,
     );
 
-    expect(
-      find.text('Erro ao iniciar inteligência artificial.'),
-      findsOneWidget,
-    );
+    expect(find.text('Não foi possível iniciar.'), findsOneWidget);
     expect(find.textContaining('interpreter-allocation'), findsNothing);
     expect(
       find.bySemanticsLabel(
-        RegExp('Estado da varredura: Erro ao iniciar inteligência artificial.'),
+        RegExp('Estado da varredura: Não foi possível iniciar.'),
       ),
       findsOneWidget,
     );

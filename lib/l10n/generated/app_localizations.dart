@@ -106,13 +106,13 @@ abstract class AppLocalizations {
   /// No description provided for @accountTitle.
   ///
   /// In pt, this message translates to:
-  /// **'Conta e sincronização'**
+  /// **'Conta opcional'**
   String get accountTitle;
 
   /// No description provided for @openAccountSettings.
   ///
   /// In pt, this message translates to:
-  /// **'Conta e sincronização'**
+  /// **'Conta opcional'**
   String get openAccountSettings;
 
   /// No description provided for @onboardingOptionalAccount.
@@ -124,7 +124,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountLoading.
   ///
   /// In pt, this message translates to:
-  /// **'Carregando conta e sincronização'**
+  /// **'Carregando conta'**
   String get accountLoading;
 
   /// No description provided for @accountLoadError.
@@ -148,7 +148,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountOfflineGuarantee.
   ///
   /// In pt, this message translates to:
-  /// **'Entrar é opcional. A câmera, o reconhecimento, a voz e a vibração continuam funcionando localmente sem conta e sem internet.'**
+  /// **'A câmera e os avisos continuam funcionando localmente, sem conta e sem internet.'**
   String get accountOfflineGuarantee;
 
   /// No description provided for @emailLabel.
@@ -250,13 +250,13 @@ abstract class AppLocalizations {
   /// No description provided for @syncConsentDescription.
   ///
   /// In pt, this message translates to:
-  /// **'Quando ativado, o Eyes poderá sincronizar apenas dados operacionais permitidos. Imagens, vídeos, áudios e senhas nunca entram na fila.'**
+  /// **'Salve sua preferência para o futuro envio de metadados operacionais. Imagens, vídeos, áudios e senhas não entram na fila.'**
   String get syncConsentDescription;
 
   /// No description provided for @syncMetadataOnlyNotice.
   ///
   /// In pt, this message translates to:
-  /// **'A sincronização não altera o processamento offline da câmera e pode ser revogada a qualquer momento.'**
+  /// **'O consentimento fica salvo neste aparelho. O envio de metadados ainda não está disponível. Nenhuma imagem, vídeo ou áudio é enviado.'**
   String get syncMetadataOnlyNotice;
 
   /// No description provided for @syncConsentDialogTitle.
@@ -268,7 +268,7 @@ abstract class AppLocalizations {
   /// No description provided for @syncConsentDialogMessage.
   ///
   /// In pt, this message translates to:
-  /// **'Somente metadados permitidos poderão ser enviados quando houver conexão. Imagens, vídeos e áudios permanecem no aparelho.'**
+  /// **'Esta ação salva sua preferência neste aparelho. O envio de metadados ainda não está disponível. Imagens, vídeos, áudios e senhas não entram na fila.'**
   String get syncConsentDialogMessage;
 
   /// No description provided for @syncConsentConfirm.
@@ -334,7 +334,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingPrivacyBody.
   ///
   /// In pt, this message translates to:
-  /// **'A câmera é processada localmente durante a varredura. O Eyes não salva fotos ou vídeos e a função assistiva opera sem internet e sem conta. Nenhum dado é sincronizado no MVP.'**
+  /// **'A câmera é processada localmente durante a varredura. O Eyes não salva fotos ou vídeos e a função assistiva opera sem internet e sem conta. Nenhum metadado é enviado.'**
   String get onboardingPrivacyBody;
 
   /// No description provided for @onboardingFeedbackTitle.
@@ -556,7 +556,7 @@ abstract class AppLocalizations {
   /// No description provided for @cameraPageTitle.
   ///
   /// In pt, this message translates to:
-  /// **'Câmera e varredura'**
+  /// **'Câmera'**
   String get cameraPageTitle;
 
   /// No description provided for @cameraPrivacyNotice.
@@ -598,13 +598,13 @@ abstract class AppLocalizations {
   /// No description provided for @visionFailed.
   ///
   /// In pt, this message translates to:
-  /// **'Erro ao iniciar inteligência artificial.'**
+  /// **'Não foi possível iniciar.'**
   String get visionFailed;
 
   /// No description provided for @visionFailedHelp.
   ///
   /// In pt, this message translates to:
-  /// **'A varredura não foi iniciada. Tente preparar a inteligência artificial novamente.'**
+  /// **'A varredura não foi iniciada. Tente novamente.'**
   String get visionFailedHelp;
 
   /// No description provided for @visionRetry.
@@ -886,7 +886,7 @@ abstract class AppLocalizations {
   /// No description provided for @recoveryModelUnavailableTitle.
   ///
   /// In pt, this message translates to:
-  /// **'Inteligência artificial indisponível'**
+  /// **'Não foi possível iniciar.'**
   String get recoveryModelUnavailableTitle;
 
   /// No description provided for @recoveryModelInvalidMessage.
@@ -898,7 +898,7 @@ abstract class AppLocalizations {
   /// No description provided for @recoveryModelMemoryMessage.
   ///
   /// In pt, this message translates to:
-  /// **'O aparelho não conseguiu reservar memória para o reconhecimento. Feche outros aplicativos e tente novamente.'**
+  /// **'Faltou memória para iniciar. Feche outros aplicativos e tente novamente.'**
   String get recoveryModelMemoryMessage;
 
   /// No description provided for @recoveryModelDelegateMessage.
@@ -1186,7 +1186,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpAndSafetyIntro.
   ///
   /// In pt, this message translates to:
-  /// **'Orientações rápidas para usar o Eyes com segurança, privacidade e autonomia.'**
+  /// **'Orientações para usar a câmera e os avisos com segurança.'**
   String get helpAndSafetyIntro;
 
   /// No description provided for @helpSafetyHeading.

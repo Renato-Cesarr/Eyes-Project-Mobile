@@ -71,6 +71,7 @@ final class _OnboardingPageState extends ConsumerState<OnboardingPage>
 
     return EyesPageScaffold(
       title: l10n.onboardingTitle,
+      adaptiveTitle: true,
       leading: widget.replay
           ? IconButton(
               tooltip: l10n.close,
@@ -126,8 +127,21 @@ final class _OnboardingContent extends ConsumerWidget {
             OnboardingStep.values.length,
           ),
           excludeSemantics: true,
-          child: LinearProgressIndicator(
-            value: (state.step.index + 1) / OnboardingStep.values.length,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text(
+                l10n.onboardingProgress(
+                  state.step.index + 1,
+                  OnboardingStep.values.length,
+                ),
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              SizedBox(height: layout.spaceSm),
+              LinearProgressIndicator(
+                value: (state.step.index + 1) / OnboardingStep.values.length,
+              ),
+            ],
           ),
         ),
         SizedBox(height: layout.spaceXl),
@@ -136,7 +150,6 @@ final class _OnboardingContent extends ConsumerWidget {
           child: EyesPageHeader(
             title: content.title,
             description: content.body,
-            leading: ExcludeSemantics(child: Icon(content.icon, size: 48)),
           ),
         ),
         if (state.step == OnboardingStep.feedback) ...<Widget>[
@@ -335,34 +348,29 @@ Future<void> _complete(BuildContext context, WidgetRef ref) async {
   }
 }
 
-typedef _StepContent = ({String title, String body, IconData icon});
+typedef _StepContent = ({String title, String body});
 
 _StepContent _contentFor(AppLocalizations l10n, OnboardingStep step) =>
     switch (step) {
       OnboardingStep.welcome => (
         title: l10n.onboardingWelcomeTitle,
         body: l10n.onboardingWelcomeBody,
-        icon: Icons.visibility_outlined,
       ),
       OnboardingStep.safety => (
         title: l10n.onboardingSafetyTitle,
         body: l10n.onboardingSafetyBody,
-        icon: Icons.health_and_safety_outlined,
       ),
       OnboardingStep.privacy => (
         title: l10n.onboardingPrivacyTitle,
         body: l10n.onboardingPrivacyBody,
-        icon: Icons.privacy_tip_outlined,
       ),
       OnboardingStep.feedback => (
         title: l10n.onboardingFeedbackTitle,
         body: l10n.onboardingFeedbackBody,
-        icon: Icons.record_voice_over_outlined,
       ),
       OnboardingStep.camera => (
         title: l10n.onboardingCameraTitle,
         body: l10n.onboardingCameraBody,
-        icon: Icons.camera_alt_outlined,
       ),
     };
 
