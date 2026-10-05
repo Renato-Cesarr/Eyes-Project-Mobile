@@ -74,3 +74,8 @@ REN-37/68 cobrem protocolo final, avaliação separada, amostra suficiente,
 latência e sessão prolongada. REN-32/41/42 cobrem ensaios assistivos e físicos.
 REN-63 cobre o Quality Gate da `dev`, que em 04/10 estava sem definição de
 New Code no Sonar. A integração não comprova essas aprovações.
+
+
+## Reprodução depois da REN-68
+
+O comando histórico acima descreve a interface usada na integração. Na CLI atual, acrescentar --legacy-purpose fixture para a fixture de teste; dados físicos finais exigem --manifest com hashes, identidade e janela. A fixture versionada agora inclui timestamps e correlation_id compatíveis com o recorder atual, sem representar coleta real. Não substituir nem reclassificar os 31 artefatos históricos por essa atualização sintética.

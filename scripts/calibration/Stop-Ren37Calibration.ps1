@@ -114,4 +114,5 @@ Remove-Item -LiteralPath $rawLogPath, $errorLogPath -Force -ErrorAction Silently
 
 Write-Host "Coleta salva em: $jsonlPath"
 Write-Host "Métricas do aparelho salvas em: $devicePath"
-Write-Host "Gere o relatório com: dart run tool/calibration_report.dart --input `"$jsonlPath`" --output `"docs/benchmarks/REN-37-$SessionId.md`" --device-metrics `"$devicePath`""
+Write-Host "Diagnóstico descritivo: dart run tool/calibration_report.dart --input `"$jsonlPath`" --output `"docs/benchmarks/REN-37-$SessionId.md`" --legacy-purpose pilot --device-metrics `"$devicePath`""
+Write-Host 'Calibração/avaliação final exigem --manifest com identidade, hashes e janela/aquecimento reais. Consulte docs/calibration/REN-37-protocol.md.'
