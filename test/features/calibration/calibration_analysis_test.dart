@@ -24,7 +24,12 @@ void main() {
     expect(analysis.missedHazardRate, 0.5);
     expect(analysis.falseAlertRate, 1);
     expect(analysis.repeatedAlertCount, 1);
-    expect(analysis.firstAlertLatency, const Duration(milliseconds: 400));
+    expect(analysis.firstAlertLatency, const Duration(milliseconds: 300));
+    expect(analysis.sessionToFirstAlertMicroseconds, [400000]);
+    final stats =
+        analysis.toJson()['latencyStatistics']! as Map<String, Object?>;
+    expect((stats['cameraToSpeechStart']! as Map<String, Object?>)['n'], 2);
+    expect((stats['cameraToDecision']! as Map<String, Object?>)['n'], 3);
     expect(
       analysis.percentile(analysis.cameraToSpeechStartMicroseconds, 50),
       300000,
@@ -60,6 +65,7 @@ Map<String, Object?> _frame(
   bool announced = false,
 }) => {
   ..._event('frame_evaluated', milliseconds),
+  'captured_at': (_event('frame_evaluated', milliseconds))['emitted_at'],
   'expected_band': expected,
   'predicted_band': predicted,
   'announced': announced,

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "protocolId": "eyes-assistive-evaluation-v1",
+  "protocolSha256": null,
+  "purpose": "calibration",
+  "split": "calibration",
+  "buildIdentity": {
+    "sourceCommit": null,
+    "sourceDirty": false,
+    "flavor": "dev",
+    "buildMode": "profile",
+    "calibrationEnabled": true,
+    "apkSha256": null,
+    "modelSha256": null,
+    "policySha256": null
+  },
+  "runtimeConfiguration": {
+    "inferenceThreads": null,
+    "targetFps": null,
+    "scoreThreshold": null,
+    "camera": null
+  },
+  "sources": [
+    {
+      "file": "ren37-cal-001.jsonl",
+      "sha256": null,
+      "metadataFile": "ren37-cal-001.device.json",
+      "metadataSha256": null,
+      "sessionId": "ren37-cal-001",
+      "scenarioId": "chair-attention-bright-clear-01",
+      "operationalStartUtc": null,
+      "measurementStartUtc": null,
+      "measurementEndUtc": null
+    }
+  ]
+}

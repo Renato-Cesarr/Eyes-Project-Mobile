@@ -15,6 +15,9 @@ final class CalibrationAnalysis {
     required this.falseAlertFrameCount,
     required this.repeatedAlertCount,
     required this.timeToFirstAlertMicroseconds,
+    required this.sessionToFirstAlertMicroseconds,
+    required this.cameraToQueueMicroseconds,
+    required this.queueToSpeechMicroseconds,
   });
 
   factory CalibrationAnalysis.fromEvents(
@@ -82,7 +85,14 @@ final class CalibrationAnalysis {
       distantFrameCount: distantFrames,
       falseAlertFrameCount: falseAlertFrames,
       repeatedAlertCount: _repeatedAlerts(alerts),
-      timeToFirstAlertMicroseconds: _timeToFirstAlert(sessions, alerts),
+      timeToFirstAlertMicroseconds: _timeToFirstFrameAlert(frames, alerts),
+      sessionToFirstAlertMicroseconds: _timeToFirstAlert(sessions, alerts),
+      cameraToQueueMicroseconds: _timestampDeltas(
+        alerts,
+        'source_at',
+        'emitted_at',
+      ),
+      queueToSpeechMicroseconds: _queueToSpeech(alerts, speechStarts),
     );
   }
 
@@ -101,6 +111,9 @@ final class CalibrationAnalysis {
   final int falseAlertFrameCount;
   final int repeatedAlertCount;
   final List<int> timeToFirstAlertMicroseconds;
+  final List<int> sessionToFirstAlertMicroseconds;
+  final List<int> cameraToQueueMicroseconds;
+  final List<int> queueToSpeechMicroseconds;
 
   double? percentile(List<int> values, double percentile) {
     if (values.isEmpty) {
@@ -164,7 +177,90 @@ final class CalibrationAnalysis {
     'missedHazardRate': missedHazardRate,
     'falseAlertRate': falseAlertRate,
     'repeatedAlertCount': repeatedAlertCount,
+    'sampleCounts': {
+      'hazardFrames': hazardFrameCount,
+      'missedHazardFrames': missedHazardFrameCount,
+      'distantFrames': distantFrameCount,
+      'falseAlertFrames': falseAlertFrameCount,
+    },
+    'latencyStatistics': {
+      for (final entry in <String, List<int>>{
+        'preprocessing': preprocessingMicroseconds,
+        'inference': inferenceMicroseconds,
+        'visionTotal': visionTotalMicroseconds,
+        'cameraToDecision': cameraToDecisionMicroseconds,
+        'cameraToQueue': cameraToQueueMicroseconds,
+        'queueToSpeech': queueToSpeechMicroseconds,
+        'cameraToSpeechStart': cameraToSpeechStartMicroseconds,
+        'firstOperationalAlert': timeToFirstAlertMicroseconds,
+        'sessionToFirstAlert': sessionToFirstAlertMicroseconds,
+      }.entries)
+        entry.key: {
+          'n': entry.value.length,
+          'p50Ms': _milliseconds(percentile(entry.value, 50)),
+          'p95Ms': _milliseconds(percentile(entry.value, 95)),
+          'unit': 'ms',
+          'method': 'linear_interpolation',
+        },
+    },
   };
+}
+
+List<int> _timeToFirstFrameAlert(
+  List<Map<String, Object?>> frames,
+  List<Map<String, Object?>> alerts,
+) {
+  final origins = <String, DateTime>{};
+  for (final frame in frames) {
+    if (frame['captured_at'] is! String) continue;
+    final id = _requiredString(frame, 'session_id');
+    final time = _eventTime(frame, preferredKey: 'captured_at');
+    if (origins[id] == null || time.isBefore(origins[id]!)) origins[id] = time;
+  }
+  return _timeToFirstAlert([
+    for (final entry in origins.entries)
+      {'session_id': entry.key, 'emitted_at': entry.value.toIso8601String()},
+  ], alerts);
+}
+
+List<int> _timestampDeltas(
+  List<Map<String, Object?>> events,
+  String startKey,
+  String endKey,
+) => [
+  for (final event in events)
+    if (event[startKey] is String &&
+        event[endKey] is String &&
+        !_eventTime(
+          event,
+          preferredKey: endKey,
+        ).isBefore(_eventTime(event, preferredKey: startKey)))
+      _eventTime(
+        event,
+        preferredKey: endKey,
+      ).difference(_eventTime(event, preferredKey: startKey)).inMicroseconds,
+];
+
+List<int> _queueToSpeech(
+  List<Map<String, Object?>> alerts,
+  List<Map<String, Object?>> speeches,
+) {
+  final byId = <String, Map<String, Object?>>{
+    for (final alert in alerts)
+      if (alert['correlation_id'] is String)
+        '${alert['session_id']}:${alert['correlation_id']}': alert,
+  };
+  final values = <int>[];
+  for (final speech in speeches) {
+    final alert = byId['${speech['session_id']}:${speech['correlation_id']}'];
+    if (alert == null || speech['started_at'] is! String) continue;
+    final delta = _eventTime(
+      speech,
+      preferredKey: 'started_at',
+    ).difference(_eventTime(alert));
+    if (!delta.isNegative) values.add(delta.inMicroseconds);
+  }
+  return values;
 }
 
 List<int> _integerMetric(Iterable<Map<String, Object?>> events, String key) =>
@@ -242,7 +338,7 @@ List<int> _timeToFirstAlert(
           return null;
         }
         final latency = firstAlert.difference(entry.value);
-        return latency.isNegative ? 0 : latency.inMicroseconds;
+        return latency.isNegative ? null : latency.inMicroseconds;
       })
       .whereType<int>()
       .toList(growable: false);
