@@ -143,7 +143,7 @@ Future<void> bootstrap(AppEnvironment environment) async {
                 sync.setScanning(
                   next.asData?.value.status == CameraScanStatus.streaming,
                 );
-              });
+              }, fireImmediately: true);
               ref.onDispose(() => unawaited(sync.dispose()));
               return sync;
             }),

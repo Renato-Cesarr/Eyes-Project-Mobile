@@ -314,6 +314,32 @@ void main() {
     },
   );
 
+  test(
+    'restored consent survives camera starting during asynchronous hydration',
+    () async {
+      await sync.dispose();
+      await store.writeConsentOwner(testRemoteSession.user.id);
+      preferences.consent = true;
+      sync = ScanMetadataSync(
+        store: store,
+        preferences: preferences,
+        accounts: accounts,
+        gateway: gateway,
+        clock: () => now,
+        retryDelays: const [],
+      );
+      sync.setScanning(true);
+      await sync.ready;
+      expect(sync.consented, isTrue);
+      expect(sync.snapshot.status, ScanSyncStatus.collecting);
+      sync.recordFrame(frame());
+      now = now.add(const Duration(seconds: 1));
+      sync.setScanning(false);
+      await settle();
+      expect(gateway.sent.single.processedFrames, 1);
+    },
+  );
+
   for (final status in <int?>[null, 500, 408, 429, 401, 403, 404, 409, 422]) {
     test(
       'HTTP $status preserves immutable envelope and stops aggressive retry',

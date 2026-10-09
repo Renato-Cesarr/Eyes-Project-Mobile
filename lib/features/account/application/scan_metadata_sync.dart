@@ -110,7 +110,11 @@ final class ScanMetadataSync {
           ? await store.installationId()
           : null;
       final pending = await store.pending();
-      if (_disposed || _policyBusy || epoch != _epoch) return;
+      if (_disposed || _policyBusy) return;
+      if (epoch != _epoch) {
+        await _refresh();
+        return;
+      }
       _account = account;
       _owner = owner;
       _installation = installation;
