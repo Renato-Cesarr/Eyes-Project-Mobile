@@ -25,16 +25,25 @@
   "accountSignedOut": "Sessão remota encerrada. Seus recursos locais continuam disponíveis.",
   "accountSignOut": "Sair da conta",
   "syncConsentLabel": "Permitir sincronização de metadados",
-  "syncConsentDescription": "Salve sua preferência para o futuro envio de metadados operacionais. Imagens, vídeos, áudios e senhas não entram na fila.",
-  "syncMetadataOnlyNotice": "O consentimento fica salvo neste aparelho. O envio de metadados ainda não está disponível. Nenhuma imagem, vídeo ou áudio é enviado.",
+  "syncConsentDescription": "Autorize o envio das próximas sessões após encerrar a varredura. A câmera e a voz continuam funcionando offline.",
+  "syncMetadataOnlyNotice": "Envia classe do objeto, confiança, proximidade relativa, direção e contadores. Sem imagens, vídeos, áudio ou localização. No servidor, os dados ficam vinculados à sua conta por até 30 dias. Pendentes locais ficam até enviar ou desativar.",
   "syncConsentDialogTitle": "Permitir sincronização?",
-  "syncConsentDialogMessage": "Esta ação salva sua preferência neste aparelho. O envio de metadados ainda não está disponível. Imagens, vídeos, áudios e senhas não entram na fila.",
+  "syncConsentDialogMessage": "Você autoriza coletar os metadados das próximas sessões neste aparelho e enviá-los após encerrar a varredura. No servidor, os dados ficam vinculados à sua conta por até 30 dias. Pendentes locais permanecem até enviar ou desativar. Nenhuma imagem, vídeo, áudio ou localização é enviado. Desativar limpa os pendentes deste aparelho; para remover o histórico remoto, use Excluir histórico. Ao autorizar outra conta, os pendentes da conta anterior neste aparelho serão apagados.",
   "syncConsentConfirm": "Permitir",
   "syncConsentEnabled": "Consentimento de sincronização ativado.",
   "syncConsentRevoked": "Consentimento revogado e fila local de sincronização apagada.",
   "onboardingTitle": "Primeiros passos",
   "onboardingProgress": "Etapa {current} de {total}",
-  "@onboardingProgress": {"placeholders": {"current": {"type": "int"}, "total": {"type": "int"}}},
+  "@onboardingProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "onboardingWelcomeTitle": "Bem-vindo ao Eyes",
   "onboardingWelcomeBody": "O Eyes usa a câmera do celular para reconhecer alguns objetos e oferecer avisos curtos por voz e vibração.",
   "onboardingSafetyTitle": "Use como apoio complementar",
@@ -98,15 +107,27 @@
   "objectBackpack": "Mochila",
   "proximityDistant": "{object} distante.",
   "@proximityDistant": {
-    "placeholders": {"object": {"type": "String"}}
+    "placeholders": {
+      "object": {
+        "type": "String"
+      }
+    }
   },
   "proximityAttention": "{object} próxima. Atenção.",
   "@proximityAttention": {
-    "placeholders": {"object": {"type": "String"}}
+    "placeholders": {
+      "object": {
+        "type": "String"
+      }
+    }
   },
   "proximityVeryNear": "{object} muito próxima. Cuidado.",
   "@proximityVeryNear": {
-    "placeholders": {"object": {"type": "String"}}
+    "placeholders": {
+      "object": {
+        "type": "String"
+      }
+    }
   },
   "cameraStatusLabel": "Estado da câmera",
   "cameraStart": "Iniciar câmera",
@@ -219,11 +240,23 @@
   "voiceSectionTitle": "Voz",
   "speechRateLabel": "Velocidade da voz",
   "speechRateValue": "{percent} por cento",
-  "@speechRateValue": {"placeholders": {"percent": {"type": "int"}}},
+  "@speechRateValue": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
   "speechRateRange": "Ajustável de 30 a 70 por cento. Deslize para cima ou para baixo para alterar.",
   "speechVolumeLabel": "Volume da voz",
   "percentValue": "{percent} por cento",
-  "@percentValue": {"placeholders": {"percent": {"type": "int"}}},
+  "@percentValue": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
   "speechVolumeRange": "Ajustável de zero a 100 por cento. Deslize para cima ou para baixo para alterar.",
   "voiceDetailLabel": "Nível de detalhe",
   "voiceDetailConcise": "Frases curtas",
@@ -262,13 +295,49 @@
   "@cameraTelemetry": {
     "description": "Telemetria local de diagnóstico da câmera, invisível ao TalkBack.",
     "placeholders": {
-      "fps": {"type": "String"},
-      "received": {"type": "int"},
-      "processed": {"type": "int"},
-      "dropped": {"type": "int"},
-      "processingMs": {"type": "int"}
+      "fps": {
+        "type": "String"
+      },
+      "received": {
+        "type": "int"
+      },
+      "processed": {
+        "type": "int"
+      },
+      "dropped": {
+        "type": "int"
+      },
+      "processingMs": {
+        "type": "int"
+      }
     }
   },
   "homeSettingsAction": "Abrir configurações",
-  "homePrivacyNote": "Nenhuma foto ou vídeo é salvo."
+  "homePrivacyNote": "Nenhuma foto ou vídeo é salvo.",
+  "scanSyncTitle": "Envio de metadados",
+  "scanSyncDisabled": "Envio desativado. A assistência funciona offline.",
+  "scanSyncIdle": "Sem sessões pendentes de envio.",
+  "scanSyncCollecting": "Varredura em andamento. O envio aguarda o encerramento.",
+  "scanSyncQueued": "Sessões aguardando envio.",
+  "scanSyncSending": "Enviando sessões encerradas.",
+  "scanSyncRetryable": "Não foi possível concluir. Os pendentes permanecem neste aparelho.",
+  "scanSyncAuthentication": "Entre novamente na mesma conta para enviar os pendentes.",
+  "scanSyncUnavailable": "O serviço de coleta está indisponível. Os pendentes foram preservados.",
+  "scanSyncBlocked": "O serviço não confirmou os dados. Os pendentes foram preservados; revise o serviço antes de tentar novamente.",
+  "scanSyncStorage": "Não foi possível salvar todos os metadados. A coleta está pausada; tente novamente antes de fechar o app.",
+  "scanSyncFull": "Limite local de 20 sessões atingido. A coleta está pausada; encerre a varredura e envie os pendentes.",
+  "scanSyncDeleted": "Histórico remoto excluído e envio desativado neste aparelho.",
+  "scanSyncPending": "Sessões pendentes: {count}.",
+  "@scanSyncPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "scanSyncRetry": "Tentar enviar pendentes",
+  "scanSyncDelete": "Excluir histórico de metadados",
+  "scanSyncDeleteMessage": "Desativa o envio e apaga os pendentes deste aparelho. Depois solicita a exclusão de todo o histórico remoto desta conta. A exclusão só será confirmada quando o servidor responder; se falhar, você poderá tentar de novo.",
+  "scanSyncDeleteConfirm": "Desativar e excluir",
+  "scanSyncDeleteFailed": "Envio desativado neste aparelho. A exclusão remota não foi confirmada. Use Excluir histórico para tentar novamente."
 }

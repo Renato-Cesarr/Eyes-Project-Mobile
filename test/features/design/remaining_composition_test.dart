@@ -167,7 +167,7 @@ void main() {
                     await _check(tester);
                     expect(
                       find.textContaining(
-                        'envio de metadados ainda não está disponível',
+                        'os dados ficam vinculados à sua conta por até 30 dias',
                       ),
                       findsOneWidget,
                     );

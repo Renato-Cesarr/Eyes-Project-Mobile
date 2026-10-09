@@ -28,6 +28,46 @@ final class _RecordingAdapter implements HttpClientAdapter {
 }
 
 void main() {
+  test(
+    '401 from an earlier account does not expire the current account',
+    () async {
+      final store = InMemoryRemoteSessionStore(session: testRemoteSession);
+      final adapter = _RecordingAdapter(401);
+      final dio = Dio()..httpClientAdapter = adapter;
+      dio.interceptors.add(BearerSessionInterceptor(store));
+      await expectLater(
+        dio.get<void>(
+          'https://example.invalid/private',
+          options: Options(
+            headers: {'Authorization': 'Bearer old-account-token'},
+          ),
+        ),
+        throwsA(isA<DioException>()),
+      );
+      expect(store.session, testRemoteSession);
+      await store.dispose();
+    },
+  );
+
+  test(
+    'rejected unauthenticated login does not revoke another valid session',
+    () async {
+      final store = InMemoryRemoteSessionStore(session: testRemoteSession);
+      final adapter = _RecordingAdapter(401);
+      final dio = Dio()..httpClientAdapter = adapter;
+      dio.interceptors.add(BearerSessionInterceptor(store));
+      await expectLater(
+        dio.post<void>(
+          'https://example.invalid/login',
+          options: Options(extra: {'skipAuthentication': true}),
+        ),
+        throwsA(isA<DioException>()),
+      );
+      expect(store.session, testRemoteSession);
+      await store.dispose();
+    },
+  );
+
   test('adds bearer token without exposing it to callers', () async {
     final store = InMemoryRemoteSessionStore(session: testRemoteSession);
     final adapter = _RecordingAdapter(200);

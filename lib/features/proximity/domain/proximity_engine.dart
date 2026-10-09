@@ -218,6 +218,7 @@ final class ProximityEngine {
       band: selected.stableBand,
       direction: _direction(selected.boundingBox),
       score: selected.smoothedScore,
+      confidence: selected.confidence,
       priority: _priority(selected),
       occurredAt: capturedAt,
     );
@@ -271,6 +272,7 @@ final class _TrackedObject {
     required this.kind,
     required this.boundingBox,
     required this.smoothedScore,
+    required this.confidence,
     required this.stableBand,
     required this.pendingBand,
     required this.pendingBandFrames,
@@ -290,6 +292,7 @@ final class _TrackedObject {
       kind: detection.kind,
       boundingBox: detection.boundingBox,
       smoothedScore: score,
+      confidence: detection.confidence,
       stableBand: ProximityBand.distant,
       pendingBand: candidate == ProximityBand.distant ? null : candidate,
       pendingBandFrames: candidate == ProximityBand.distant ? 0 : 1,
@@ -301,6 +304,7 @@ final class _TrackedObject {
   final DetectedObjectKind kind;
   NormalizedBoundingBox boundingBox;
   double smoothedScore;
+  double confidence;
   ProximityBand stableBand;
   ProximityBand? pendingBand;
   int pendingBandFrames;
@@ -316,6 +320,7 @@ final class _TrackedObject {
     ProximityPolicy policy,
   ) {
     boundingBox = detection.boundingBox;
+    confidence = detection.confidence;
     lastSeenAt = capturedAt;
     missedFrames = 0;
     seenFrames++;

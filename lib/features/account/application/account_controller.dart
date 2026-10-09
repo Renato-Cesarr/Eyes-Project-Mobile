@@ -6,6 +6,7 @@ import 'package:eyes_mobile/core/session/remote_session_store.dart';
 import 'package:eyes_mobile/features/account/application/account_state.dart';
 import 'package:eyes_mobile/features/account/application/auth_gateway.dart';
 import 'package:eyes_mobile/features/account/application/metadata_sync_queue.dart';
+import 'package:eyes_mobile/features/account/application/scan_metadata_sync.dart';
 import 'package:eyes_mobile/features/account/application/sync_preferences_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,9 +23,11 @@ final class AccountController extends AsyncNotifier<AccountState> {
       sessionStore.read(),
       preferences.readConsent(),
     ]);
+    final sync = ref.read(scanMetadataSyncProvider);
+    await sync?.ready;
     return AccountState(
       session: values[0] as RemoteSession?,
-      syncConsent: values[1]! as bool,
+      syncConsent: sync?.consented ?? values[1]! as bool,
     );
   }
 
@@ -45,9 +48,14 @@ final class AccountController extends AsyncNotifier<AccountState> {
           .read(authGatewayProvider)
           .login(email: email.trim(), password: password);
       await ref.read(remoteSessionStoreProvider).save(session);
+      final sync = ref.read(scanMetadataSyncProvider);
+      await sync?.retryManually();
       state = AsyncData<AccountState>(
         current.copyWith(
           session: session,
+          syncConsent:
+              ref.read(scanMetadataSyncProvider)?.consented ??
+              current.syncConsent,
           isSubmitting: false,
           clearFailure: true,
           notice: AccountNotice.signedIn,
@@ -74,54 +82,73 @@ final class AccountController extends AsyncNotifier<AccountState> {
 
   Future<void> signOut() async {
     final current = state.asData?.value;
-    if (current == null) {
-      return;
-    }
-    await ref.read(remoteSessionStoreProvider).clear();
+    if (current == null || current.isSubmitting) return;
+    state = AsyncData(
+      current.copyWith(isSubmitting: true, notice: AccountNotice.none),
+    );
+    var storageFailed = false;
+    var cleared = false;
     try {
+      await ref.read(scanMetadataSyncProvider)?.setConsent(false);
       await ref.read(syncPreferencesRepositoryProvider).writeConsent(false);
       await ref.read(metadataSyncQueueProvider).clear();
-      state = AsyncData<AccountState>(
-        current.copyWith(
-          clearSession: true,
-          syncConsent: false,
-          isSubmitting: false,
-          clearFailure: true,
-          notice: AccountNotice.signedOut,
-        ),
-      );
     } on Object {
-      state = AsyncData<AccountState>(
-        current.copyWith(
-          clearSession: true,
-          syncConsent: false,
-          isSubmitting: false,
-          failure: const OperationalFailure(
-            kind: OperationalFailureKind.preferencesUnavailable,
-            impact: OperationalFailureImpact.degraded,
-            primaryAction: OperationalRecoveryAction.retry,
-          ),
-          notice: AccountNotice.signedOut,
-        ),
-      );
+      storageFailed = true;
     }
+    try {
+      await ref.read(remoteSessionStoreProvider).clear();
+      cleared = true;
+    } on Object {
+      storageFailed = true;
+    }
+    state = AsyncData(
+      (state.asData?.value ?? current).copyWith(
+        clearSession: cleared,
+        syncConsent: false,
+        isSubmitting: false,
+        clearFailure: !storageFailed,
+        failure: storageFailed
+            ? const OperationalFailure(
+                kind: OperationalFailureKind.preferencesUnavailable,
+                impact: OperationalFailureImpact.degraded,
+                primaryAction: OperationalRecoveryAction.retry,
+              )
+            : null,
+        notice: cleared ? AccountNotice.signedOut : AccountNotice.none,
+      ),
+    );
   }
 
   Future<void> setSyncConsent(bool enabled) async {
     final current = state.asData?.value;
-    if (current == null || (enabled && !current.isSignedIn)) {
+    if (current == null ||
+        current.isSubmitting ||
+        (enabled && !current.isSignedIn)) {
       return;
     }
+    state = AsyncData(
+      current.copyWith(isSubmitting: true, notice: AccountNotice.none),
+    );
     try {
-      await ref.read(syncPreferencesRepositoryProvider).writeConsent(enabled);
+      final sync = ref.read(scanMetadataSyncProvider);
+      if (sync != null) {
+        await sync.setConsent(enabled);
+      } else {
+        await ref.read(syncPreferencesRepositoryProvider).writeConsent(enabled);
+      }
       if (!enabled) {
         await ref.read(metadataSyncQueueProvider).clear();
       }
       state = AsyncData<AccountState>(
         current.copyWith(
-          syncConsent: enabled,
+          syncConsent: ref.read(scanMetadataSyncProvider)?.consented ?? enabled,
+          isSubmitting: false,
           clearFailure: true,
-          notice: enabled
+          notice:
+              enabled &&
+                  !(ref.read(scanMetadataSyncProvider)?.consented ?? enabled)
+              ? AccountNotice.none
+              : enabled
               ? AccountNotice.consentEnabled
               : AccountNotice.consentRevoked,
         ),
@@ -135,6 +162,33 @@ final class AccountController extends AsyncNotifier<AccountState> {
             primaryAction: OperationalRecoveryAction.retry,
           ),
           notice: AccountNotice.none,
+          isSubmitting: false,
+        ),
+      );
+    }
+  }
+
+  Future<void> deleteSyncHistory() async {
+    final current = state.asData?.value;
+    final sync = ref.read(scanMetadataSyncProvider);
+    if (current == null || current.isSubmitting || sync == null) return;
+    state = AsyncData(
+      current.copyWith(isSubmitting: true, notice: AccountNotice.none),
+    );
+    try {
+      await sync.deleteHistory();
+      state = AsyncData(
+        (state.asData?.value ?? current).copyWith(
+          syncConsent: sync.consented,
+          isSubmitting: false,
+        ),
+      );
+    } on Object {
+      state = AsyncData(
+        current.copyWith(
+          syncConsent: false,
+          isSubmitting: false,
+          failure: _unexpectedFailure,
         ),
       );
     }
@@ -160,6 +214,11 @@ final class AccountController extends AsyncNotifier<AccountState> {
       current.copyWith(
         session: change.session,
         clearSession: change.session == null,
+        syncConsent:
+            change.session == null ||
+                change.session?.user.id != current.session?.user.id
+            ? false
+            : current.syncConsent,
         isSubmitting: false,
         failure: expired ? _expiredFailure : null,
         clearFailure: !expired,

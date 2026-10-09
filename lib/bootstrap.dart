@@ -14,9 +14,13 @@ import 'package:eyes_mobile/core/persistence/storage_providers.dart';
 import 'package:eyes_mobile/core/session/remote_session_store.dart';
 import 'package:eyes_mobile/features/account/application/auth_gateway.dart';
 import 'package:eyes_mobile/features/account/application/metadata_sync_queue.dart';
+import 'package:eyes_mobile/features/account/application/scan_metadata_alert_observer.dart';
+import 'package:eyes_mobile/features/account/application/scan_metadata_sync.dart';
 import 'package:eyes_mobile/features/account/application/sync_preferences_repository.dart';
 import 'package:eyes_mobile/features/account/infrastructure/dio_auth_gateway.dart';
+import 'package:eyes_mobile/features/account/infrastructure/dio_scan_metadata_gateway.dart';
 import 'package:eyes_mobile/features/account/infrastructure/shared_preferences_metadata_sync_queue.dart';
+import 'package:eyes_mobile/features/account/infrastructure/shared_preferences_scan_metadata_store.dart';
 import 'package:eyes_mobile/features/account/infrastructure/shared_preferences_sync_preferences_repository.dart';
 import 'package:eyes_mobile/features/appearance/application/appearance_repository.dart';
 import 'package:eyes_mobile/features/appearance/infrastructure/shared_preferences_appearance_repository.dart';
@@ -37,8 +41,10 @@ import 'package:eyes_mobile/features/onboarding/infrastructure/shared_preference
 import 'package:eyes_mobile/features/proximity/application/proximity_controller.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_gateway.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_vision_frame_adapter.dart';
+import 'package:eyes_mobile/features/scanning/application/scan_controller.dart';
 import 'package:eyes_mobile/features/scanning/application/scan_transition_feedback.dart';
 import 'package:eyes_mobile/features/scanning/application/scan_wake_lock_gateway.dart';
+import 'package:eyes_mobile/features/scanning/domain/camera_scan_status.dart';
 import 'package:eyes_mobile/features/scanning/infrastructure/mobile_camera_gateway.dart';
 import 'package:eyes_mobile/features/scanning/infrastructure/system_scan_transition_feedback.dart';
 import 'package:eyes_mobile/features/scanning/infrastructure/wakelock_plus_scan_gateway.dart';
@@ -122,9 +128,31 @@ Future<void> bootstrap(AppEnvironment environment) async {
                 ref.read(syncPreferencesRepositoryProvider),
               );
             }),
+            scanMetadataSyncProvider.overrideWith((Ref ref) {
+              final sync = ScanMetadataSync(
+                store: SharedPreferencesScanMetadataStore(
+                  ref.read(sharedPreferencesProvider),
+                ),
+                preferences: ref.read(syncPreferencesRepositoryProvider),
+                accounts: ref.read(remoteSessionStoreProvider),
+                gateway: DioScanMetadataGateway(ref.read(dioProvider)),
+                remoteAvailable:
+                    environment.apiBaseUrl.host != 'api.example.invalid',
+              );
+              ref.listen(scanControllerProvider, (previous, next) {
+                sync.setScanning(
+                  next.asData?.value.status == CameraScanStatus.streaming,
+                );
+              });
+              ref.onDispose(() => unawaited(sync.dispose()));
+              return sync;
+            }),
             calibrationRecorderProvider.overrideWithValue(calibrationRecorder),
-            assistiveAlertObserverProvider.overrideWithValue(
-              calibrationRecorder,
+            assistiveAlertObserverProvider.overrideWith(
+              (Ref ref) => ScanMetadataAlertObserver(
+                ref.read(scanMetadataSyncProvider)!,
+                calibrationRecorder,
+              ),
             ),
             accessibleFeedbackServiceProvider.overrideWith((Ref ref) {
               return SystemAccessibleFeedbackService(
@@ -140,7 +168,12 @@ Future<void> bootstrap(AppEnvironment environment) async {
             }),
             speechGatewayProvider.overrideWith((Ref ref) {
               final gateway = FlutterTtsSpeechGateway(
-                onPlaybackStarted: calibrationRecorder.recordSpeechStarted,
+                onPlaybackStarted: (message, startedAt) {
+                  calibrationRecorder.recordSpeechStarted(message, startedAt);
+                  ref
+                      .read(scanMetadataSyncProvider)!
+                      .recordSpeechStarted(message, startedAt);
+                },
               );
               ref.onDispose(() => unawaited(gateway.dispose()));
               return gateway;
@@ -194,6 +227,7 @@ Future<void> bootstrap(AppEnvironment environment) async {
                 final batch = await ref
                     .read(visionControllerProvider.notifier)
                     .process(adapter.adapt(frame));
+                ref.read(scanMetadataSyncProvider)!.recordFrame(batch);
                 final evaluation = ref
                     .read(proximityControllerProvider.notifier)
                     .process(batch);

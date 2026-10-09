@@ -24,8 +24,14 @@ final class BearerSessionInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (err.response?.statusCode == 401) {
-      await _sessionStore.clear(reason: RemoteSessionChangeReason.expired);
+    if (err.response?.statusCode == 401 &&
+        err.requestOptions.extra['skipAuthentication'] != true) {
+      final current = await _sessionStore.read();
+      if (current != null &&
+          err.requestOptions.headers['Authorization'] ==
+              'Bearer ${current.accessToken}') {
+        await _sessionStore.clear(reason: RemoteSessionChangeReason.expired);
+      }
     }
     handler.next(err);
   }

@@ -37,6 +37,7 @@ final class ProximityAlertEvent {
     required this.score,
     required this.priority,
     required this.occurredAt,
+    this.confidence,
   });
 
   final int trackId;
@@ -46,6 +47,7 @@ final class ProximityAlertEvent {
   final double score;
   final double priority;
   final DateTime occurredAt;
+  final double? confidence;
 
   bool get isCritical => band == ProximityBand.veryNear;
 }

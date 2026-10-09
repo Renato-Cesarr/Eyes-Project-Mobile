@@ -89,18 +89,18 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get syncConsentDescription =>
-      'Salve sua preferência para o futuro envio de metadados operacionais. Imagens, vídeos, áudios e senhas não entram na fila.';
+      'Autorize o envio das próximas sessões após encerrar a varredura. A câmera e a voz continuam funcionando offline.';
 
   @override
   String get syncMetadataOnlyNotice =>
-      'O consentimento fica salvo neste aparelho. O envio de metadados ainda não está disponível. Nenhuma imagem, vídeo ou áudio é enviado.';
+      'Envia classe do objeto, confiança, proximidade relativa, direção e contadores. Sem imagens, vídeos, áudio ou localização. No servidor, os dados ficam vinculados à sua conta por até 30 dias. Pendentes locais ficam até enviar ou desativar.';
 
   @override
   String get syncConsentDialogTitle => 'Permitir sincronização?';
 
   @override
   String get syncConsentDialogMessage =>
-      'Esta ação salva sua preferência neste aparelho. O envio de metadados ainda não está disponível. Imagens, vídeos, áudios e senhas não entram na fila.';
+      'Você autoriza coletar os metadados das próximas sessões neste aparelho e enviá-los após encerrar a varredura. No servidor, os dados ficam vinculados à sua conta por até 30 dias. Pendentes locais permanecem até enviar ou desativar. Nenhuma imagem, vídeo, áudio ou localização é enviado. Desativar limpa os pendentes deste aparelho; para remover o histórico remoto, use Excluir histórico. Ao autorizar outra conta, os pendentes da conta anterior neste aparelho serão apagados.';
 
   @override
   String get syncConsentConfirm => 'Permitir';
@@ -856,6 +856,76 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get homePrivacyNote => 'Nenhuma foto ou vídeo é salvo.';
+
+  @override
+  String get scanSyncTitle => 'Envio de metadados';
+
+  @override
+  String get scanSyncDisabled =>
+      'Envio desativado. A assistência funciona offline.';
+
+  @override
+  String get scanSyncIdle => 'Sem sessões pendentes de envio.';
+
+  @override
+  String get scanSyncCollecting =>
+      'Varredura em andamento. O envio aguarda o encerramento.';
+
+  @override
+  String get scanSyncQueued => 'Sessões aguardando envio.';
+
+  @override
+  String get scanSyncSending => 'Enviando sessões encerradas.';
+
+  @override
+  String get scanSyncRetryable =>
+      'Não foi possível concluir. Os pendentes permanecem neste aparelho.';
+
+  @override
+  String get scanSyncAuthentication =>
+      'Entre novamente na mesma conta para enviar os pendentes.';
+
+  @override
+  String get scanSyncUnavailable =>
+      'O serviço de coleta está indisponível. Os pendentes foram preservados.';
+
+  @override
+  String get scanSyncBlocked =>
+      'O serviço não confirmou os dados. Os pendentes foram preservados; revise o serviço antes de tentar novamente.';
+
+  @override
+  String get scanSyncStorage =>
+      'Não foi possível salvar todos os metadados. A coleta está pausada; tente novamente antes de fechar o app.';
+
+  @override
+  String get scanSyncFull =>
+      'Limite local de 20 sessões atingido. A coleta está pausada; encerre a varredura e envie os pendentes.';
+
+  @override
+  String get scanSyncDeleted =>
+      'Histórico remoto excluído e envio desativado neste aparelho.';
+
+  @override
+  String scanSyncPending(int count) {
+    return 'Sessões pendentes: $count.';
+  }
+
+  @override
+  String get scanSyncRetry => 'Tentar enviar pendentes';
+
+  @override
+  String get scanSyncDelete => 'Excluir histórico de metadados';
+
+  @override
+  String get scanSyncDeleteMessage =>
+      'Desativa o envio e apaga os pendentes deste aparelho. Depois solicita a exclusão de todo o histórico remoto desta conta. A exclusão só será confirmada quando o servidor responder; se falhar, você poderá tentar de novo.';
+
+  @override
+  String get scanSyncDeleteConfirm => 'Desativar e excluir';
+
+  @override
+  String get scanSyncDeleteFailed =>
+      'Envio desativado neste aparelho. A exclusão remota não foi confirmada. Use Excluir histórico para tentar novamente.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -943,18 +1013,18 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get syncConsentDescription =>
-      'Salve sua preferência para o futuro envio de metadados operacionais. Imagens, vídeos, áudios e senhas não entram na fila.';
+      'Autorize o envio das próximas sessões após encerrar a varredura. A câmera e a voz continuam funcionando offline.';
 
   @override
   String get syncMetadataOnlyNotice =>
-      'O consentimento fica salvo neste aparelho. O envio de metadados ainda não está disponível. Nenhuma imagem, vídeo ou áudio é enviado.';
+      'Envia classe do objeto, confiança, proximidade relativa, direção e contadores. Sem imagens, vídeos, áudio ou localização. No servidor, os dados ficam vinculados à sua conta por até 30 dias. Pendentes locais ficam até enviar ou desativar.';
 
   @override
   String get syncConsentDialogTitle => 'Permitir sincronização?';
 
   @override
   String get syncConsentDialogMessage =>
-      'Esta ação salva sua preferência neste aparelho. O envio de metadados ainda não está disponível. Imagens, vídeos, áudios e senhas não entram na fila.';
+      'Você autoriza coletar os metadados das próximas sessões neste aparelho e enviá-los após encerrar a varredura. No servidor, os dados ficam vinculados à sua conta por até 30 dias. Pendentes locais permanecem até enviar ou desativar. Nenhuma imagem, vídeo, áudio ou localização é enviado. Desativar limpa os pendentes deste aparelho; para remover o histórico remoto, use Excluir histórico. Ao autorizar outra conta, os pendentes da conta anterior neste aparelho serão apagados.';
 
   @override
   String get syncConsentConfirm => 'Permitir';
@@ -1710,4 +1780,74 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get homePrivacyNote => 'Nenhuma foto ou vídeo é salvo.';
+
+  @override
+  String get scanSyncTitle => 'Envio de metadados';
+
+  @override
+  String get scanSyncDisabled =>
+      'Envio desativado. A assistência funciona offline.';
+
+  @override
+  String get scanSyncIdle => 'Sem sessões pendentes de envio.';
+
+  @override
+  String get scanSyncCollecting =>
+      'Varredura em andamento. O envio aguarda o encerramento.';
+
+  @override
+  String get scanSyncQueued => 'Sessões aguardando envio.';
+
+  @override
+  String get scanSyncSending => 'Enviando sessões encerradas.';
+
+  @override
+  String get scanSyncRetryable =>
+      'Não foi possível concluir. Os pendentes permanecem neste aparelho.';
+
+  @override
+  String get scanSyncAuthentication =>
+      'Entre novamente na mesma conta para enviar os pendentes.';
+
+  @override
+  String get scanSyncUnavailable =>
+      'O serviço de coleta está indisponível. Os pendentes foram preservados.';
+
+  @override
+  String get scanSyncBlocked =>
+      'O serviço não confirmou os dados. Os pendentes foram preservados; revise o serviço antes de tentar novamente.';
+
+  @override
+  String get scanSyncStorage =>
+      'Não foi possível salvar todos os metadados. A coleta está pausada; tente novamente antes de fechar o app.';
+
+  @override
+  String get scanSyncFull =>
+      'Limite local de 20 sessões atingido. A coleta está pausada; encerre a varredura e envie os pendentes.';
+
+  @override
+  String get scanSyncDeleted =>
+      'Histórico remoto excluído e envio desativado neste aparelho.';
+
+  @override
+  String scanSyncPending(int count) {
+    return 'Sessões pendentes: $count.';
+  }
+
+  @override
+  String get scanSyncRetry => 'Tentar enviar pendentes';
+
+  @override
+  String get scanSyncDelete => 'Excluir histórico de metadados';
+
+  @override
+  String get scanSyncDeleteMessage =>
+      'Desativa o envio e apaga os pendentes deste aparelho. Depois solicita a exclusão de todo o histórico remoto desta conta. A exclusão só será confirmada quando o servidor responder; se falhar, você poderá tentar de novo.';
+
+  @override
+  String get scanSyncDeleteConfirm => 'Desativar e excluir';
+
+  @override
+  String get scanSyncDeleteFailed =>
+      'Envio desativado neste aparelho. A exclusão remota não foi confirmada. Use Excluir histórico para tentar novamente.';
 }
