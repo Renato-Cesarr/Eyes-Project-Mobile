@@ -79,6 +79,18 @@ final class AssistiveFeedbackController
     _queue = VoiceAlertQueue(
       gateway,
       onSuccess: _markSpeechAvailable,
+      onPlaybackRequested: (message) {
+        final observer = ref.read(assistiveAlertObserverProvider);
+        if (observer is AssistivePlaybackObserver) {
+          try {
+            (observer as AssistivePlaybackObserver).onPlaybackRequested(
+              message,
+            );
+          } on Object catch (error, stackTrace) {
+            _report(error, stackTrace, 'metadata-playback-observer');
+          }
+        }
+      },
       onFailure: (error, stackTrace) {
         _report(error, stackTrace, 'tts-alert');
         _markSpeechUnavailable();

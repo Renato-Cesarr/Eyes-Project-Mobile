@@ -7,6 +7,7 @@ import 'package:eyes_mobile/core/recovery/accessible_recovery_panel.dart';
 import 'package:eyes_mobile/core/recovery/recovery_content.dart';
 import 'package:eyes_mobile/features/account/application/account_controller.dart';
 import 'package:eyes_mobile/features/account/application/account_state.dart';
+import 'package:eyes_mobile/features/account/presentation/scan_sync_panel.dart';
 import 'package:eyes_mobile/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -296,6 +297,7 @@ final class _ConnectedAccount extends StatelessWidget {
           value: syncConsent,
           onChanged: isSubmitting ? null : onConsentChanged,
         ),
+        const ScanSyncPanel(),
         SizedBox(height: context.eyesLayout.spaceXl),
         EyesButton(
           label: l10n.accountSignOut,

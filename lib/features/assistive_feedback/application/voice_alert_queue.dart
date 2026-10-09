@@ -14,6 +14,7 @@ final class VoiceAlertQueue {
     Clock? clock,
     this.onFailure,
     this.onSuccess,
+    this.onPlaybackRequested,
     this.deduplicationCooldown = const Duration(seconds: 4),
     this.maximumPending = 4,
   }) : _clock = clock ?? DateTime.now;
@@ -22,6 +23,7 @@ final class VoiceAlertQueue {
   final Clock _clock;
   final VoiceQueueFailureHandler? onFailure;
   final VoiceQueueSuccessHandler? onSuccess;
+  final void Function(AssistiveAlertMessage message)? onPlaybackRequested;
   final Duration deduplicationCooldown;
   final int maximumPending;
   final List<AssistiveAlertMessage> _pending = [];
@@ -97,6 +99,7 @@ final class VoiceAlertQueue {
         final next = _pending.removeAt(0);
         _current = next;
         try {
+          onPlaybackRequested?.call(next);
           await _gateway.speak(next.text);
           _lastDelivered[next.deduplicationKey] = _clock();
           onSuccess?.call();

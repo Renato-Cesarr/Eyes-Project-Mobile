@@ -250,13 +250,13 @@ abstract class AppLocalizations {
   /// No description provided for @syncConsentDescription.
   ///
   /// In pt, this message translates to:
-  /// **'Salve sua preferência para o futuro envio de metadados operacionais. Imagens, vídeos, áudios e senhas não entram na fila.'**
+  /// **'Autorize o envio das próximas sessões após encerrar a varredura. A câmera e a voz continuam funcionando offline.'**
   String get syncConsentDescription;
 
   /// No description provided for @syncMetadataOnlyNotice.
   ///
   /// In pt, this message translates to:
-  /// **'O consentimento fica salvo neste aparelho. O envio de metadados ainda não está disponível. Nenhuma imagem, vídeo ou áudio é enviado.'**
+  /// **'Envia classe do objeto, confiança, proximidade relativa, direção e contadores. Sem imagens, vídeos, áudio ou localização. No servidor, os dados ficam vinculados à sua conta por até 30 dias. Pendentes locais ficam até enviar ou desativar.'**
   String get syncMetadataOnlyNotice;
 
   /// No description provided for @syncConsentDialogTitle.
@@ -268,7 +268,7 @@ abstract class AppLocalizations {
   /// No description provided for @syncConsentDialogMessage.
   ///
   /// In pt, this message translates to:
-  /// **'Esta ação salva sua preferência neste aparelho. O envio de metadados ainda não está disponível. Imagens, vídeos, áudios e senhas não entram na fila.'**
+  /// **'Você autoriza coletar os metadados das próximas sessões neste aparelho e enviá-los após encerrar a varredura. No servidor, os dados ficam vinculados à sua conta por até 30 dias. Pendentes locais permanecem até enviar ou desativar. Nenhuma imagem, vídeo, áudio ou localização é enviado. Desativar limpa os pendentes deste aparelho; para remover o histórico remoto, use Excluir histórico. Ao autorizar outra conta, os pendentes da conta anterior neste aparelho serão apagados.'**
   String get syncConsentDialogMessage;
 
   /// No description provided for @syncConsentConfirm.
@@ -1596,6 +1596,120 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Nenhuma foto ou vídeo é salvo.'**
   String get homePrivacyNote;
+
+  /// No description provided for @scanSyncTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Envio de metadados'**
+  String get scanSyncTitle;
+
+  /// No description provided for @scanSyncDisabled.
+  ///
+  /// In pt, this message translates to:
+  /// **'Envio desativado. A assistência funciona offline.'**
+  String get scanSyncDisabled;
+
+  /// No description provided for @scanSyncIdle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sem sessões pendentes de envio.'**
+  String get scanSyncIdle;
+
+  /// No description provided for @scanSyncCollecting.
+  ///
+  /// In pt, this message translates to:
+  /// **'Varredura em andamento. O envio aguarda o encerramento.'**
+  String get scanSyncCollecting;
+
+  /// No description provided for @scanSyncQueued.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sessões aguardando envio.'**
+  String get scanSyncQueued;
+
+  /// No description provided for @scanSyncSending.
+  ///
+  /// In pt, this message translates to:
+  /// **'Enviando sessões encerradas.'**
+  String get scanSyncSending;
+
+  /// No description provided for @scanSyncRetryable.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível concluir. Os pendentes permanecem neste aparelho.'**
+  String get scanSyncRetryable;
+
+  /// No description provided for @scanSyncAuthentication.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entre novamente na mesma conta para enviar os pendentes.'**
+  String get scanSyncAuthentication;
+
+  /// No description provided for @scanSyncUnavailable.
+  ///
+  /// In pt, this message translates to:
+  /// **'O serviço de coleta está indisponível. Os pendentes foram preservados.'**
+  String get scanSyncUnavailable;
+
+  /// No description provided for @scanSyncBlocked.
+  ///
+  /// In pt, this message translates to:
+  /// **'O serviço não confirmou os dados. Os pendentes foram preservados; revise o serviço antes de tentar novamente.'**
+  String get scanSyncBlocked;
+
+  /// No description provided for @scanSyncStorage.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível salvar todos os metadados. A coleta está pausada; tente novamente antes de fechar o app.'**
+  String get scanSyncStorage;
+
+  /// No description provided for @scanSyncFull.
+  ///
+  /// In pt, this message translates to:
+  /// **'Limite local de 20 sessões atingido. A coleta está pausada; encerre a varredura e envie os pendentes.'**
+  String get scanSyncFull;
+
+  /// No description provided for @scanSyncDeleted.
+  ///
+  /// In pt, this message translates to:
+  /// **'Histórico remoto excluído e envio desativado neste aparelho.'**
+  String get scanSyncDeleted;
+
+  /// No description provided for @scanSyncPending.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sessões pendentes: {count}.'**
+  String scanSyncPending(int count);
+
+  /// No description provided for @scanSyncRetry.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tentar enviar pendentes'**
+  String get scanSyncRetry;
+
+  /// No description provided for @scanSyncDelete.
+  ///
+  /// In pt, this message translates to:
+  /// **'Excluir histórico de metadados'**
+  String get scanSyncDelete;
+
+  /// No description provided for @scanSyncDeleteMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'Desativa o envio e apaga os pendentes deste aparelho. Depois solicita a exclusão de todo o histórico remoto desta conta. A exclusão só será confirmada quando o servidor responder; se falhar, você poderá tentar de novo.'**
+  String get scanSyncDeleteMessage;
+
+  /// No description provided for @scanSyncDeleteConfirm.
+  ///
+  /// In pt, this message translates to:
+  /// **'Desativar e excluir'**
+  String get scanSyncDeleteConfirm;
+
+  /// No description provided for @scanSyncDeleteFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Envio desativado neste aparelho. A exclusão remota não foi confirmada. Use Excluir histórico para tentar novamente.'**
+  String get scanSyncDeleteFailed;
 }
 
 class _AppLocalizationsDelegate

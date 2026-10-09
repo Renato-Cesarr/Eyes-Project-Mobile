@@ -14,7 +14,7 @@ final class SafeHttpLoggingInterceptor extends Interceptor {
       'http-request',
       context: <String, Object?>{
         'method': options.method,
-        'path': options.uri.path,
+        'path': _safePath(options),
       },
     );
     handler.next(options);
@@ -31,7 +31,7 @@ final class SafeHttpLoggingInterceptor extends Interceptor {
       context: <String, Object?>{
         'durationMs': elapsed?.elapsedMilliseconds,
         'method': response.requestOptions.method,
-        'path': response.requestOptions.uri.path,
+        'path': _safePath(response.requestOptions),
         'statusCode': response.statusCode,
       },
     );
@@ -47,10 +47,15 @@ final class SafeHttpLoggingInterceptor extends Interceptor {
         'durationMs': elapsed?.elapsedMilliseconds,
         'errorType': err.type.name,
         'method': err.requestOptions.method,
-        'path': err.requestOptions.uri.path,
+        'path': _safePath(err.requestOptions),
         'statusCode': err.response?.statusCode,
       },
     );
     handler.next(err);
   }
 }
+
+String _safePath(RequestOptions options) =>
+    options.extra['redactedPath'] is String
+    ? options.extra['redactedPath'] as String
+    : options.uri.path;

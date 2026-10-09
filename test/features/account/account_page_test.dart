@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:eyes_mobile/app/app.dart';
 import 'package:eyes_mobile/app/config/app_environment.dart';
 import 'package:eyes_mobile/app/routing/app_router.dart';
@@ -5,16 +7,23 @@ import 'package:eyes_mobile/core/accessibility/accessible_feedback_service.dart'
 import 'package:eyes_mobile/core/error/app_error_reporter.dart';
 import 'package:eyes_mobile/core/logging/secure_logger.dart';
 import 'package:eyes_mobile/core/session/remote_session_store.dart';
+import 'package:eyes_mobile/features/account/application/account_controller.dart';
 import 'package:eyes_mobile/features/account/application/auth_gateway.dart';
 import 'package:eyes_mobile/features/account/application/metadata_sync_queue.dart';
+import 'package:eyes_mobile/features/account/application/scan_metadata_sync.dart';
 import 'package:eyes_mobile/features/account/application/sync_preferences_repository.dart';
+import 'package:eyes_mobile/features/account/infrastructure/shared_preferences_scan_metadata_store.dart';
 import 'package:eyes_mobile/features/onboarding/application/onboarding_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
 import '../../support/fake_account.dart';
 import '../../support/fake_onboarding.dart';
+import '../../support/scan_metadata_fixture.dart';
 
 final class _SilentFeedback implements AccessibleFeedbackService {
   @override
@@ -25,6 +34,127 @@ final class _SilentFeedback implements AccessibleFeedbackService {
 }
 
 void main() {
+  testWidgets('pending sync is recoverable and reachable at 200 percent text', (
+    tester,
+  ) async {
+    late InMemoryRemoteSessionStore sessions;
+    late InMemorySyncPreferencesRepository prefs;
+    late SharedPreferencesScanMetadataStore store;
+    late FakeScanMetadataGateway gateway;
+    late ScanMetadataSync sync;
+    {
+      SharedPreferencesAsyncPlatform.instance =
+          InMemorySharedPreferencesAsync.empty();
+      sessions = InMemoryRemoteSessionStore(session: testRemoteSession);
+      prefs = InMemorySyncPreferencesRepository();
+      store = SharedPreferencesScanMetadataStore(SharedPreferencesAsync());
+      gateway = FakeScanMetadataGateway()
+        ..onUpload = (_, _) async => throw metadataHttpFailure(500);
+      sync = ScanMetadataSync(
+        store: store,
+        preferences: prefs,
+        accounts: sessions,
+        gateway: gateway,
+        retryDelays: const [],
+      );
+      await sync.ready;
+      await sync.setConsent(true);
+      await store.add(metadataFixture());
+      await sync.retryManually();
+    }
+    tester.view.physicalSize = const Size(320, 844);
+    tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+      tester.platformDispatcher.clearTextScaleFactorTestValue();
+    });
+    final fixture = await _pumpAccount(
+      tester,
+      store: sessions,
+      preferences: prefs,
+      sync: sync,
+    );
+
+    expect(
+      find.textContaining('pendentes permanecem neste aparelho'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Sessões pendentes: 1.'), findsOneWidget);
+    await tester.ensureVisible(find.text('Tentar enviar pendentes'));
+    await tester.pumpAndSettle();
+    gateway.onUpload = null;
+    await tester.tap(find.text('Tentar enviar pendentes'));
+    await tester.pumpAndSettle();
+    expect(await store.pending(), isEmpty);
+    expect(find.textContaining('Sem sessões pendentes'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    fixture.container.dispose();
+    unawaited(sync.dispose());
+    await tester.pump();
+    await sessions.dispose();
+  });
+
+  testWidgets(
+    'history deletion requires explicit confirmation and updates consent',
+    (tester) async {
+      late InMemoryRemoteSessionStore sessions;
+      late InMemorySyncPreferencesRepository prefs;
+      late SharedPreferencesScanMetadataStore store;
+      late FakeScanMetadataGateway gateway;
+      late ScanMetadataSync sync;
+      {
+        SharedPreferencesAsyncPlatform.instance =
+            InMemorySharedPreferencesAsync.empty();
+        sessions = InMemoryRemoteSessionStore(session: testRemoteSession);
+        prefs = InMemorySyncPreferencesRepository();
+        store = SharedPreferencesScanMetadataStore(SharedPreferencesAsync());
+        gateway = FakeScanMetadataGateway();
+        sync = ScanMetadataSync(
+          store: store,
+          preferences: prefs,
+          accounts: sessions,
+          gateway: gateway,
+          retryDelays: const [],
+        );
+        await sync.ready;
+        await sync.setConsent(true);
+      }
+      final fixture = await _pumpAccount(
+        tester,
+        store: sessions,
+        preferences: prefs,
+        sync: sync,
+      );
+
+      await tester.ensureVisible(find.text('Excluir histórico de metadados'));
+      await tester.tap(find.text('Excluir histórico de metadados'));
+      await tester.pumpAndSettle();
+      expect(gateway.deleteCalls, 0);
+      expect(
+        find.textContaining('exclusão só será confirmada'),
+        findsOneWidget,
+      );
+      await tester.tap(find.text('Desativar e excluir'));
+      await tester.pumpAndSettle();
+      expect(gateway.deleteCalls, 1);
+      expect(
+        fixture.container
+            .read(accountControllerProvider)
+            .requireValue
+            .syncConsent,
+        isFalse,
+      );
+      expect(find.textContaining('Histórico remoto excluído'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      fixture.container.dispose();
+      unawaited(sync.dispose());
+      await tester.pump();
+      await sessions.dispose();
+    },
+  );
+
   testWidgets('login is optional, accessible and safe at 200 percent text', (
     WidgetTester tester,
   ) async {
@@ -127,12 +257,14 @@ Future<_AccountFixture> _pumpAccount(
   FakeAuthGateway? gateway,
   InMemorySyncPreferencesRepository? preferences,
   InMemoryMetadataSyncQueue? queue,
+  ScanMetadataSync? sync,
 }) async {
   final environment = AppEnvironment.dev();
   final logger = SecureLogger(environment);
   final sessionStore = store ?? InMemoryRemoteSessionStore();
   final container = ProviderContainer(
     overrides: [
+      scanMetadataSyncProvider.overrideWithValue(sync),
       appEnvironmentProvider.overrideWithValue(environment),
       secureLoggerProvider.overrideWithValue(logger),
       appErrorReporterProvider.overrideWithValue(AppErrorReporter(logger)),

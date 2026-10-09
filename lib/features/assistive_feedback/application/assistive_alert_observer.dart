@@ -8,6 +8,10 @@ abstract interface class AssistiveAlertObserver {
   void onAlertQueued(ProximityAlertEvent event, AssistiveAlertMessage message);
 }
 
+abstract interface class AssistivePlaybackObserver {
+  void onPlaybackRequested(AssistiveAlertMessage message);
+}
+
 final class NoopAssistiveAlertObserver implements AssistiveAlertObserver {
   const NoopAssistiveAlertObserver();
 
