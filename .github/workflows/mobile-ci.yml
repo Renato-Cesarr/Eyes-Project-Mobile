@@ -58,6 +58,13 @@ jobs:
       - name: Build development APK
         run: flutter build apk --debug --flavor dev --target lib/main_dev.dart
 
+      - name: Build installable demonstration APK
+        run: flutter build apk --release --flavor dev --target lib/main_dev.dart
+
+      - name: Verify and identify demonstration package
+        shell: pwsh
+        run: ./scripts/package-demo.ps1
+
       - name: Build production bundle
         run: >-
           flutter build appbundle --release --flavor prod
@@ -68,3 +75,13 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Store verified demonstration and coverage
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: eyes-mobile-demo-${{ github.sha }}-${{ github.run_attempt }}
+          path: |
+            build/demo/
+            coverage/lcov.info
+          if-no-files-found: error
+          retention-days: 14
