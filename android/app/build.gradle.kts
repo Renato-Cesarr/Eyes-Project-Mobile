@@ -31,6 +31,8 @@ android {
             dimension = "environment"
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
+            // Installable demonstration only; never use this key for prod.
+            signingConfig = signingConfigs.getByName("debug")
         }
         create("prod") {
             dimension = "environment"
