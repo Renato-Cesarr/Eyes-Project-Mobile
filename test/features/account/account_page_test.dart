@@ -34,6 +34,102 @@ final class _SilentFeedback implements AccessibleFeedbackService {
 }
 
 void main() {
+  testWidgets(
+    'guest without pending metadata keeps optional login uncluttered',
+    (tester) async {
+      SharedPreferencesAsyncPlatform.instance =
+          InMemorySharedPreferencesAsync.empty();
+      final sessions = InMemoryRemoteSessionStore();
+      final sync = ScanMetadataSync(
+        store: SharedPreferencesScanMetadataStore(SharedPreferencesAsync()),
+        preferences: InMemorySyncPreferencesRepository(),
+        accounts: sessions,
+        gateway: FakeScanMetadataGateway(),
+        retryDelays: const [],
+      );
+      await sync.ready;
+      final fixture = await _pumpAccount(tester, store: sessions, sync: sync);
+      expect(find.text('Entrar'), findsOneWidget);
+      expect(find.textContaining('Sessões pendentes:'), findsNothing);
+      expect(find.text('Continuar para a varredura offline'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      fixture.container.dispose();
+      unawaited(sync.dispose());
+      await tester.pump();
+      await sessions.dispose();
+    },
+  );
+
+  testWidgets(
+    '401 keeps pending status visible and recovers after login at 200 percent',
+    (tester) async {
+      SharedPreferencesAsyncPlatform.instance =
+          InMemorySharedPreferencesAsync.empty();
+      final sessions = InMemoryRemoteSessionStore(session: testRemoteSession);
+      final prefs = InMemorySyncPreferencesRepository();
+      final store = SharedPreferencesScanMetadataStore(
+        SharedPreferencesAsync(),
+      );
+      final gateway = FakeScanMetadataGateway()
+        ..onUpload = (_, _) async => throw metadataHttpFailure(401);
+      final sync = ScanMetadataSync(
+        store: store,
+        preferences: prefs,
+        accounts: sessions,
+        gateway: gateway,
+        retryDelays: const [],
+      );
+      await sync.ready;
+      await sync.setConsent(true);
+      await store.add(metadataFixture());
+      await sync.retryManually();
+      tester.view.physicalSize = const Size(320, 844);
+      tester.view.devicePixelRatio = 1;
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+        tester.platformDispatcher.clearTextScaleFactorTestValue();
+      });
+      final fixture = await _pumpAccount(
+        tester,
+        store: sessions,
+        preferences: prefs,
+        sync: sync,
+      );
+      expect(
+        find.textContaining('Entre novamente na mesma conta'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('Sessões pendentes: 1.'), findsOneWidget);
+      expect(find.text('Tentar enviar pendentes'), findsNothing);
+      expect(find.text('Excluir histórico de metadados'), findsNothing);
+      expect(await store.pending(), hasLength(1));
+      gateway.onUpload = null;
+      await tester.ensureVisible(find.widgetWithText(TextFormField, 'E-mail'));
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'E-mail'),
+        'pessoa@example.com',
+      );
+      await tester.ensureVisible(find.widgetWithText(TextFormField, 'Senha'));
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Senha'),
+        'test-password',
+      );
+      await tester.ensureVisible(find.text('Entrar'));
+      await tester.tap(find.text('Entrar'));
+      await tester.pumpAndSettle();
+      expect(find.text('Conta conectada'), findsOneWidget);
+      expect(await store.pending(), isEmpty);
+      expect(find.textContaining('Sessões pendentes: 0.'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      fixture.container.dispose();
+      unawaited(sync.dispose());
+      await tester.pump();
+      await sessions.dispose();
+    },
+  );
+
   testWidgets('pending sync is recoverable and reachable at 200 percent text', (
     tester,
   ) async {

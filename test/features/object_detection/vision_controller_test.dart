@@ -92,6 +92,74 @@ void main() {
     );
   });
 
+  test('hidden seguido de paused conserva a intenção de retomada', () async {
+    final worker = _FakeVisionWorker();
+    final container = createContainer(worker);
+    addTearDown(() async {
+      container.dispose();
+      await worker.close();
+    });
+    await container.read(visionControllerProvider.future);
+    final controller = container.read(visionControllerProvider.notifier);
+
+    await controller.handleBackground();
+    await controller.handleBackground();
+    expect(worker.disposeCalls, 1);
+    await controller.handleForeground();
+
+    expect(worker.startCalls, 2);
+    expect(
+      container.read(visionControllerProvider).requireValue.status,
+      VisionRuntimeStatus.ready,
+    );
+  });
+
+  test('background simultâneo não libera o mesmo runtime duas vezes', () async {
+    final gate = Completer<void>();
+    final worker = _FakeVisionWorker(disposeGate: gate);
+    final container = createContainer(worker);
+    addTearDown(() async {
+      container.dispose();
+      await worker.close();
+    });
+    await container.read(visionControllerProvider.future);
+    final controller = container.read(visionControllerProvider.notifier);
+
+    final first = controller.handleBackground();
+    final second = controller.handleBackground();
+    expect(worker.disposeCalls, 1);
+    gate.complete();
+    await Future.wait([first, second]);
+    await controller.handleForeground();
+    expect(worker.startCalls, 2);
+    expect(
+      container.read(visionControllerProvider).requireValue.status,
+      VisionRuntimeStatus.ready,
+    );
+  });
+
+  test('encerramento explícito cancela retomada após background', () async {
+    final worker = _FakeVisionWorker();
+    final container = createContainer(worker);
+    addTearDown(() async {
+      container.dispose();
+      await worker.close();
+    });
+    await container.read(visionControllerProvider.future);
+    final controller = container.read(visionControllerProvider.notifier);
+
+    await controller.handleBackground();
+    await controller.stop();
+    await controller.handleBackground();
+    await controller.handleForeground();
+
+    expect(worker.startCalls, 1);
+    expect(
+      container.read(visionControllerProvider).requireValue.status,
+      VisionRuntimeStatus.paused,
+    );
+  });
+
   test('encerrar a tela libera runtime e permite uma nova sessão', () async {
     final worker = _FakeVisionWorker();
     final container = createContainer(worker);
@@ -157,9 +225,10 @@ VisionFrame _frame() => VisionFrame(
 );
 
 final class _FakeVisionWorker implements VisionWorker {
-  _FakeVisionWorker({this.startGate});
+  _FakeVisionWorker({this.startGate, this.disposeGate});
 
   final Completer<void>? startGate;
+  final Completer<void>? disposeGate;
   final StreamController<VisionWorkerSnapshot> _snapshots =
       StreamController<VisionWorkerSnapshot>.broadcast(sync: true);
 
@@ -209,6 +278,7 @@ final class _FakeVisionWorker implements VisionWorker {
   @override
   Future<void> dispose() async {
     disposeCalls++;
+    await (disposeGate?.future ?? Future<void>.value());
     snapshot = const VisionWorkerSnapshot.idle();
     _snapshots.add(snapshot);
   }
@@ -221,5 +291,9 @@ final class _FakeVisionWorker implements VisionWorker {
     _snapshots.add(snapshot);
   }
 
-  Future<void> close() => _snapshots.close();
+  Future<void> close() async {
+    // Provider disposal releases the worker asynchronously. Drain it first.
+    await Future<void>.delayed(Duration.zero);
+    await _snapshots.close();
+  }
 }

@@ -64,6 +64,11 @@ final class VisionController extends AsyncNotifier<VisionRuntimeState> {
   }
 
   Future<void> handleBackground() async {
+    // Android can deliver hidden and paused for the same background transition.
+    // Preserve the pending resume and release the runtime only once.
+    if (_isDisposed || _resumeAfterLifecycle) {
+      return;
+    }
     final current = state.asData?.value;
     final worker = ref.read(visionWorkerProvider);
     _resumeAfterLifecycle =
