@@ -110,6 +110,7 @@ final class _AccountPageState extends ConsumerState<AccountPage> {
             liveRegion: true,
           ),
         ],
+        if (state.session == null) const ScanSyncPanel(),
         SizedBox(height: layout.spaceXl),
         if (state.session case final session?)
           _ConnectedAccount(

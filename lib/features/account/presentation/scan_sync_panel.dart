@@ -15,6 +15,9 @@ final class ScanSyncPanel extends ConsumerWidget {
     final snapshot =
         ref.watch(scanSyncSnapshotProvider).asData?.value ?? sync.snapshot;
     final account = ref.watch(accountControllerProvider).asData?.value;
+    if (account?.isSignedIn != true && snapshot.pendingSessions == 0) {
+      return const SizedBox.shrink();
+    }
     final busy = account?.isSubmitting ?? true;
     final l10n = AppLocalizations.of(context);
     final message = switch (snapshot.status) {
