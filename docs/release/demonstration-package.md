@@ -58,11 +58,12 @@ branch do autor. Conferir run, PR e ancestrais antes de congelar entrega.
 
 ```powershell
 gh run download RUN_ID --repo Renato-Cesarr/Eyes-Project-Mobile --name NOME_ARTIFACT --dir PASTA_NOVA
-Get-FileHash PASTA_NOVA/demo/eyes-dev-release-COMMIT.apk -Algorithm SHA256
+Get-FileHash PASTA_NOVA/build/demo/eyes-dev-release-COMMIT.apk -Algorithm SHA256
 ```
 
 Comparar todos os arquivos com SHA256SUMS e manifesto. No Linux, executar
-sha256sum -c SHA256SUMS dentro de demo. A assinatura e assets podem ser
+sha256sum -c SHA256SUMS dentro de build/demo. Como APK e LCOV têm raiz comum,
+o download mantém build/demo/ e coverage/. A assinatura e assets podem ser
 reconferidos com o script no checkout correspondente, em output novo.
 Artifacts temporários não são uma release permanente; preservar a cópia
 verificada com o manifesto conjunto das quatro áreas para a REN-74.
