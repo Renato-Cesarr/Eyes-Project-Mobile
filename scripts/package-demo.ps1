@@ -2,11 +2,14 @@
 param(
     [string]$RepositoryRoot = (Split-Path -Parent $PSScriptRoot),
     [string]$ApkPath = 'build/app/outputs/flutter-apk/app-dev-release.apk',
-    [string]$OutputDirectory = 'build/demo'
+    [string]$OutputDirectory = 'build/demo',
+    [string]$BuildReceiptPath = 'build/demo-build-receipt.json',
+    [string]$ExpectedApiBaseUrl = 'http://10.0.2.2:8080'
 )
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
+. (Join-Path $PSScriptRoot 'demo-build-receipt.ps1')
 $RepositoryRoot = (Resolve-Path -LiteralPath $RepositoryRoot).Path
 function GitValue([string[]]$Arguments) {
     $result = & git -C $RepositoryRoot @Arguments
@@ -31,10 +34,15 @@ if (GitValue @('status', '--porcelain')) { throw 'Demo requires a clean checkout
 $apk = if ([IO.Path]::IsPathRooted($ApkPath)) { $ApkPath } else { Join-Path $RepositoryRoot $ApkPath }
 $output = if ([IO.Path]::IsPathRooted($OutputDirectory)) { $OutputDirectory } else { Join-Path $RepositoryRoot $OutputDirectory }
 if (Test-Path -LiteralPath $output) { throw 'Output already exists; do not overwrite a prior package.' }
+$receiptPath = if ([IO.Path]::IsPathRooted($BuildReceiptPath)) { $BuildReceiptPath } else { Join-Path $RepositoryRoot $BuildReceiptPath }
+$flutterPin = Get-Content -LiteralPath (Join-Path $RepositoryRoot '.fvmrc') -Raw | ConvertFrom-Json
+$receipt = Get-VerifiedDemoBuildReceipt -ReceiptPath $receiptPath -ApkPath $apk -Commit $commit -FlutterVersion $flutterPin.flutter -ExpectedApiBaseUrl $ExpectedApiBaseUrl
+$receiptHash = (Get-FileHash -LiteralPath $receiptPath -Algorithm SHA256).Hash.ToLowerInvariant()
 $manifestPath = Join-Path $RepositoryRoot 'assets/models/model-manifest.v1.json'
 $manifestBytes = [IO.File]::ReadAllBytes($manifestPath)
 $manifest = [Text.Encoding]::UTF8.GetString($manifestBytes) | ConvertFrom-Json
 $apkHash = (Get-FileHash -LiteralPath $apk -Algorithm SHA256).Hash.ToLowerInvariant()
+if ($apkHash -cne $receipt.apk.sha256) { throw 'APK changed after build receipt verification.' }
 $modelBytes = [IO.File]::ReadAllBytes((Join-Path $RepositoryRoot 'assets/models/efficientdet-lite0.tflite'))
 if ((Sha256 $modelBytes) -ne $manifest.artifact.sha256 -or $modelBytes.Length -ne $manifest.artifact.size_bytes) {
     throw 'Source model hash/size mismatch.'
@@ -75,7 +83,6 @@ if ($badging -match 'application-debuggable') { throw 'Expected a release-mode A
 $pubspec = Get-Content -LiteralPath (Join-Path $RepositoryRoot 'pubspec.yaml') -Raw
 if ($pubspec -notmatch '(?m)^version:\s*([^+\s]+)\+([0-9]+)\s*$') { throw 'Invalid application version.' }
 if ($versionName -ne ($Matches[1] + '-dev') -or $versionCode -ne $Matches[2]) { throw 'APK version differs from pubspec.' }
-$flutterPin = Get-Content -LiteralPath (Join-Path $RepositoryRoot '.fvmrc') -Raw | ConvertFrom-Json
 $apkName = "eyes-dev-release-$commit.apk"
 $apkInfo = Get-Item -LiteralPath $apk
 if ((GitValue @('rev-parse', 'HEAD')) -ne $commit -or (GitValue @('status', '--porcelain'))) {
@@ -84,15 +91,19 @@ if ((GitValue @('rev-parse', 'HEAD')) -ne $commit -or (GitValue @('status', '--p
 if ((Get-FileHash -LiteralPath $apk -Algorithm SHA256).Hash.ToLowerInvariant() -ne $apkHash) {
     throw 'APK changed during verification.'
 }
+if ((Get-FileHash -LiteralPath $receiptPath -Algorithm SHA256).Hash.ToLowerInvariant() -ne $receiptHash) {
+    throw 'Build receipt changed during verification.'
+}
 $metadata = [ordered]@{
-    schema_version = 1
+    schema_version = 2
     generated_at = [DateTime]::UtcNow.ToString('o')
     source = @{ commit = $commit; clean = $true }
     ci = @{ run_id = $env:GITHUB_RUN_ID; attempt = $env:GITHUB_RUN_ATTEMPT; quality_gate = 'not_asserted_by_packaging' }
-    apk = @{ file = $apkName; sha256 = $apkHash; size_bytes = $apkInfo.Length; application_id = 'br.com.eyesproject.mobile.dev'; version_name = $versionName; version_code = [int]$versionCode; build_mode = 'release'; flavor = 'dev'; signing = 'verified_test_key'; api_default = 'http://10.0.2.2:8080' }
+    apk = @{ file = $apkName; sha256 = $apkHash; size_bytes = $apkInfo.Length; application_id = 'br.com.eyesproject.mobile.dev'; version_name = $versionName; version_code = [int]$versionCode; build_mode = 'release'; flavor = 'dev'; signing = 'verified_test_key'; api_base_url = $receipt.build.api_base_url }
+    build_receipt = @{ file = 'build-receipt.json'; sha256 = $receiptHash; clean_build_verified = $true; configuration_provenance = 'explicit_build_command' }
     model = @{ id = $manifest.model_id; version = $manifest.model_version; sha256 = $manifest.artifact.sha256; size_bytes = $manifest.artifact.size_bytes; manifest_sha256 = (Sha256 $manifestBytes); embedded_assets_verified = $true }
     pinned_toolchains = @{ flutter = $flutterPin.flutter; java = 21 }
-    limits = @('Test signature; not a store release.', 'No physical device/TalkBack/scientific acceptance asserted.', 'Requires the documented default dev API for account features; assistance remains offline.')
+    limits = @('Test signature; not a store release.', 'No physical device/TalkBack/scientific acceptance asserted.', 'API configuration comes from the recorded build command; connectivity is not asserted.', 'Receipt is a local build record, not a signed supply-chain attestation.')
 }
 # Validate everything before creating the immutable output directory.
 [IO.Directory]::CreateDirectory($output) | Out-Null
@@ -101,9 +112,13 @@ if ((Get-FileHash -LiteralPath (Join-Path $output $apkName) -Algorithm SHA256).H
     throw 'Copied APK differs from the verified artifact; package incomplete.'
 }
 [IO.File]::WriteAllText((Join-Path $output 'signature.txt'), $signature)
+Copy-Item -LiteralPath $receiptPath -Destination (Join-Path $output 'build-receipt.json')
+if ((Get-FileHash -LiteralPath (Join-Path $output 'build-receipt.json') -Algorithm SHA256).Hash.ToLowerInvariant() -ne $receiptHash) {
+    throw 'Copied build receipt differs from the verified record; package incomplete.'
+}
 [IO.File]::WriteAllText((Join-Path $output 'demo-manifest.json'), ($metadata | ConvertTo-Json -Depth 8) + "`n")
 $lines = @("$($metadata.apk.sha256)  $apkName")
-foreach ($name in @('demo-manifest.json', 'signature.txt')) {
+foreach ($name in @('demo-manifest.json', 'signature.txt', 'build-receipt.json')) {
     $hash = (Get-FileHash -LiteralPath (Join-Path $output $name) -Algorithm SHA256).Hash.ToLowerInvariant()
     $lines += "$hash  $name"
 }

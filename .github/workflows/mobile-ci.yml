@@ -55,11 +55,16 @@ jobs:
       - name: Validate coverage report
         run: test -s coverage/lcov.info
 
+      - name: Test demonstration build provenance
+        shell: pwsh
+        run: ./scripts/test-demo-build-receipt.ps1
+
       - name: Build development APK
         run: flutter build apk --debug --flavor dev --target lib/main_dev.dart
 
       - name: Build installable demonstration APK
-        run: flutter build apk --release --flavor dev --target lib/main_dev.dart
+        shell: pwsh
+        run: ./scripts/build-demo.ps1
 
       - name: Verify and identify demonstration package
         shell: pwsh
