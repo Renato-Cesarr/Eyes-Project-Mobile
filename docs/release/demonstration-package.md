@@ -19,7 +19,8 @@ flutter pub get
 flutter analyze
 dart run tool/validate_design_tokens.dart
 flutter test --coverage
-flutter build apk --release --flavor dev --target lib/main_dev.dart
+./scripts/test-demo-build-receipt.ps1
+./scripts/build-demo.ps1
 ./scripts/package-demo.ps1
 ```
 
@@ -28,13 +29,24 @@ não são necessários nem incluídos no pacote. Uma assinatura de teste diferen
 em outro runner pode exigir desinstalar a versão anterior; preservar/exportar
 dados antes dessa decisão. Não prometer hashes binários iguais entre runners.
 
-package-demo.ps1 exige checkout Git limpo, lê seu HEAD real e recusa output
+build-demo.ps1 exige checkout limpo, valida Flutter/Java, executa flutter clean
+e pub get e compila release/dev com API_BASE_URL explicitamente definido.
+Só cria build/demo-build-receipt.json depois de conferir que o HEAD e o estado
+Git permaneceram iguais. O recibo identifica commit, API, toolchain e SHA/tamanho
+do APK produzido. O clean evita reutilizar saída incremental de outro checkout
+ou configuração; ele remove os outputs anteriores em build/. Copiar pacotes que
+precisem ser preservados para fora de build/ antes de executar o comando.
+
+package-demo.ps1 exige esse recibo, checkout Git limpo, lê seu HEAD real e recusa output
 existente. Confere SHA/tamanho do modelo original e do binário dentro do APK,
 manifesto embarcado byte a byte com o manifesto versionado, assinatura via
 apksigner e identidade/versão via aapt. Recusa APK debuggable, outro flavor,
 versão divergente, assets ausentes/duplicados, fonte alterada e APK alterado
-durante a verificação. Flutter/Java no manifesto são os pins; o passo de
-toolchain da CI valida os executáveis. O pacote não afirma que o Sonar passou.
+durante a verificação. Também recusa APK sem recibo, de outro commit, hash/tamanho
+divergente, build incremental e API diferente da esperada. Flutter/Java no
+recibo são validados pelo comando de build. O pacote não afirma que o Sonar passou.
+O recibo documenta o processo local: não é uma atestação criptográfica de origem
+nem inspeção independente da configuração compilada ou teste de conectividade.
 
 Saída em build/demo, fora do Git:
 
@@ -42,11 +54,16 @@ Saída em build/demo, fora do Git:
 - demo-manifest.json: commit, versão, hash/tamanho APK, modelo/manifesto,
   flavor, assinatura de teste e limitações;
 - signature.txt: verificação/certificado público, sem chave privada;
-- SHA256SUMS: recibo dos três arquivos.
+- build-receipt.json: origem do build limpo e configuração explícita, também
+  vinculado por hash no demo-manifest.json (schema 2);
+- SHA256SUMS: recibo dos quatro arquivos.
 
 Para repetir, escolher uma pasta nova com -OutputDirectory. Não sobrescrever
 evidência anterior. -RepositoryRoot e -ApkPath permitem verificar um checkout
 e seu APK explicitamente; não mudam os requisitos de identidade/assets/fonte.
+APK antigo sem recibo permanece evidência histórica, mas não pode receber um
+novo rótulo de commit por este procedimento. Ao recuperar o artifact da CI,
+revalidar com -BuildReceiptPath apontando para build/demo/build-receipt.json.
 
 ## Recuperar e verificar a CI
 
@@ -89,3 +106,14 @@ localhost:8080 no host. Em aparelho, preparar e registrar uma configuração
 dev apropriada antes de recompilar/validar; o pacote padrão não comprova
 conectividade física. Nenhum deploy, envio externo ou instalação é automático.
 O app com este APK ainda precisa do roteiro de validação humana e física.
+
+Exemplo para uma demonstração com transporte USB previamente preparado:
+
+```powershell
+./scripts/build-demo.ps1 -ApiBaseUrl http://127.0.0.1:8080
+./scripts/package-demo.ps1 -ExpectedApiBaseUrl http://127.0.0.1:8080
+```
+
+O endpoint deixa de ser declarado como o padrão do emulador no manifesto.
+URLs com credenciais, query ou fragmento são recusadas para evitar segredos
+no pacote. A API não é necessária para câmera, inferência, voz ou vibração locais.
