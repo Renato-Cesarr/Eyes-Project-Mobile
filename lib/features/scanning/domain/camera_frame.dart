@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-enum CameraPixelFormat { nv21, yuv420, bgra8888, unknown }
+enum CameraPixelFormat { nv21, yuv420, bgra8888, unknown, rgba8888 }
 
 enum CameraFrameRotation { degrees0, degrees90, degrees180, degrees270 }
 

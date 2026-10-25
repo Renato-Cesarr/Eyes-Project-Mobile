@@ -56,9 +56,44 @@ final class VisionFramePreprocessor {
     final decoded = switch (frame.format) {
       VisionPixelFormat.nv21 => _decodeNv21(frame),
       VisionPixelFormat.yuv420 => _decodeYuv420(frame),
+      VisionPixelFormat.rgba8888 => _decodeRgba(frame),
     };
     final rotated = _rotate(decoded, frame.rotation);
     return _resizeBilinear(rotated, targetWidth, targetHeight);
+  }
+
+  RgbImage _decodeRgba(VisionFrame frame) {
+    if (frame.planes.length != 1) {
+      throw const VisionPreprocessingException(
+        VisionPreprocessingErrorCode.invalidPlaneLayout,
+        'RGBA precisa de um único plano.',
+      );
+    }
+    final plane = frame.planes.single;
+    if (plane.bytesPerPixel != 4 || plane.bytesPerRow < frame.width * 4) {
+      throw const VisionPreprocessingException(
+        VisionPreprocessingErrorCode.invalidPlaneLayout,
+        'Os strides RGBA são inválidos.',
+      );
+    }
+    final lastByte = (frame.height - 1) * plane.bytesPerRow + frame.width * 4;
+    if (plane.bytes.length < lastByte) {
+      throw const VisionPreprocessingException(
+        VisionPreprocessingErrorCode.invalidPlaneLayout,
+        'O plano RGBA está truncado.',
+      );
+    }
+    final rgb = Uint8List(frame.width * frame.height * 3);
+    for (var y = 0; y < frame.height; y++) {
+      for (var x = 0; x < frame.width; x++) {
+        final input = y * plane.bytesPerRow + x * 4;
+        final output = (y * frame.width + x) * 3;
+        rgb[output] = plane.bytes[input];
+        rgb[output + 1] = plane.bytes[input + 1];
+        rgb[output + 2] = plane.bytes[input + 2];
+      }
+    }
+    return RgbImage(width: frame.width, height: frame.height, bytes: rgb);
   }
 
   RgbImage _decodeNv21(VisionFrame frame) {

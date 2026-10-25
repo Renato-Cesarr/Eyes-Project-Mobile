@@ -71,6 +71,74 @@ void main() {
     expect(_redChannel(result), [0, 255, 77, 150]);
   });
 
+  test('converte RGBA da webcam respeitando padding e descartando alpha', () {
+    final frame = VisionFrame(
+      width: 2,
+      height: 2,
+      format: VisionPixelFormat.rgba8888,
+      planes: [
+        VisionFramePlane(
+          bytes: Uint8List.fromList([
+            255,
+            0,
+            0,
+            20,
+            0,
+            255,
+            0,
+            40,
+            9,
+            9,
+            9,
+            9,
+            0,
+            0,
+            255,
+            60,
+            255,
+            255,
+            255,
+            80,
+          ]),
+          bytesPerRow: 12,
+          bytesPerPixel: 4,
+        ),
+      ],
+      rotation: VisionRotation.degrees0,
+      capturedAt: DateTime.utc(2026),
+    );
+
+    final result = preprocessor.preprocess(
+      frame,
+      targetWidth: 2,
+      targetHeight: 2,
+    );
+
+    expect(result.bytes, [255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255]);
+  });
+
+  test('rejeita frame RGBA truncado sem acessar memoria invalida', () {
+    final frame = VisionFrame(
+      width: 2,
+      height: 2,
+      format: VisionPixelFormat.rgba8888,
+      planes: [
+        VisionFramePlane(
+          bytes: Uint8List(15),
+          bytesPerRow: 8,
+          bytesPerPixel: 4,
+        ),
+      ],
+      rotation: VisionRotation.degrees0,
+      capturedAt: DateTime.utc(2026),
+    );
+
+    expect(
+      () => preprocessor.preprocess(frame, targetWidth: 2, targetHeight: 2),
+      throwsA(isA<VisionPreprocessingException>()),
+    );
+  });
+
   test('redimensiona por interpolação bilinear para o tensor do modelo', () {
     final frame = _nv21Frame(width: 2, height: 2, yValues: [82, 82, 82, 82]);
 

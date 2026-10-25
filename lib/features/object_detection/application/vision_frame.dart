@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
-enum VisionPixelFormat { nv21, yuv420 }
+// Append new formats: the worker protocol serializes enum indices.
+enum VisionPixelFormat { nv21, yuv420, rgba8888 }
 
 enum VisionRotation {
   degrees0(0),
