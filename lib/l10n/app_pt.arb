@@ -91,6 +91,7 @@
   "scanMoreOptions": "Mais opções de varredura",
   "cameraSourceWebcam": "Webcam USB",
   "cameraSourceWebcamUncalibrated": "Webcam USB. Proximidade ainda não calibrada.",
+  "cameraSourceWebcamFallback": "Webcam indisponível. Usando câmera do celular.",
   "cameraSourcePhone": "Câmera do celular",
   "cameraSourceWebcamMissing": "Nenhuma webcam USB conectada. Verifique o adaptador OTG.",
   "cameraSourcePhoneDetail": "Usa a câmera traseira deste aparelho.",

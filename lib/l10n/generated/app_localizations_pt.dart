@@ -280,6 +280,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Webcam USB. Proximidade ainda não calibrada.';
 
   @override
+  String get cameraSourceWebcamFallback =>
+      'Webcam indisponível. Usando câmera do celular.';
+
+  @override
   String get cameraSourcePhone => 'Câmera do celular';
 
   @override
@@ -1245,6 +1249,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get cameraSourceWebcamUncalibrated =>
       'Webcam USB. Proximidade ainda não calibrada.';
+
+  @override
+  String get cameraSourceWebcamFallback =>
+      'Webcam indisponível. Usando câmera do celular.';
 
   @override
   String get cameraSourcePhone => 'Câmera do celular';

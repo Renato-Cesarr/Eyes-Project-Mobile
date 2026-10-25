@@ -44,6 +44,7 @@ final class SelectableCameraGateway
         preference: preference,
         webcams: _state.webcams,
         active: _state.active,
+        fellBackToPhone: _state.fellBackToPhone,
       );
     }
     try {
@@ -53,12 +54,17 @@ final class SelectableCameraGateway
           preference: _state.preference,
           webcams: List<WebcamDevice>.unmodifiable(webcams),
           active: _state.active,
+          fellBackToPhone: _state.fellBackToPhone,
         ),
       );
     } on Object {
       // Internal camera remains available if USB enumeration fails.
       _publish(
-        CameraSourceState(preference: _state.preference, active: _state.active),
+        CameraSourceState(
+          preference: _state.preference,
+          active: _state.active,
+          fellBackToPhone: _state.fellBackToPhone,
+        ),
       );
     }
     return _state;
@@ -73,6 +79,7 @@ final class SelectableCameraGateway
         preference: kind,
         webcams: _state.webcams,
         active: _state.active,
+        fellBackToPhone: _state.fellBackToPhone,
       ),
     );
   }
@@ -120,6 +127,32 @@ final class SelectableCameraGateway
     _activeGateway = gateway;
     try {
       await gateway.initialize(selectedConfiguration);
+    } on CameraGatewayException {
+      await release();
+      if (kind != CameraSourceKind.webcam || sources.preference != null) {
+        rethrow;
+      }
+      // Auto-selection happens before a stream starts. A USB device can be
+      // enumerated yet fail to negotiate video; keep assistance available via
+      // the phone and disclose the fallback in the accessible status.
+      _activeGateway = _phone;
+      try {
+        await _phone.initialize(
+          configuration.withSource(CameraSourceKind.phone),
+        );
+      } on Object {
+        await release();
+        rethrow;
+      }
+      _publish(
+        CameraSourceState(
+          preference: null,
+          webcams: _state.webcams,
+          active: CameraSourceKind.phone,
+          fellBackToPhone: true,
+        ),
+      );
+      return;
     } on Object {
       await release();
       rethrow;

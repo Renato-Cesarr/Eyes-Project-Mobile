@@ -20,6 +20,7 @@ final class _MemoryPreferenceStore implements CameraSourcePreferenceStore {
 
 class _FakeCamera implements CameraGateway {
   CameraConfiguration? configuration;
+  CameraGatewayException? initializationFailure;
   int releases = 0;
 
   @override
@@ -40,8 +41,11 @@ class _FakeCamera implements CameraGateway {
   Future<bool> openSettings() async => true;
 
   @override
-  Future<void> initialize(CameraConfiguration configuration) async =>
-      this.configuration = configuration;
+  Future<void> initialize(CameraConfiguration configuration) async {
+    final failure = initializationFailure;
+    if (failure != null) throw failure;
+    this.configuration = configuration;
+  }
 
   @override
   Future<void> startStream({
@@ -142,6 +146,58 @@ void main() {
           ),
         ),
       );
+      expect(gateway.sourceState.preference, CameraSourceKind.webcam);
+    },
+  );
+
+  test(
+    'unusable USB falls back before streaming with an explicit notice',
+    () async {
+      final phone = _FakeCamera();
+      final usb = _FakeWebcam()
+        ..devices = [webcam]
+        ..initializationFailure = const CameraGatewayException(
+          CameraGatewayFailureReason.initialization,
+          code: 'webcam-no-valid-video-mode',
+        );
+      final gateway = SelectableCameraGateway(
+        phone,
+        usb,
+        _MemoryPreferenceStore(),
+      );
+      addTearDown(gateway.dispose);
+
+      await gateway.initialize(const CameraConfiguration());
+
+      expect(gateway.sourceState.active, CameraSourceKind.phone);
+      expect(gateway.sourceState.selected, CameraSourceKind.phone);
+      expect(gateway.sourceState.fellBackToPhone, isTrue);
+      expect(phone.configuration?.source, CameraSourceKind.phone);
+      expect(usb.releases, 1);
+    },
+  );
+
+  test(
+    'explicit USB choice reports startup failure instead of switching',
+    () async {
+      final phone = _FakeCamera();
+      final usb = _FakeWebcam()
+        ..devices = [webcam]
+        ..initializationFailure = const CameraGatewayException(
+          CameraGatewayFailureReason.initialization,
+          code: 'webcam-no-valid-video-mode',
+        );
+      final store = _MemoryPreferenceStore()..saved = CameraSourceKind.webcam;
+      final gateway = SelectableCameraGateway(phone, usb, store);
+      addTearDown(gateway.dispose);
+
+      await expectLater(
+        gateway.initialize(const CameraConfiguration()),
+        throwsA(isA<CameraGatewayException>()),
+      );
+
+      expect(phone.configuration, isNull);
+      expect(gateway.sourceState.active, isNull);
       expect(gateway.sourceState.preference, CameraSourceKind.webcam);
     },
   );

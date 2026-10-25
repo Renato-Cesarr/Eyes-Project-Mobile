@@ -207,11 +207,14 @@ final class _AssistiveScanContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final selector = ref.read(cameraSourceSelectorProvider);
-    final activeSource = selector?.sourceState.active;
+    final sourceState = selector?.sourceState;
+    final activeSource = sourceState?.active;
     final sourceLabel = activeSource == null
         ? null
         : activeSource == CameraSourceKind.webcam
         ? l10n.cameraSourceWebcamUncalibrated
+        : sourceState?.fellBackToPhone == true
+        ? l10n.cameraSourceWebcamFallback
         : l10n.cameraSourcePhone;
     final operationalStatus = AssistiveScanStatus.resolve(session, vision);
     final statusText = _scanStatusText(

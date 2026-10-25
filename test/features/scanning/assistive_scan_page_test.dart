@@ -153,8 +153,12 @@ final class _RecordingTransitionFeedback implements ScanTransitionFeedback {
 }
 
 final class _WidgetCameraSourceSelector implements CameraSourceSelector {
+  _WidgetCameraSourceSelector({this.state = const CameraSourceState()});
+
+  final CameraSourceState state;
+
   @override
-  CameraSourceState get sourceState => const CameraSourceState();
+  CameraSourceState get sourceState => state;
 
   @override
   Stream<CameraSourceState> get sourceChanges => const Stream.empty();
@@ -476,6 +480,29 @@ void main() {
     expect(gateway.streaming, isFalse);
     expect(wakeLock.disableCalls, greaterThanOrEqualTo(1));
     expect(worker.disposeCalls, greaterThanOrEqualTo(1));
+  });
+
+  testWidgets('announces automatic fallback to the phone camera', (
+    WidgetTester tester,
+  ) async {
+    await pumpApp(
+      tester,
+      _WidgetCameraGateway(),
+      sourceSelector: _WidgetCameraSourceSelector(
+        state: const CameraSourceState(
+          active: CameraSourceKind.phone,
+          fellBackToPhone: true,
+        ),
+      ),
+    );
+    await tester.ensureVisible(find.text('Iniciar varredura'));
+    await tester.tap(find.text('Iniciar varredura'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Webcam indisponível. Usando câmera do celular.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('TalkBack receives only a temporally stabilized alert', (

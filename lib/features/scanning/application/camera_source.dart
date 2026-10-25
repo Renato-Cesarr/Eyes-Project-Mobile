@@ -15,6 +15,7 @@ final class CameraSourceState {
     this.preference,
     this.webcams = const <WebcamDevice>[],
     this.active,
+    this.fellBackToPhone = false,
   });
 
   /// A null preference means: prefer an attached webcam on the next start.
@@ -22,7 +23,11 @@ final class CameraSourceState {
   final List<WebcamDevice> webcams;
   final CameraSourceKind? active;
 
+  /// Set only when automatic USB startup failed before streaming began.
+  final bool fellBackToPhone;
+
   CameraSourceKind get selected =>
+      active ??
       preference ??
       (webcams.isNotEmpty ? CameraSourceKind.webcam : CameraSourceKind.phone);
 

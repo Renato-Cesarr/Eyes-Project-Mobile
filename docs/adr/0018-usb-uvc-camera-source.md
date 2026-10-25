@@ -18,7 +18,10 @@ entre `MobileCameraGateway` e `UvcCameraGateway`. Sem preferência persistida,
 uma webcam USB/UVC detectada tem prioridade; na ausência dela, usa-se a câmera
 do celular. A seleção manual é persistida localmente. Se a preferência explícita
 for webcam e ela não estiver disponível, o app mostra erro recuperável; não
-liga outra câmera sem conhecimento do usuário.
+liga outra câmera sem conhecimento do usuário. Se a seleção era automática e
+a webcam enumerada não consegue iniciar vídeo, o adaptador abre a câmera do
+celular antes da varredura e informa a alternativa no estado acessível. Não há
+troca automática após a varredura começar.
 
 `flutter_ffi_uvc` fornece enumeração USB, pedido de acesso ao dispositivo,
 prévia por `Texture` e quadros RGBA. O adaptador captura apenas quadros novos

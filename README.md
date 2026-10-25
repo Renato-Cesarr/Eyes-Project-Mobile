@@ -26,8 +26,10 @@ disponível; a escolha manual fica salva no aparelho.
 Conecte uma webcam UVC por adaptador USB OTG. Na tela de varredura, abra
 **Fonte de imagem** para escolher **Webcam USB** ou **Câmera do celular**. Sem
 preferência salva, o app tenta a webcam primeiro quando ela está presente e
-usa a câmera do celular quando não há webcam. Uma escolha manual por webcam
-não muda silenciosamente para a câmera do celular se o cabo for removido.
+usa a câmera do celular quando não há webcam. Se a webcam é detectada mas não
+consegue iniciar vídeo, o app usa a câmera do celular **antes da varredura** e
+informa a troca no estado acessível. Uma escolha manual por webcam não muda
+silenciosamente para a câmera do celular se ela falhar ou o cabo for removido.
 
 O Android solicita permissão de câmera e pode solicitar acesso ao dispositivo
 USB na primeira conexão. A prévia nativa e os quadros RGBA seguem para a mesma

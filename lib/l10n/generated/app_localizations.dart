@@ -583,6 +583,12 @@ abstract class AppLocalizations {
   /// **'Webcam USB. Proximidade ainda não calibrada.'**
   String get cameraSourceWebcamUncalibrated;
 
+  /// No description provided for @cameraSourceWebcamFallback.
+  ///
+  /// In pt, this message translates to:
+  /// **'Webcam indisponível. Usando câmera do celular.'**
+  String get cameraSourceWebcamFallback;
+
   /// No description provided for @cameraSourcePhone.
   ///
   /// In pt, this message translates to:
