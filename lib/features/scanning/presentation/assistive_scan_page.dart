@@ -17,15 +17,19 @@ import 'package:eyes_mobile/features/proximity/application/proximity_controller.
 import 'package:eyes_mobile/features/proximity/domain/proximity_models.dart';
 import 'package:eyes_mobile/features/scanning/application/assistive_scan_coordinator.dart';
 import 'package:eyes_mobile/features/scanning/application/assistive_scan_status.dart';
+import 'package:eyes_mobile/features/scanning/application/camera_source.dart';
 import 'package:eyes_mobile/features/scanning/application/scan_controller.dart';
 import 'package:eyes_mobile/features/scanning/application/scan_failure_policy.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_scan_status.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_session_state.dart';
 import 'package:eyes_mobile/features/scanning/infrastructure/camera_preview_surface.dart';
+import 'package:eyes_mobile/features/scanning/presentation/camera_source_picker.dart';
 import 'package:eyes_mobile/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+enum _ScanToolbarAction { source, help, settings }
 
 final class AssistiveScanPage extends ConsumerStatefulWidget {
   const AssistiveScanPage({super.key});
@@ -73,6 +77,9 @@ final class _AssistiveScanPageState extends ConsumerState<AssistiveScanPage>
     final camera = ref.watch(scanControllerProvider);
     final vision = ref.watch(visionControllerProvider);
     final l10n = AppLocalizations.of(context);
+    final compactActions =
+        MediaQuery.sizeOf(context).width < 360 ||
+        MediaQuery.textScalerOf(context).scale(14) > 21;
 
     ref.listen<AsyncValue<VisionRuntimeState>>(visionControllerProvider, (
       previous,
@@ -89,24 +96,72 @@ final class _AssistiveScanPageState extends ConsumerState<AssistiveScanPage>
       }
     });
 
+    ref.listen<AsyncValue<CameraSessionState>>(scanControllerProvider, (
+      previous,
+      next,
+    ) {
+      final wasStreaming =
+          previous?.asData?.value.status == CameraScanStatus.streaming;
+      final failed = next.asData?.value.failure != null;
+      if (wasStreaming && failed) {
+        unawaited(_coordinator.handleCameraFailure());
+      }
+    });
+
     return EyesPageScaffold(
       title: l10n.cameraPageTitle,
       adaptiveTitle: true,
       scrollable: false,
       contentPadding: EdgeInsets.zero,
       maxContentWidth: double.infinity,
-      actions: [
-        IconButton(
-          tooltip: l10n.openHelpAndSafety,
-          onPressed: () => unawaited(context.pushNamed(AppRoutes.help)),
-          icon: const Icon(Icons.help_outline),
-        ),
-        IconButton(
-          tooltip: l10n.openFeedbackSettings,
-          onPressed: () => unawaited(context.pushNamed(AppRoutes.settings)),
-          icon: const Icon(Icons.settings_outlined),
-        ),
-      ],
+      actions: compactActions
+          ? [
+              PopupMenuButton<_ScanToolbarAction>(
+                tooltip: l10n.scanMoreOptions,
+                icon: const Icon(Icons.more_vert),
+                onSelected: (action) => switch (action) {
+                  _ScanToolbarAction.source => _openSourcePicker(context),
+                  _ScanToolbarAction.help => unawaited(
+                    context.pushNamed(AppRoutes.help),
+                  ),
+                  _ScanToolbarAction.settings => unawaited(
+                    context.pushNamed(AppRoutes.settings),
+                  ),
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: _ScanToolbarAction.source,
+                    child: Text(l10n.cameraSourceTitle),
+                  ),
+                  PopupMenuItem(
+                    value: _ScanToolbarAction.help,
+                    child: Text(l10n.openHelpAndSafety),
+                  ),
+                  PopupMenuItem(
+                    value: _ScanToolbarAction.settings,
+                    child: Text(l10n.openFeedbackSettings),
+                  ),
+                ],
+              ),
+            ]
+          : [
+              IconButton(
+                tooltip: l10n.cameraSourceTitle,
+                onPressed: () => _openSourcePicker(context),
+                icon: const Icon(Icons.switch_video_outlined),
+              ),
+              IconButton(
+                tooltip: l10n.openHelpAndSafety,
+                onPressed: () => unawaited(context.pushNamed(AppRoutes.help)),
+                icon: const Icon(Icons.help_outline),
+              ),
+              IconButton(
+                tooltip: l10n.openFeedbackSettings,
+                onPressed: () =>
+                    unawaited(context.pushNamed(AppRoutes.settings)),
+                icon: const Icon(Icons.settings_outlined),
+              ),
+            ],
       child: camera.when(
         data: (session) => _AssistiveScanContent(
           session: session,
@@ -122,6 +177,16 @@ final class _AssistiveScanPageState extends ConsumerState<AssistiveScanPage>
             child: const CircularProgressIndicator(),
           ),
         ),
+      ),
+    );
+  }
+
+  void _openSourcePicker(BuildContext context) {
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => CameraSourcePicker(coordinator: _coordinator),
       ),
     );
   }
@@ -141,6 +206,13 @@ final class _AssistiveScanContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final selector = ref.read(cameraSourceSelectorProvider);
+    final activeSource = selector?.sourceState.active;
+    final sourceLabel = activeSource == null
+        ? null
+        : activeSource == CameraSourceKind.webcam
+        ? l10n.cameraSourceWebcamUncalibrated
+        : l10n.cameraSourcePhone;
     final operationalStatus = AssistiveScanStatus.resolve(session, vision);
     final statusText = _scanStatusText(
       l10n,
@@ -148,6 +220,10 @@ final class _AssistiveScanContent extends ConsumerWidget {
       session,
       vision,
     );
+    final displayedStatus =
+        session.failure?.technicalCode == 'webcam-disconnected'
+        ? l10n.cameraSourceDisconnected
+        : statusText;
     final blockingFailure = _blockingFailure(session, vision);
     final feedbackState = ref.watch(assistiveFeedbackControllerProvider);
     final feedback = feedbackState.asData?.value;
@@ -168,14 +244,15 @@ final class _AssistiveScanContent extends ConsumerWidget {
         failure: blockingFailure,
         visionFailure: vision.hasError,
         phase: operationalStatus.phase,
-        statusText: statusText,
+        statusText: displayedStatus,
         coordinator: coordinator,
       );
     }
 
     return _CameraFirstScanView(
       phase: operationalStatus.phase,
-      statusText: statusText,
+      statusText: displayedStatus,
+      sourceLabel: sourceLabel,
       isActivelyScanning: isActivelyScanning,
       previewAspectRatio: previewAspectRatio,
       latestAlert: latestAlert,
@@ -221,6 +298,7 @@ final class _CameraFirstScanView extends StatelessWidget {
   const _CameraFirstScanView({
     required this.phase,
     required this.statusText,
+    required this.sourceLabel,
     required this.isActivelyScanning,
     required this.previewAspectRatio,
     required this.latestAlert,
@@ -231,6 +309,7 @@ final class _CameraFirstScanView extends StatelessWidget {
 
   final AssistiveScanPhase phase;
   final String statusText;
+  final String? sourceLabel;
   final bool isActivelyScanning;
   final double? previewAspectRatio;
   final ProximityAlertEvent? latestAlert;
@@ -247,6 +326,7 @@ final class _CameraFirstScanView extends StatelessWidget {
     final status = _OperationalStatusOverlay(
       phase: phase,
       statusText: statusText,
+      sourceLabel: sourceLabel,
     );
     final tail = <Widget>[
       if (latestAlert != null) ...<Widget>[
@@ -378,10 +458,12 @@ final class _OperationalStatusOverlay extends StatelessWidget {
   const _OperationalStatusOverlay({
     required this.phase,
     required this.statusText,
+    required this.sourceLabel,
   });
 
   final AssistiveScanPhase phase;
   final String statusText;
+  final String? sourceLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -396,7 +478,9 @@ final class _OperationalStatusOverlay extends StatelessWidget {
           key: ValueKey<AssistiveScanPhase>(phase),
           container: true,
           liveRegion: true,
-          label: '${l10n.scanStatusLabel}: $statusText',
+          label:
+              '${l10n.scanStatusLabel}: $statusText'
+              '${sourceLabel == null ? '' : '. ${l10n.cameraSourceTitle}: $sourceLabel'}',
           excludeSemantics: true,
           child: Material(
             color: scheme.surface,
@@ -415,9 +499,19 @@ final class _OperationalStatusOverlay extends StatelessWidget {
                   Icon(_phaseIcon(phase), color: scheme.primary, size: 28),
                   SizedBox(width: layout.spaceMd),
                   Expanded(
-                    child: Text(
-                      statusText,
-                      style: Theme.of(context).textTheme.titleMedium,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          statusText,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        if (sourceLabel != null)
+                          Text(
+                            sourceLabel!,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                      ],
                     ),
                   ),
                   SizedBox(width: layout.spaceSm),
@@ -631,6 +725,7 @@ final class _BlockingRecoveryView extends StatelessWidget {
                   _OperationalStatusOverlay(
                     phase: phase,
                     statusText: statusText,
+                    sourceLabel: null,
                   ),
                   SizedBox(height: layout.spaceLg),
                 ],

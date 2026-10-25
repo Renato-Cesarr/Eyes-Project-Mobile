@@ -1,9 +1,9 @@
 # Eyes Project Mobile
 
 Aplicativo Android assistivo do Eyes Project para pessoas cegas ou com baixa
-visão. Esta fundação prepara o MVP para reconhecimento de objetos com a câmera
-do celular, sem incluir antecipadamente câmera externa ou funcionalidades
-pós-MVP.
+visão. O reconhecimento local usa a câmera do celular ou uma webcam USB/UVC
+conectada por adaptador OTG. A webcam é preferida automaticamente quando está
+disponível; a escolha manual fica salva no aparelho.
 
 ## Stack
 
@@ -18,6 +18,30 @@ pós-MVP.
 - plugins oficiais `camera` e `permission_handler` para câmera Android e
   permissões em tempo de execução.
 - `flutter_tts` para síntese local em português do Brasil.
+- `flutter_ffi_uvc` para enumerar e capturar quadros de webcams USB/UVC no
+  Android sem depender da exposição da câmera pelo Camera2 do fabricante.
+
+## Câmera USB externa
+
+Conecte uma webcam UVC por adaptador USB OTG. Na tela de varredura, abra
+**Fonte de imagem** para escolher **Webcam USB** ou **Câmera do celular**. Sem
+preferência salva, o app tenta a webcam primeiro quando ela está presente e
+usa a câmera do celular quando não há webcam. Uma escolha manual por webcam
+não muda silenciosamente para a câmera do celular se o cabo for removido.
+
+O Android solicita permissão de câmera e pode solicitar acesso ao dispositivo
+USB na primeira conexão. A prévia nativa e os quadros RGBA seguem para a mesma
+inferência TFLite local, sem upload ou gravação de imagem. A câmera e o modelo
+são liberados ao encerrar a varredura ou colocar o app em segundo plano.
+
+O suporte físico depende da compatibilidade OTG, UVC, modos de vídeo e energia
+do conjunto celular/adaptador/webcam. A geometria de uma câmera montada no
+corpo altera a interpretação de proximidade; os limiares atuais vêm da câmera
+do celular. Portanto, a calibração e a validação assistiva com webcam real são
+obrigatórias antes de afirmar precisão, latência ou segurança para esse uso.
+Consulte [ADR 0018](docs/adr/0018-usb-uvc-camera-source.md).
+Os avisos das bibliotecas nativas empacotadas estão em
+[docs/legal/flutter_ffi_uvc-third-party-notices.md](docs/legal/flutter_ffi_uvc-third-party-notices.md).
 
 ## Pré-requisitos
 

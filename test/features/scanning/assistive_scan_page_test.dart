@@ -13,6 +13,7 @@ import 'package:eyes_mobile/features/onboarding/application/onboarding_repositor
 import 'package:eyes_mobile/features/proximity/application/proximity_controller.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_configuration.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_gateway.dart';
+import 'package:eyes_mobile/features/scanning/application/camera_source.dart';
 import 'package:eyes_mobile/features/scanning/application/scan_transition_feedback.dart';
 import 'package:eyes_mobile/features/scanning/application/scan_wake_lock_gateway.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_permission_state.dart';
@@ -30,6 +31,7 @@ final class _WidgetCameraGateway implements CameraGateway {
   bool streaming = false;
   int releaseCalls = 0;
   int openSettingsCalls = 0;
+  CameraErrorHandler? errorHandler;
 
   @override
   bool get isPreviewReady => streaming;
@@ -65,6 +67,7 @@ final class _WidgetCameraGateway implements CameraGateway {
     required CameraErrorHandler onError,
   }) async {
     streaming = true;
+    errorHandler = onError;
   }
 }
 
@@ -149,6 +152,20 @@ final class _RecordingTransitionFeedback implements ScanTransitionFeedback {
   }
 }
 
+final class _WidgetCameraSourceSelector implements CameraSourceSelector {
+  @override
+  CameraSourceState get sourceState => const CameraSourceState();
+
+  @override
+  Stream<CameraSourceState> get sourceChanges => const Stream.empty();
+
+  @override
+  Future<CameraSourceState> refreshSources() async => sourceState;
+
+  @override
+  Future<void> selectSource(CameraSourceKind kind) async {}
+}
+
 void main() {
   Future<void> pumpApp(
     WidgetTester tester,
@@ -158,6 +175,7 @@ void main() {
     FakeSpeechGateway? speech,
     ScanWakeLockGateway? wakeLock,
     ScanTransitionFeedback? transitionFeedback,
+    CameraSourceSelector? sourceSelector,
   }) async {
     final environment = AppEnvironment.dev();
     final logger = SecureLogger(environment);
@@ -175,6 +193,8 @@ void main() {
             InMemoryFeedbackPreferencesRepository(),
           ),
           cameraGatewayProvider.overrideWithValue(gateway),
+          if (sourceSelector != null)
+            cameraSourceSelectorProvider.overrideWithValue(sourceSelector),
           onboardingRepositoryProvider.overrideWithValue(
             InMemoryOnboardingRepository(completed: true),
           ),
@@ -407,6 +427,55 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('Pausar varredura'), findsOneWidget);
+  });
+
+  testWidgets('source picker remains reachable and scrollable at 200 percent', (
+    WidgetTester tester,
+  ) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await pumpApp(
+      tester,
+      _WidgetCameraGateway(),
+      sourceSelector: _WidgetCameraSourceSelector(),
+    );
+
+    await tester.tap(find.byTooltip('Mais opções de varredura'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Fonte da imagem'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Webcam USB'), findsOneWidget);
+    expect(find.text('Câmera do celular'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('USB disconnect stops the assistive session and wake lock', (
+    WidgetTester tester,
+  ) async {
+    final gateway = _WidgetCameraGateway();
+    final wakeLock = _RecordingWakeLock();
+    final worker = _ReadyVisionWorker();
+    await pumpApp(tester, gateway, wakeLock: wakeLock, worker: worker);
+    await tester.ensureVisible(find.text('Iniciar varredura'));
+    await tester.tap(find.text('Iniciar varredura'));
+    await tester.pumpAndSettle();
+
+    gateway.errorHandler!(
+      const CameraGatewayException(
+        CameraGatewayFailureReason.stream,
+        code: 'webcam-disconnected',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Webcam desconectada. A varredura foi interrompida.'),
+      findsWidgets,
+    );
+    expect(gateway.streaming, isFalse);
+    expect(wakeLock.disableCalls, greaterThanOrEqualTo(1));
+    expect(worker.disposeCalls, greaterThanOrEqualTo(1));
   });
 
   testWidgets('TalkBack receives only a temporally stabilized alert', (

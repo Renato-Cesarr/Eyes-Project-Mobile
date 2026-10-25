@@ -118,6 +118,16 @@ final class AssistiveScanCoordinator {
     await vision.retry();
   }
 
+  /// Keep the camera failure visible while retiring audio, tracks and model.
+  Future<void> handleCameraFailure() async {
+    _resetProximity();
+    await Future.wait<void>([
+      _ref.read(assistiveFeedbackControllerProvider.notifier).stopAlerts(),
+      _ref.read(visionControllerProvider.notifier).stop(),
+    ]);
+    await _setWakeLock(enabled: false);
+  }
+
   void _resetProximity() {
     _ref.read(proximityControllerProvider.notifier).reset();
   }
