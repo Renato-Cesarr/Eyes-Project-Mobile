@@ -559,6 +559,84 @@ abstract class AppLocalizations {
   /// **'Câmera'**
   String get cameraPageTitle;
 
+  /// No description provided for @cameraSourceTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Fonte da imagem'**
+  String get cameraSourceTitle;
+
+  /// No description provided for @scanMoreOptions.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mais opções de varredura'**
+  String get scanMoreOptions;
+
+  /// No description provided for @cameraSourceWebcam.
+  ///
+  /// In pt, this message translates to:
+  /// **'Webcam USB'**
+  String get cameraSourceWebcam;
+
+  /// No description provided for @cameraSourceWebcamUncalibrated.
+  ///
+  /// In pt, this message translates to:
+  /// **'Webcam USB. Proximidade ainda não calibrada.'**
+  String get cameraSourceWebcamUncalibrated;
+
+  /// No description provided for @cameraSourceWebcamFallback.
+  ///
+  /// In pt, this message translates to:
+  /// **'Webcam indisponível. Usando câmera do celular.'**
+  String get cameraSourceWebcamFallback;
+
+  /// No description provided for @cameraSourcePhone.
+  ///
+  /// In pt, this message translates to:
+  /// **'Câmera do celular'**
+  String get cameraSourcePhone;
+
+  /// No description provided for @cameraSourceWebcamMissing.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhuma webcam USB conectada. Verifique o adaptador OTG.'**
+  String get cameraSourceWebcamMissing;
+
+  /// No description provided for @cameraSourcePhoneDetail.
+  ///
+  /// In pt, this message translates to:
+  /// **'Usa a câmera traseira deste aparelho.'**
+  String get cameraSourcePhoneDetail;
+
+  /// No description provided for @cameraSourcePreferenceHelp.
+  ///
+  /// In pt, this message translates to:
+  /// **'A webcam conectada tem prioridade inicial. Sua escolha manual será lembrada.'**
+  String get cameraSourcePreferenceHelp;
+
+  /// No description provided for @cameraSourceDiscoveryFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível verificar a webcam. A câmera do celular continua disponível.'**
+  String get cameraSourceDiscoveryFailed;
+
+  /// No description provided for @cameraSourceSwitchFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível trocar a câmera. Verifique a conexão e tente novamente.'**
+  String get cameraSourceSwitchFailed;
+
+  /// No description provided for @cameraSourceDisconnected.
+  ///
+  /// In pt, this message translates to:
+  /// **'Webcam desconectada. A varredura foi interrompida.'**
+  String get cameraSourceDisconnected;
+
+  /// No description provided for @cameraSourceCalibrationNotice.
+  ///
+  /// In pt, this message translates to:
+  /// **'A proximidade por webcam requer calibração própria. Não use os avisos como medida de distância.'**
+  String get cameraSourceCalibrationNotice;
+
   /// No description provided for @cameraPrivacyNotice.
   ///
   /// In pt, this message translates to:

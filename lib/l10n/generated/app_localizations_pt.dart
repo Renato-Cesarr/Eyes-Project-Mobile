@@ -267,6 +267,53 @@ class AppLocalizationsPt extends AppLocalizations {
   String get cameraPageTitle => 'Câmera';
 
   @override
+  String get cameraSourceTitle => 'Fonte da imagem';
+
+  @override
+  String get scanMoreOptions => 'Mais opções de varredura';
+
+  @override
+  String get cameraSourceWebcam => 'Webcam USB';
+
+  @override
+  String get cameraSourceWebcamUncalibrated =>
+      'Webcam USB. Proximidade ainda não calibrada.';
+
+  @override
+  String get cameraSourceWebcamFallback =>
+      'Webcam indisponível. Usando câmera do celular.';
+
+  @override
+  String get cameraSourcePhone => 'Câmera do celular';
+
+  @override
+  String get cameraSourceWebcamMissing =>
+      'Nenhuma webcam USB conectada. Verifique o adaptador OTG.';
+
+  @override
+  String get cameraSourcePhoneDetail => 'Usa a câmera traseira deste aparelho.';
+
+  @override
+  String get cameraSourcePreferenceHelp =>
+      'A webcam conectada tem prioridade inicial. Sua escolha manual será lembrada.';
+
+  @override
+  String get cameraSourceDiscoveryFailed =>
+      'Não foi possível verificar a webcam. A câmera do celular continua disponível.';
+
+  @override
+  String get cameraSourceSwitchFailed =>
+      'Não foi possível trocar a câmera. Verifique a conexão e tente novamente.';
+
+  @override
+  String get cameraSourceDisconnected =>
+      'Webcam desconectada. A varredura foi interrompida.';
+
+  @override
+  String get cameraSourceCalibrationNotice =>
+      'A proximidade por webcam requer calibração própria. Não use os avisos como medida de distância.';
+
+  @override
   String get cameraPrivacyNotice =>
       'A imagem é processada apenas enquanto esta tela está ativa. O aplicativo não salva fotos nem vídeos.';
 
@@ -1189,6 +1236,53 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get cameraPageTitle => 'Câmera';
+
+  @override
+  String get cameraSourceTitle => 'Fonte da imagem';
+
+  @override
+  String get scanMoreOptions => 'Mais opções de varredura';
+
+  @override
+  String get cameraSourceWebcam => 'Webcam USB';
+
+  @override
+  String get cameraSourceWebcamUncalibrated =>
+      'Webcam USB. Proximidade ainda não calibrada.';
+
+  @override
+  String get cameraSourceWebcamFallback =>
+      'Webcam indisponível. Usando câmera do celular.';
+
+  @override
+  String get cameraSourcePhone => 'Câmera do celular';
+
+  @override
+  String get cameraSourceWebcamMissing =>
+      'Nenhuma webcam USB conectada. Verifique o adaptador OTG.';
+
+  @override
+  String get cameraSourcePhoneDetail => 'Usa a câmera traseira deste aparelho.';
+
+  @override
+  String get cameraSourcePreferenceHelp =>
+      'A webcam conectada tem prioridade inicial. Sua escolha manual será lembrada.';
+
+  @override
+  String get cameraSourceDiscoveryFailed =>
+      'Não foi possível verificar a webcam. A câmera do celular continua disponível.';
+
+  @override
+  String get cameraSourceSwitchFailed =>
+      'Não foi possível trocar a câmera. Verifique a conexão e tente novamente.';
+
+  @override
+  String get cameraSourceDisconnected =>
+      'Webcam desconectada. A varredura foi interrompida.';
+
+  @override
+  String get cameraSourceCalibrationNotice =>
+      'A proximidade por webcam requer calibração própria. Não use os avisos como medida de distância.';
 
   @override
   String get cameraPrivacyNotice =>

@@ -46,10 +46,14 @@ import 'package:eyes_mobile/features/scanning/application/scan_transition_feedba
 import 'package:eyes_mobile/features/scanning/application/scan_wake_lock_gateway.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_scan_status.dart';
 import 'package:eyes_mobile/features/scanning/infrastructure/mobile_camera_gateway.dart';
+import 'package:eyes_mobile/features/scanning/infrastructure/selectable_camera_gateway.dart';
+import 'package:eyes_mobile/features/scanning/infrastructure/shared_preferences_camera_source_store.dart';
 import 'package:eyes_mobile/features/scanning/infrastructure/system_scan_transition_feedback.dart';
+import 'package:eyes_mobile/features/scanning/infrastructure/uvc_camera_gateway.dart';
 import 'package:eyes_mobile/features/scanning/infrastructure/wakelock_plus_scan_gateway.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ffi_uvc/flutter_ffi_uvc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> bootstrap(AppEnvironment environment) async {
@@ -202,8 +206,14 @@ Future<void> bootstrap(AppEnvironment environment) async {
               return worker;
             }),
             cameraGatewayProvider.overrideWith((Ref ref) {
-              final gateway = MobileCameraGateway();
-              ref.onDispose(() => unawaited(gateway.release()));
+              final gateway = SelectableCameraGateway(
+                MobileCameraGateway(),
+                UvcCameraGateway(UvcCamera()),
+                SharedPreferencesCameraSourceStore(
+                  ref.read(sharedPreferencesProvider),
+                ),
+              );
+              ref.onDispose(() => unawaited(gateway.dispose()));
               return gateway;
             }),
             scanWakeLockGatewayProvider.overrideWithValue(

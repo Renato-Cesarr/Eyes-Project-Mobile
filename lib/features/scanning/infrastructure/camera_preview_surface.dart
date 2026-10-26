@@ -1,6 +1,8 @@
 import 'package:camera/camera.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_gateway.dart';
 import 'package:eyes_mobile/features/scanning/infrastructure/mobile_camera_gateway.dart';
+import 'package:eyes_mobile/features/scanning/infrastructure/selectable_camera_gateway.dart';
+import 'package:eyes_mobile/features/scanning/infrastructure/uvc_camera_gateway.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,8 +21,14 @@ final class CameraPreviewSurface extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final gateway = ref.read(cameraGatewayProvider);
-    final controller = gateway is MobileCameraGateway
-        ? gateway.previewController
+    final activeGateway = gateway is SelectableCameraGateway
+        ? gateway.activeGateway
+        : gateway;
+    final controller = activeGateway is MobileCameraGateway
+        ? activeGateway.previewController
+        : null;
+    final textureId = activeGateway is UvcCameraGateway
+        ? activeGateway.previewTextureId
         : null;
 
     return ExcludeSemantics(
@@ -30,11 +38,16 @@ final class CameraPreviewSurface extends ConsumerWidget {
           color: Colors.black,
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-              final displayAspectRatio = orientedAspectRatio(
-                sourceAspectRatio: aspectRatio,
-                viewport: constraints.biggest,
-              );
-              final preview = controller == null
+              // UVC frames keep their native orientation. CameraPreview handles
+              // phone sensor rotation internally, so only that path needs the
+              // viewport-based aspect-ratio correction.
+              final displayAspectRatio = textureId == null
+                  ? orientedAspectRatio(
+                      sourceAspectRatio: aspectRatio,
+                      viewport: constraints.biggest,
+                    )
+                  : aspectRatio;
+              final preview = controller == null && textureId == null
                   ? const ColoredBox(
                       color: Colors.black,
                       child: Center(
@@ -45,7 +58,9 @@ final class CameraPreviewSurface extends ConsumerWidget {
                         ),
                       ),
                     )
-                  : CameraPreview(controller);
+                  : textureId != null
+                  ? Texture(textureId: textureId)
+                  : CameraPreview(controller!);
 
               if (fit == BoxFit.contain || !constraints.hasBoundedHeight) {
                 return AspectRatio(

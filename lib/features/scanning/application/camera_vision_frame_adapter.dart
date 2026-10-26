@@ -8,6 +8,7 @@ final class CameraVisionFrameAdapter {
     final format = switch (frame.format) {
       CameraPixelFormat.nv21 => VisionPixelFormat.nv21,
       CameraPixelFormat.yuv420 => VisionPixelFormat.yuv420,
+      CameraPixelFormat.rgba8888 => VisionPixelFormat.rgba8888,
       CameraPixelFormat.bgra8888 || CameraPixelFormat.unknown =>
         throw const CameraVisionFrameException('unsupported-pixel-format'),
     };
