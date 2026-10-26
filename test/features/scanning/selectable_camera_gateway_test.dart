@@ -22,6 +22,7 @@ class _FakeCamera implements CameraGateway {
   CameraConfiguration? configuration;
   CameraGatewayException? initializationFailure;
   int releases = 0;
+  int streamStarts = 0;
 
   @override
   bool get isPreviewReady => configuration != null;
@@ -52,7 +53,7 @@ class _FakeCamera implements CameraGateway {
     required CameraFrameHandler onFrame,
     required CameraTelemetryHandler onTelemetry,
     required CameraErrorHandler onError,
-  }) async {}
+  }) async => streamStarts++;
 
   @override
   Future<void> release() async {
@@ -65,6 +66,7 @@ final class _FakeWebcam extends _FakeCamera implements WebcamCameraGateway {
   final StreamController<Object?> events =
       StreamController<Object?>.broadcast();
   List<WebcamDevice> devices = [];
+  bool discoveryFails = false;
   bool disposed = false;
 
   @override
@@ -74,7 +76,10 @@ final class _FakeWebcam extends _FakeCamera implements WebcamCameraGateway {
   int? get previewTextureId => 7;
 
   @override
-  Future<List<WebcamDevice>> discover() async => devices;
+  Future<List<WebcamDevice>> discover() async {
+    if (discoveryFails) throw StateError('USB enumeration failed');
+    return devices;
+  }
 
   @override
   Future<void> dispose() async {
@@ -120,6 +125,13 @@ void main() {
     expect(gateway.sourceState.active, CameraSourceKind.phone);
     expect(phone.configuration?.source, CameraSourceKind.phone);
     expect(usb.configuration, isNull);
+    await gateway.startStream(
+      onFrame: (_) async {},
+      onTelemetry: (_) {},
+      onError: (_) {},
+    );
+    expect(phone.streamStarts, 1);
+    expect(usb.streamStarts, 0);
   });
 
   test(
@@ -201,4 +213,41 @@ void main() {
       expect(gateway.sourceState.preference, CameraSourceKind.webcam);
     },
   );
+
+  test(
+    'USB attachment refreshes availability without overriding manual choice',
+    () async {
+      final usb = _FakeWebcam();
+      final store = _MemoryPreferenceStore()..saved = CameraSourceKind.phone;
+      final gateway = SelectableCameraGateway(_FakeCamera(), usb, store);
+      addTearDown(gateway.dispose);
+      await gateway.refreshSources();
+      expect(gateway.sourceState.webcamAvailable, isFalse);
+
+      final changed = gateway.sourceChanges.firstWhere(
+        (state) => state.webcamAvailable,
+      );
+      usb.devices = [webcam];
+      usb.events.add(Object());
+      await changed.timeout(const Duration(seconds: 2));
+
+      expect(gateway.sourceState.webcamAvailable, isTrue);
+      expect(gateway.sourceState.selected, CameraSourceKind.phone);
+    },
+  );
+
+  test('USB discovery error keeps the internal camera available', () async {
+    final phone = _FakeCamera();
+    final usb = _FakeWebcam()..discoveryFails = true;
+    final gateway = SelectableCameraGateway(
+      phone,
+      usb,
+      _MemoryPreferenceStore(),
+    );
+    addTearDown(gateway.dispose);
+
+    await gateway.initialize(const CameraConfiguration());
+    expect(gateway.sourceState.active, CameraSourceKind.phone);
+    expect(phone.configuration, isNotNull);
+  });
 }
