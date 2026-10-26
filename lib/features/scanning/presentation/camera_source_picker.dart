@@ -37,7 +37,11 @@ final class _CameraSourcePickerState extends ConsumerState<CameraSourcePicker> {
     try {
       if (wasStreaming) await widget.coordinator.stop(announce: false);
       await selector.selectSource(kind);
-      await HapticFeedback.selectionClick();
+      // Haptics are supplementary. A slow or unavailable platform channel
+      // must never hold the source switch or trap the bottom sheet open.
+      unawaited(
+        HapticFeedback.selectionClick().onError((Object _, StackTrace _) {}),
+      );
       if (wasStreaming) await widget.coordinator.start();
       if (mounted) Navigator.of(context).pop();
     } on Object {

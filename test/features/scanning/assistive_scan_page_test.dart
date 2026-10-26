@@ -14,9 +14,11 @@ import 'package:eyes_mobile/features/proximity/application/proximity_controller.
 import 'package:eyes_mobile/features/scanning/application/camera_configuration.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_gateway.dart';
 import 'package:eyes_mobile/features/scanning/application/camera_source.dart';
+import 'package:eyes_mobile/features/scanning/application/scan_controller.dart';
 import 'package:eyes_mobile/features/scanning/application/scan_transition_feedback.dart';
 import 'package:eyes_mobile/features/scanning/application/scan_wake_lock_gateway.dart';
 import 'package:eyes_mobile/features/scanning/domain/camera_permission_state.dart';
+import 'package:eyes_mobile/features/scanning/domain/camera_scan_status.dart';
 import 'package:eyes_mobile/features/scanning/infrastructure/camera_preview_surface.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -156,6 +158,7 @@ final class _WidgetCameraSourceSelector implements CameraSourceSelector {
   _WidgetCameraSourceSelector({this.state = const CameraSourceState()});
 
   final CameraSourceState state;
+  CameraSourceKind? lastSelected;
 
   @override
   CameraSourceState get sourceState => state;
@@ -167,7 +170,7 @@ final class _WidgetCameraSourceSelector implements CameraSourceSelector {
   Future<CameraSourceState> refreshSources() async => sourceState;
 
   @override
-  Future<void> selectSource(CameraSourceKind kind) async {}
+  Future<void> selectSource(CameraSourceKind kind) async => lastSelected = kind;
 }
 
 void main() {
@@ -438,11 +441,8 @@ void main() {
   ) async {
     tester.platformDispatcher.textScaleFactorTestValue = 2;
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    await pumpApp(
-      tester,
-      _WidgetCameraGateway(),
-      sourceSelector: _WidgetCameraSourceSelector(),
-    );
+    final selector = _WidgetCameraSourceSelector();
+    await pumpApp(tester, _WidgetCameraGateway(), sourceSelector: selector);
 
     await tester.tap(find.byTooltip('Mais opções de varredura'));
     await tester.pumpAndSettle();
@@ -452,6 +452,26 @@ void main() {
     expect(find.text('Webcam USB'), findsOneWidget);
     expect(find.text('Câmera do celular'), findsOneWidget);
     expect(tester.takeException(), isNull);
+    final container = ProviderScope.containerOf(
+      tester.element(find.text('Câmera do celular')),
+    );
+    expect(
+      container.read(scanControllerProvider).asData?.value.status,
+      isNot(CameraScanStatus.streaming),
+    );
+    await tester.ensureVisible(find.text('Câmera do celular'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Câmera do celular'));
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(selector.lastSelected, CameraSourceKind.phone);
+    expect(
+      find.text(
+        'Não foi possível trocar a câmera. Verifique a conexão e tente novamente.',
+      ),
+      findsNothing,
+    );
+    expect(find.text('Fonte da imagem'), findsNothing);
   });
 
   testWidgets('USB disconnect stops the assistive session and wake lock', (
