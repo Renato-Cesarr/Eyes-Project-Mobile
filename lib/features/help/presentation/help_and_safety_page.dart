@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final class HelpAndSafetyPage extends StatelessWidget {
-  const HelpAndSafetyPage({super.key});
+  const HelpAndSafetyPage({this.diagnosticsEnabled = false, super.key});
+
+  final bool diagnosticsEnabled;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +26,17 @@ final class HelpAndSafetyPage extends StatelessWidget {
             l10n.helpAndSafetyIntro,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
+          if (diagnosticsEnabled) ...[
+            SizedBox(height: layout.spaceLg),
+            EyesButton(
+              label: l10n.diagnosticsTitle,
+              icon: Icons.assignment_outlined,
+              variant: EyesButtonVariant.outlined,
+              expand: true,
+              onPressed: () =>
+                  unawaited(context.pushNamed(AppRoutes.diagnostics)),
+            ),
+          ],
           SizedBox(height: layout.spaceLg),
           EyesButton(
             label: l10n.repeatFeedbackTests,

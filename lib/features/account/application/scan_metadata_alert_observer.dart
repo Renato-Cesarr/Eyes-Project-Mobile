@@ -5,14 +5,20 @@ import 'package:eyes_mobile/features/proximity/domain/proximity_models.dart';
 
 final class ScanMetadataAlertObserver
     implements AssistiveAlertObserver, AssistivePlaybackObserver {
-  const ScanMetadataAlertObserver(this.sync, this.calibration);
+  const ScanMetadataAlertObserver(
+    this.sync,
+    this.calibration, {
+    this.diagnostics,
+  });
   final ScanMetadataSync sync;
   final AssistiveAlertObserver calibration;
+  final AssistiveAlertObserver? diagnostics;
 
   @override
   void onAlertQueued(ProximityAlertEvent event, AssistiveAlertMessage message) {
     calibration.onAlertQueued(event, message);
     sync.onAlertQueued(event, message);
+    diagnostics?.onAlertQueued(event, message);
   }
 
   @override

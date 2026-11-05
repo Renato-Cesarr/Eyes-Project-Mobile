@@ -352,5 +352,17 @@
   "scanSyncDelete": "Excluir histórico de metadados",
   "scanSyncDeleteMessage": "Desativa o envio e apaga os pendentes deste aparelho. Depois solicita a exclusão de todo o histórico remoto desta conta. A exclusão só será confirmada quando o servidor responder; se falhar, você poderá tentar de novo.",
   "scanSyncDeleteConfirm": "Desativar e excluir",
-  "scanSyncDeleteFailed": "Envio desativado neste aparelho. A exclusão remota não foi confirmada. Use Excluir histórico para tentar novamente."
+  "scanSyncDeleteFailed": "Envio desativado neste aparelho. A exclusão remota não foi confirmada. Use Excluir histórico para tentar novamente.",
+  "diagnosticsTitle": "Diagnóstico de teste",
+  "diagnosticsIntro": "Registre informações técnicas para ajudar a equipe a investigar o funcionamento do app. Não são gravados fotos, vídeos, áudio, localização, senhas ou dados da conta. Nenhum envio é automático.",
+  "diagnosticsConsent": "Quero registrar este teste e escolherei se vou compartilhar o relatório.",
+  "diagnosticsStart": "Iniciar diagnóstico",
+  "diagnosticsStop": "Encerrar diagnóstico",
+  "diagnosticsShare": "Compartilhar relatório",
+  "diagnosticsDelete": "Apagar relatório local",
+  "diagnosticsActive": "Diagnóstico ativo. Abra a câmera, faça o teste e volte aqui para encerrar.",
+  "diagnosticsSaved": "Relatório disponível neste aparelho. Compartilhe somente se desejar. Para um novo teste, apague o relatório anterior.",
+  "diagnosticsInactive": "Nenhum diagnóstico ativo.",
+  "diagnosticsError": "Não foi possível concluir a operação. A assistência continua disponível. Tente novamente.",
+  "diagnosticsLimits": "Ficam registrados a versão do app, o modelo do celular ao compartilhar, os estados da câmera, contagens de detecções e alertas e tempos de processamento. Somente o último relatório é mantido; registros vencidos são removidos na próxima abertura ou consulta após sete dias. Ao fechar o app, até cinco segundos finais podem se perder. O diagnóstico não recomeça sozinho. Este relatório não mede acurácia nem substitui a avaliação do TCC. Apagar aqui não remove cópias já compartilhadas."
 }
