@@ -36,7 +36,13 @@ final class EyesActionTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   if (icon case final icon?) ...<Widget>[
-                    ExcludeSemantics(child: Icon(icon, size: 28)),
+                    ExcludeSemantics(
+                      child: Icon(
+                        icon,
+                        size: 22,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                     SizedBox(width: layout.spaceMd),
                   ],
                   Expanded(
@@ -45,7 +51,7 @@ final class EyesActionTile extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           title,
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: Theme.of(context).textTheme.titleSmall,
                         ),
                         if (subtitle case final subtitle?) ...<Widget>[
                           SizedBox(height: layout.spaceXs),

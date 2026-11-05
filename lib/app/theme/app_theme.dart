@@ -42,7 +42,7 @@ abstract final class AppTheme {
       focusColor: semanticColors.focusRing.withValues(alpha: 0.24),
       fontFamily: 'Atkinson Hyperlegible',
       materialTapTargetSize: MaterialTapTargetSize.padded,
-      scaffoldBackgroundColor: colorScheme.surfaceContainerLow,
+      scaffoldBackgroundColor: colorScheme.surfaceContainerLowest,
       useMaterial3: true,
       visualDensity: VisualDensity.standard,
     );
@@ -54,13 +54,13 @@ abstract final class AppTheme {
         centerTitle: false,
         elevation: 0,
         foregroundColor: colorScheme.onSurface,
-        backgroundColor: colorScheme.surface,
+        backgroundColor: colorScheme.surfaceContainerLowest,
         surfaceTintColor: Colors.transparent,
         titleTextStyle: textTheme.titleLarge,
       ),
       cardTheme: CardThemeData(
         color: colorScheme.surface,
-        elevation: highContrast ? 0 : 1,
+        elevation: 0,
         margin: EdgeInsets.zero,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
@@ -155,11 +155,20 @@ abstract final class AppTheme {
     minimumSize: WidgetStatePropertyAll<Size>(
       Size(layout.minimumTapTarget, layout.minimumTapTarget),
     ),
+    shape: WidgetStatePropertyAll<OutlinedBorder>(
+      RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(layout.radiusLg),
+      ),
+    ),
     padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(
       EdgeInsets.symmetric(horizontal: layout.spaceXl, vertical: 14),
     ),
     textStyle: WidgetStatePropertyAll<TextStyle?>(
-      textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+      textTheme.labelLarge?.copyWith(
+        fontFamily: 'Lexend',
+        fontWeight: FontWeight.w500,
+        fontSize: 16,
+      ),
     ),
   );
 
@@ -190,7 +199,7 @@ abstract final class AppTheme {
       source?.copyWith(
         fontFamily: 'Lexend',
         fontSize: size,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w500,
         height: height,
       );
 }

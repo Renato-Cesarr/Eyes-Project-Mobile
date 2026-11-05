@@ -12,8 +12,8 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('maps the canonical colors to every supported theme', () {
-    expect(AppTheme.light.colorScheme.primary, const Color(0xFF005A84));
-    expect(AppTheme.dark.colorScheme.primary, const Color(0xFF8DCDFF));
+    expect(AppTheme.light.colorScheme.primary, const Color(0xFF0052A8));
+    expect(AppTheme.dark.colorScheme.primary, const Color(0xFF79CCFF));
     expect(
       AppTheme.highContrastLight.colorScheme.primary,
       const Color(0xFF003B59),

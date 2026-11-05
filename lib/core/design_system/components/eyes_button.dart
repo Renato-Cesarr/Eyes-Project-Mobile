@@ -9,6 +9,7 @@ final class EyesButton extends StatelessWidget {
     required this.onPressed,
     this.variant = EyesButtonVariant.filled,
     this.icon,
+    this.iconAlignment = IconAlignment.start,
     this.semanticHint,
     this.loading = false,
     this.expand = false,
@@ -19,6 +20,7 @@ final class EyesButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final EyesButtonVariant variant;
   final IconData? icon;
+  final IconAlignment iconAlignment;
   final String? semanticHint;
   final bool loading;
   final bool expand;
@@ -28,7 +30,13 @@ final class EyesButton extends StatelessWidget {
     final enabledAction = loading ? null : onPressed;
     final semanticsLabel = loading ? '$label. Carregando.' : label;
     final content = ExcludeSemantics(
-      child: _ButtonContent(label: label, icon: icon, loading: loading),
+      child: _ButtonContent(
+        label: label,
+        icon: icon,
+        loading: loading,
+        iconAlignment: iconAlignment,
+        stretch: expand,
+      ),
     );
     final button = switch (variant) {
       EyesButtonVariant.filled => FilledButton(
@@ -73,19 +81,29 @@ final class _ButtonContent extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.loading,
+    required this.iconAlignment,
+    required this.stretch,
   });
 
   final String label;
   final IconData? icon;
   final bool loading;
+  final IconAlignment iconAlignment;
+  final bool stretch;
 
   @override
   Widget build(BuildContext context) {
     final layout = context.eyesLayout;
+    final trailingIcon = iconAlignment == IconAlignment.end && !loading;
+    final text = Flexible(child: Text(label, textAlign: TextAlign.center));
     return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: stretch ? MainAxisSize.max : MainAxisSize.min,
+      mainAxisAlignment: trailingIcon && stretch
+          ? MainAxisAlignment.spaceBetween
+          : MainAxisAlignment.center,
       children: <Widget>[
+        if (trailingIcon) text,
+        if (trailingIcon && icon != null) SizedBox(width: layout.spaceSm),
         if (loading)
           SizedBox.square(
             dimension: 20,
@@ -96,8 +114,9 @@ final class _ButtonContent extends StatelessWidget {
           )
         else if (icon != null)
           Icon(icon),
-        if (loading || icon != null) SizedBox(width: layout.spaceSm),
-        Flexible(child: Text(label, textAlign: TextAlign.center)),
+        if (!trailingIcon && (loading || icon != null))
+          SizedBox(width: layout.spaceSm),
+        if (!trailingIcon) text,
       ],
     );
   }

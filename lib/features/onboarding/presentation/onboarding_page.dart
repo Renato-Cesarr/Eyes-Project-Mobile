@@ -145,6 +145,11 @@ final class _OnboardingContent extends ConsumerWidget {
           ),
         ),
         SizedBox(height: layout.spaceXl),
+        if (state.step == OnboardingStep.welcome &&
+            MediaQuery.textScalerOf(context).scale(16) <= 24) ...[
+          const EyesOrbitEmblem(height: 120),
+          SizedBox(height: layout.spaceLg),
+        ],
         Focus(
           focusNode: headingFocus,
           child: EyesPageHeader(

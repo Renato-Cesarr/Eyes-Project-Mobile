@@ -7,6 +7,11 @@ disponível; a escolha manual fica salva no aparelho.
 
 ## Stack
 
+A interface segue a identidade **Orbit**, com temas claro, escuro e dois modos
+de alto contraste. Componentes de apresentação e tokens são compartilhados entre
+as features; a assinatura orbital é decorativa e não indica estado da câmera.
+Decisões e limites: [ADR 0019](docs/adr/0019-orbit-product-identity.md).
+
 - Flutter `3.44.0`, fixado por `.fvmrc`;
 - Dart `3.12.0`;
 - Riverpod e `AsyncNotifier` para estado e injeção de dependências;
