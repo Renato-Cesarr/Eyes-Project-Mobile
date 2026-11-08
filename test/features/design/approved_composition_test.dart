@@ -135,6 +135,17 @@ void main() {
               await tester.pumpAndSettle();
               expect(tester.takeException(), isNull);
               expect(last.hitTestable(), findsOneWidget);
+              if (Platform.isWindows &&
+                  screen == 'settings' &&
+                  width == 390 &&
+                  scale == 1) {
+                await expectLater(
+                  find.byType(MaterialApp),
+                  matchesGoldenFile(
+                    'goldens/windows/settings-bottom-${entry.key}.png',
+                  ),
+                );
+              }
             } finally {
               semantics.dispose();
             }

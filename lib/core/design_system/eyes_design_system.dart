@@ -3,6 +3,7 @@ export 'components/eyes_brand_mark.dart';
 export 'components/eyes_button.dart';
 export 'components/eyes_card.dart';
 export 'components/eyes_confirmation_dialog.dart';
+export 'components/eyes_orbit_emblem.dart';
 export 'components/eyes_page_header.dart';
 export 'components/eyes_page_scaffold.dart';
 export 'components/eyes_section.dart';

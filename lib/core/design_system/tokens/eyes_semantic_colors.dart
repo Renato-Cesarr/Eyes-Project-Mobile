@@ -16,7 +16,7 @@ final class EyesSemanticColors extends ThemeExtension<EyesSemanticColors> {
     onSuccess: Color(0xFFFFFFFF),
     warning: Color(0xFF7A5300),
     onWarning: Color(0xFFFFFFFF),
-    focusRing: Color(0xFF005A84),
+    focusRing: Color(0xFF0052A8),
     onFocusRing: Color(0xFFFFFFFF),
   );
   static const EyesSemanticColors dark = EyesSemanticColors(
@@ -24,8 +24,8 @@ final class EyesSemanticColors extends ThemeExtension<EyesSemanticColors> {
     onSuccess: Color(0xFF003915),
     warning: Color(0xFFF3C65A),
     onWarning: Color(0xFF3E2E00),
-    focusRing: Color(0xFF8DCDFF),
-    onFocusRing: Color(0xFF00344D),
+    focusRing: Color(0xFF79CCFF),
+    onFocusRing: Color(0xFF071D30),
   );
   static const EyesSemanticColors highContrastLight = EyesSemanticColors(
     success: Color(0xFF003915),

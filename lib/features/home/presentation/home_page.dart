@@ -78,17 +78,15 @@ final class _HomeContent extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Semantics(
-          header: true,
-          child: Text(
-            l10n.homeTitle,
-            style: Theme.of(context).textTheme.titleLarge,
+        if (MediaQuery.textScalerOf(context).scale(16) <= 24) ...[
+          EyesOrbitEmblem(
+            height: MediaQuery.sizeOf(context).width < 360 ? 104 : 140,
           ),
-        ),
-        SizedBox(height: layout.spaceSm),
-        Text(
-          l10n.foundationReady,
-          style: Theme.of(context).textTheme.bodyMedium,
+          SizedBox(height: layout.spaceLg),
+        ],
+        EyesPageHeader(
+          title: l10n.homeTitle,
+          description: l10n.foundationReady,
         ),
         SizedBox(height: layout.spaceXl),
         ConstrainedBox(
@@ -97,6 +95,7 @@ final class _HomeContent extends ConsumerWidget {
             label: l10n.openCamera,
             semanticHint: l10n.scanStartHint,
             icon: Icons.center_focus_strong_outlined,
+            iconAlignment: IconAlignment.end,
             expand: true,
             onPressed: () => context.pushNamed(AppRoutes.camera),
           ),
@@ -159,11 +158,26 @@ final class _HomeContent extends ConsumerWidget {
           onTap: () => context.pushNamed(AppRoutes.account),
         ),
         SizedBox(height: layout.spaceLg),
-        Text(
-          l10n.homePrivacyNote,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: colors.onSurface),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ExcludeSemantics(
+              child: Icon(
+                Icons.shield_outlined,
+                size: 18,
+                color: colors.onSurfaceVariant,
+              ),
+            ),
+            SizedBox(width: layout.spaceSm),
+            Expanded(
+              child: Text(
+                l10n.homePrivacyNote,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
