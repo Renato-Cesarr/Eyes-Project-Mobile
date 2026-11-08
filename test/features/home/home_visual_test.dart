@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/accepted_usage_terms.dart';
 import '../../support/fake_onboarding.dart';
 
 void main() {
@@ -51,6 +52,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          acceptedUsageTerms(),
           appEnvironmentProvider.overrideWithValue(environment),
           secureLoggerProvider.overrideWithValue(logger),
           appErrorReporterProvider.overrideWithValue(AppErrorReporter(logger)),

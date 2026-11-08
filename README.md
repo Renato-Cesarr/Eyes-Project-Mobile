@@ -26,6 +26,16 @@ Decisões e limites: [ADR 0019](docs/adr/0019-orbit-product-identity.md).
 - `flutter_ffi_uvc` para enumerar e capturar quadros de webcams USB/UVC no
   Android sem depender da exposição da câmera pelo Camera2 do fabricante.
 
+## Termo de uso e privacidade
+
+O aplicativo apresenta o termo antes do primeiro uso, inclusive em rotas
+diretas. O aceite guarda a versão localmente e pode ser consultado em
+**Ajuda e segurança → Termo de uso e privacidade**. Permissões Android e
+consentimentos para sincronização ou pesquisa são escolhas separadas.
+
+Ao alterar materialmente o termo, atualize os textos de localização e
+incremente `UsageTerms.version` para pedir novo aceite.
+
 ## Câmera USB externa
 
 Conecte uma webcam UVC por adaptador USB OTG. Na tela de varredura, abra
