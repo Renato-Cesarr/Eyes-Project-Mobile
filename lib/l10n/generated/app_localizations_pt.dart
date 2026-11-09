@@ -973,6 +973,48 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get scanSyncDeleteFailed =>
       'Envio desativado neste aparelho. A exclusão remota não foi confirmada. Use Excluir histórico para tentar novamente.';
+
+  @override
+  String get diagnosticsTitle => 'Diagnóstico de teste';
+
+  @override
+  String get diagnosticsIntro =>
+      'Registre informações técnicas para ajudar a equipe a investigar o funcionamento do app. Não são gravados fotos, vídeos, áudio, localização, senhas ou dados da conta. Nenhum envio é automático.';
+
+  @override
+  String get diagnosticsConsent =>
+      'Quero registrar este teste e escolherei se vou compartilhar o relatório.';
+
+  @override
+  String get diagnosticsStart => 'Iniciar diagnóstico';
+
+  @override
+  String get diagnosticsStop => 'Encerrar diagnóstico';
+
+  @override
+  String get diagnosticsShare => 'Compartilhar relatório';
+
+  @override
+  String get diagnosticsDelete => 'Apagar relatório local';
+
+  @override
+  String get diagnosticsActive =>
+      'Diagnóstico ativo. Abra a câmera, faça o teste e volte aqui para encerrar.';
+
+  @override
+  String get diagnosticsSaved =>
+      'Relatório disponível neste aparelho. Compartilhe somente se desejar. Para um novo teste, apague o relatório anterior.';
+
+  @override
+  String get diagnosticsInactive => 'Nenhum diagnóstico ativo.';
+
+  @override
+  String get diagnosticsError =>
+      'Não foi possível concluir a operação. A assistência continua disponível. Tente novamente.';
+
+  @override
+  String get diagnosticsLimits =>
+      'Ficam registrados a versão do app, o modelo do celular ao compartilhar, os estados da câmera, contagens de detecções e alertas e tempos de processamento. Somente o último relatório é mantido; registros vencidos são removidos na próxima abertura ou consulta após sete dias. Ao fechar o app, até cinco segundos finais podem se perder. O diagnóstico não recomeça sozinho. Este relatório não mede acurácia nem substitui a avaliação do TCC. Apagar aqui não remove cópias já compartilhadas.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1944,4 +1986,46 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get scanSyncDeleteFailed =>
       'Envio desativado neste aparelho. A exclusão remota não foi confirmada. Use Excluir histórico para tentar novamente.';
+
+  @override
+  String get diagnosticsTitle => 'Diagnóstico de teste';
+
+  @override
+  String get diagnosticsIntro =>
+      'Registre informações técnicas para ajudar a equipe a investigar o funcionamento do app. Não são gravados fotos, vídeos, áudio, localização, senhas ou dados da conta. Nenhum envio é automático.';
+
+  @override
+  String get diagnosticsConsent =>
+      'Quero registrar este teste e escolherei se vou compartilhar o relatório.';
+
+  @override
+  String get diagnosticsStart => 'Iniciar diagnóstico';
+
+  @override
+  String get diagnosticsStop => 'Encerrar diagnóstico';
+
+  @override
+  String get diagnosticsShare => 'Compartilhar relatório';
+
+  @override
+  String get diagnosticsDelete => 'Apagar relatório local';
+
+  @override
+  String get diagnosticsActive =>
+      'Diagnóstico ativo. Abra a câmera, faça o teste e volte aqui para encerrar.';
+
+  @override
+  String get diagnosticsSaved =>
+      'Relatório disponível neste aparelho. Compartilhe somente se desejar. Para um novo teste, apague o relatório anterior.';
+
+  @override
+  String get diagnosticsInactive => 'Nenhum diagnóstico ativo.';
+
+  @override
+  String get diagnosticsError =>
+      'Não foi possível concluir a operação. A assistência continua disponível. Tente novamente.';
+
+  @override
+  String get diagnosticsLimits =>
+      'Ficam registrados a versão do app, o modelo do celular ao compartilhar, os estados da câmera, contagens de detecções e alertas e tempos de processamento. Somente o último relatório é mantido; registros vencidos são removidos na próxima abertura ou consulta após sete dias. Ao fechar o app, até cinco segundos finais podem se perder. O diagnóstico não recomeça sozinho. Este relatório não mede acurácia nem substitui a avaliação do TCC. Apagar aqui não remove cópias já compartilhadas.';
 }

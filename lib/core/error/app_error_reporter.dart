@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final class AppErrorReporter {
-  const AppErrorReporter(this._logger);
+  const AppErrorReporter(this._logger, {this.onProblem});
+
+  final void Function()? onProblem;
 
   final SecureLogger _logger;
 
@@ -13,6 +15,7 @@ final class AppErrorReporter {
     required String source,
     String? diagnosticCode,
   }) {
+    onProblem?.call();
     _logger.severe(
       'unhandled-error',
       context: <String, Object?>{

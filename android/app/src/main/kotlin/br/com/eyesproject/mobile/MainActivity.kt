@@ -15,6 +15,10 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        val diagnostics = DiagnosticShareHandler(this)
+        diagnostics.pruneExpired()
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "br.com.eyesproject.mobile/diagnostics")
+            .setMethodCallHandler(diagnostics::handle)
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             HAPTICS_CHANNEL,
