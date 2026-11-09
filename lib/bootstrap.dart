@@ -33,6 +33,10 @@ import 'package:eyes_mobile/features/calibration/application/calibration_recorde
 import 'package:eyes_mobile/features/calibration/domain/calibration_configuration.dart';
 import 'package:eyes_mobile/features/calibration/infrastructure/android_log_calibration_event_sink.dart';
 import 'package:eyes_mobile/features/calibration/infrastructure/platform_calibration_configuration_source.dart';
+import 'package:eyes_mobile/features/diagnostics/application/diagnostic_ports.dart';
+import 'package:eyes_mobile/features/diagnostics/application/diagnostic_recorder.dart';
+import 'package:eyes_mobile/features/diagnostics/infrastructure/android_diagnostic_export.dart';
+import 'package:eyes_mobile/features/diagnostics/infrastructure/local_diagnostic_store.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_controller.dart';
 import 'package:eyes_mobile/features/object_detection/application/vision_worker.dart';
 import 'package:eyes_mobile/features/object_detection/infrastructure/isolate_vision_worker.dart';
@@ -61,7 +65,11 @@ Future<void> bootstrap(AppEnvironment environment) async {
   await registerEyesFontLicenses();
 
   final logger = SecureLogger(environment)..initialize();
-  final errorReporter = AppErrorReporter(logger);
+  final diagnostics = DiagnosticRecorder();
+  final errorReporter = AppErrorReporter(
+    logger,
+    onProblem: diagnostics.recordProblem,
+  );
   var calibrationConfiguration = const CalibrationConfiguration.disabled();
   try {
     calibrationConfiguration =
@@ -104,6 +112,16 @@ Future<void> bootstrap(AppEnvironment environment) async {
       runApp(
         ProviderScope(
           overrides: [
+            diagnosticsEnabledProvider.overrideWithValue(
+              !environment.isProduction,
+            ),
+            diagnosticRecorderProvider.overrideWithValue(diagnostics),
+            diagnosticStoreProvider.overrideWith(
+              (ref) => LocalDiagnosticStore(),
+            ),
+            diagnosticExportProvider.overrideWithValue(
+              const AndroidDiagnosticExport(),
+            ),
             appEnvironmentProvider.overrideWithValue(environment),
             designSystemGalleryEnabledProvider.overrideWithValue(
               !environment.isProduction,
@@ -156,6 +174,7 @@ Future<void> bootstrap(AppEnvironment environment) async {
               (Ref ref) => ScanMetadataAlertObserver(
                 ref.read(scanMetadataSyncProvider)!,
                 calibrationRecorder,
+                diagnostics: diagnostics,
               ),
             ),
             accessibleFeedbackServiceProvider.overrideWith((Ref ref) {
@@ -174,6 +193,7 @@ Future<void> bootstrap(AppEnvironment environment) async {
               final gateway = FlutterTtsSpeechGateway(
                 onPlaybackStarted: (message, startedAt) {
                   calibrationRecorder.recordSpeechStarted(message, startedAt);
+                  diagnostics.recordSpeechStarted(message, startedAt);
                   ref
                       .read(scanMetadataSyncProvider)!
                       .recordSpeechStarted(message, startedAt);
@@ -238,6 +258,7 @@ Future<void> bootstrap(AppEnvironment environment) async {
                     .read(visionControllerProvider.notifier)
                     .process(adapter.adapt(frame));
                 ref.read(scanMetadataSyncProvider)!.recordFrame(batch);
+                diagnostics.recordFrame(batch);
                 final evaluation = ref
                     .read(proximityControllerProvider.notifier)
                     .process(batch);

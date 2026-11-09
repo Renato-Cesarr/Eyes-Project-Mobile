@@ -26,7 +26,7 @@ try {
     & (Join-Path $PSScriptRoot 'check-toolchain.ps1') -Ci
     Invoke-Flutter @('clean')
     Invoke-Flutter @('pub', 'get')
-    Invoke-Flutter @('build', 'apk', '--release', '--flavor', 'dev', '--target', 'lib/main_dev.dart', "--dart-define=API_BASE_URL=$ApiBaseUrl")
+    Invoke-Flutter @('build', 'apk', '--release', '--flavor', 'dev', '--target', 'lib/main_dev.dart', "--dart-define=API_BASE_URL=$ApiBaseUrl", "--dart-define=EYES_BUILD_COMMIT=$commit")
     if ((GitValue @('rev-parse', 'HEAD')) -cne $commit -or (GitValue @('status', '--porcelain'))) {
         throw 'Source changed during the demonstration build; no build receipt created.'
     }

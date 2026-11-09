@@ -5,7 +5,17 @@ visão. O reconhecimento local usa a câmera do celular ou uma webcam USB/UVC
 conectada por adaptador OTG. A webcam é preferida automaticamente quando está
 disponível; a escolha manual fica salva no aparelho.
 
-## Stack
+## Testar em Android sem USB
+
+O flavor dev inclui **Ajuda e segurança → Diagnóstico de teste**. A coleta é
+voluntária, limitada e local; o usuário encerra e compartilha um JSON pelo Android.
+Não há upload automático, captura de mídia ou necessidade de conta. O roteiro
+completo está em [Teste remoto Android](docs/qa/remote-android-diagnostic.md) e as
+decisões/limites no [ADR 0020](docs/adr/0020-voluntary-local-support-diagnostics.md).
+Não confundir diagnóstico com calibração, métricas científicas ou teste físico
+aprovado. Essa opção não aparece no flavor prod.
+
+## Stack e identidade visual
 
 A interface segue a identidade **Orbit**, com temas claro, escuro e dois modos
 de alto contraste. Componentes de apresentação e tokens são compartilhados entre

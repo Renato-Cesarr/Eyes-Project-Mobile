@@ -1890,6 +1890,78 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Não foi possível salvar o aceite neste aparelho. Tente novamente.'**
   String get termsSaveError;
+
+  /// No description provided for @diagnosticsTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Diagnóstico de teste'**
+  String get diagnosticsTitle;
+
+  /// No description provided for @diagnosticsIntro.
+  ///
+  /// In pt, this message translates to:
+  /// **'Registre informações técnicas para ajudar a equipe a investigar o funcionamento do app. Não são gravados fotos, vídeos, áudio, localização, senhas ou dados da conta. Nenhum envio é automático.'**
+  String get diagnosticsIntro;
+
+  /// No description provided for @diagnosticsConsent.
+  ///
+  /// In pt, this message translates to:
+  /// **'Quero registrar este teste e escolherei se vou compartilhar o relatório.'**
+  String get diagnosticsConsent;
+
+  /// No description provided for @diagnosticsStart.
+  ///
+  /// In pt, this message translates to:
+  /// **'Iniciar diagnóstico'**
+  String get diagnosticsStart;
+
+  /// No description provided for @diagnosticsStop.
+  ///
+  /// In pt, this message translates to:
+  /// **'Encerrar diagnóstico'**
+  String get diagnosticsStop;
+
+  /// No description provided for @diagnosticsShare.
+  ///
+  /// In pt, this message translates to:
+  /// **'Compartilhar relatório'**
+  String get diagnosticsShare;
+
+  /// No description provided for @diagnosticsDelete.
+  ///
+  /// In pt, this message translates to:
+  /// **'Apagar relatório local'**
+  String get diagnosticsDelete;
+
+  /// No description provided for @diagnosticsActive.
+  ///
+  /// In pt, this message translates to:
+  /// **'Diagnóstico ativo. Abra a câmera, faça o teste e volte aqui para encerrar.'**
+  String get diagnosticsActive;
+
+  /// No description provided for @diagnosticsSaved.
+  ///
+  /// In pt, this message translates to:
+  /// **'Relatório disponível neste aparelho. Compartilhe somente se desejar. Para um novo teste, apague o relatório anterior.'**
+  String get diagnosticsSaved;
+
+  /// No description provided for @diagnosticsInactive.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum diagnóstico ativo.'**
+  String get diagnosticsInactive;
+
+  /// No description provided for @diagnosticsError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível concluir a operação. A assistência continua disponível. Tente novamente.'**
+  String get diagnosticsError;
+
+  /// No description provided for @diagnosticsLimits.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ficam registrados a versão do app, o modelo do celular ao compartilhar, os estados da câmera, contagens de detecções e alertas e tempos de processamento. Somente o último relatório é mantido; registros vencidos são removidos na próxima abertura ou consulta após sete dias. Ao fechar o app, até cinco segundos finais podem se perder. O diagnóstico não recomeça sozinho. Este relatório não mede acurácia nem substitui a avaliação do TCC. Apagar aqui não remove cópias já compartilhadas.'**
+  String get diagnosticsLimits;
 }
 
 class _AppLocalizationsDelegate
