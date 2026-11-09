@@ -975,6 +975,66 @@ class AppLocalizationsPt extends AppLocalizations {
       'Envio desativado neste aparelho. A exclusão remota não foi confirmada. Use Excluir histórico para tentar novamente.';
 
   @override
+  String get termsTitle => 'Termo de uso e privacidade';
+
+  @override
+  String termsVersion(int version) {
+    return 'Versão $version';
+  }
+
+  @override
+  String get termsPurposeTitle => 'Finalidade do aplicativo';
+
+  @override
+  String get termsPurposeBody =>
+      'O Our Eyes é um protótipo acadêmico que reconhece algumas classes de objetos e oferece avisos por voz e vibração. O uso da assistência funciona no aparelho, inclusive sem conta e sem internet.';
+
+  @override
+  String get termsSafetyTitle => 'Limites dos avisos';
+
+  @override
+  String get termsSafetyBody =>
+      'O reconhecimento pode falhar, atrasar ou confundir objetos. A proximidade indicada é relativa e não mede distância. Use o aplicativo como recurso complementar em ambiente controlado. Mantenha seus recursos habituais de mobilidade e orientação. O protótipo não deve orientar travessias, deslocamentos vendados ou decisões de emergência.';
+
+  @override
+  String get termsCameraTitle => 'Câmera e processamento local';
+
+  @override
+  String get termsCameraBody =>
+      'O Android pede permissão de câmera quando você inicia o recurso correspondente. O aplicativo processa os quadros no aparelho durante a varredura, sem gravá-los como fotos ou vídeos e sem enviá-los ao servidor. Você pode interromper a varredura ou revogar a permissão nas configurações do Android. Respeite a privacidade das pessoas ao redor.';
+
+  @override
+  String get termsAccountTitle => 'Conta e envio opcional';
+
+  @override
+  String get termsAccountBody =>
+      'Se você entrar em uma conta, a API configurada recebe os dados necessários à autenticação. O envio de informações sobre novas sessões exige autorização separada em Conta opcional. Quando habilitado, os dados enviados ficam vinculados à conta por até 30 dias. Desativar limpa a fila local. Use Excluir histórico para remover sessões do servidor. Em versões de teste com diagnóstico, iniciar o registro e compartilhar o arquivo são escolhas separadas.';
+
+  @override
+  String get termsChoiceTitle => 'Sua escolha e consulta';
+
+  @override
+  String get termsChoiceBody =>
+      'Aceitar registra somente a versão deste termo nas preferências do aparelho. Esse aceite permite usar o app. A permissão de câmera, o envio de metadados, o diagnóstico e a participação em pesquisa têm decisões próprias. Você pode consultar o termo em Ajuda e segurança. Para dúvidas sobre esta versão ou seus dados, procure a equipe pelo canal de distribuição do protótipo.';
+
+  @override
+  String get termsAccept => 'Aceitar e continuar';
+
+  @override
+  String get termsDecline => 'Não aceitar';
+
+  @override
+  String get termsDeclined =>
+      'O uso do aplicativo está suspenso. Você pode sair ou revisar o termo quando quiser.';
+
+  @override
+  String get termsReview => 'Revisar termo';
+
+  @override
+  String get termsSaveError =>
+      'Não foi possível salvar o aceite neste aparelho. Tente novamente.';
+
+  @override
   String get diagnosticsTitle => 'Diagnóstico de teste';
 
   @override
@@ -1986,6 +2046,66 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get scanSyncDeleteFailed =>
       'Envio desativado neste aparelho. A exclusão remota não foi confirmada. Use Excluir histórico para tentar novamente.';
+
+  @override
+  String get termsTitle => 'Termo de uso e privacidade';
+
+  @override
+  String termsVersion(int version) {
+    return 'Versão $version';
+  }
+
+  @override
+  String get termsPurposeTitle => 'Finalidade do aplicativo';
+
+  @override
+  String get termsPurposeBody =>
+      'O Our Eyes é um protótipo acadêmico que reconhece algumas classes de objetos e oferece avisos por voz e vibração. O uso da assistência funciona no aparelho, inclusive sem conta e sem internet.';
+
+  @override
+  String get termsSafetyTitle => 'Limites dos avisos';
+
+  @override
+  String get termsSafetyBody =>
+      'O reconhecimento pode falhar, atrasar ou confundir objetos. A proximidade indicada é relativa e não mede distância. Use o aplicativo como recurso complementar em ambiente controlado. Mantenha seus recursos habituais de mobilidade e orientação. O protótipo não deve orientar travessias, deslocamentos vendados ou decisões de emergência.';
+
+  @override
+  String get termsCameraTitle => 'Câmera e processamento local';
+
+  @override
+  String get termsCameraBody =>
+      'O Android pede permissão de câmera quando você inicia o recurso correspondente. O aplicativo processa os quadros no aparelho durante a varredura, sem gravá-los como fotos ou vídeos e sem enviá-los ao servidor. Você pode interromper a varredura ou revogar a permissão nas configurações do Android. Respeite a privacidade das pessoas ao redor.';
+
+  @override
+  String get termsAccountTitle => 'Conta e envio opcional';
+
+  @override
+  String get termsAccountBody =>
+      'Se você entrar em uma conta, a API configurada recebe os dados necessários à autenticação. O envio de informações sobre novas sessões exige autorização separada em Conta opcional. Quando habilitado, os dados enviados ficam vinculados à conta por até 30 dias. Desativar limpa a fila local. Use Excluir histórico para remover sessões do servidor. Em versões de teste com diagnóstico, iniciar o registro e compartilhar o arquivo são escolhas separadas.';
+
+  @override
+  String get termsChoiceTitle => 'Sua escolha e consulta';
+
+  @override
+  String get termsChoiceBody =>
+      'Aceitar registra somente a versão deste termo nas preferências do aparelho. Esse aceite permite usar o app. A permissão de câmera, o envio de metadados, o diagnóstico e a participação em pesquisa têm decisões próprias. Você pode consultar o termo em Ajuda e segurança. Para dúvidas sobre esta versão ou seus dados, procure a equipe pelo canal de distribuição do protótipo.';
+
+  @override
+  String get termsAccept => 'Aceitar e continuar';
+
+  @override
+  String get termsDecline => 'Não aceitar';
+
+  @override
+  String get termsDeclined =>
+      'O uso do aplicativo está suspenso. Você pode sair ou revisar o termo quando quiser.';
+
+  @override
+  String get termsReview => 'Revisar termo';
+
+  @override
+  String get termsSaveError =>
+      'Não foi possível salvar o aceite neste aparelho. Tente novamente.';
 
   @override
   String get diagnosticsTitle => 'Diagnóstico de teste';

@@ -353,6 +353,30 @@
   "scanSyncDeleteMessage": "Desativa o envio e apaga os pendentes deste aparelho. Depois solicita a exclusão de todo o histórico remoto desta conta. A exclusão só será confirmada quando o servidor responder; se falhar, você poderá tentar de novo.",
   "scanSyncDeleteConfirm": "Desativar e excluir",
   "scanSyncDeleteFailed": "Envio desativado neste aparelho. A exclusão remota não foi confirmada. Use Excluir histórico para tentar novamente.",
+  "termsTitle": "Termo de uso e privacidade",
+  "termsVersion": "Versão {version}",
+  "@termsVersion": {
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "termsPurposeTitle": "Finalidade do aplicativo",
+  "termsPurposeBody": "O Our Eyes é um protótipo acadêmico que reconhece algumas classes de objetos e oferece avisos por voz e vibração. O uso da assistência funciona no aparelho, inclusive sem conta e sem internet.",
+  "termsSafetyTitle": "Limites dos avisos",
+  "termsSafetyBody": "O reconhecimento pode falhar, atrasar ou confundir objetos. A proximidade indicada é relativa e não mede distância. Use o aplicativo como recurso complementar em ambiente controlado. Mantenha seus recursos habituais de mobilidade e orientação. O protótipo não deve orientar travessias, deslocamentos vendados ou decisões de emergência.",
+  "termsCameraTitle": "Câmera e processamento local",
+  "termsCameraBody": "O Android pede permissão de câmera quando você inicia o recurso correspondente. O aplicativo processa os quadros no aparelho durante a varredura, sem gravá-los como fotos ou vídeos e sem enviá-los ao servidor. Você pode interromper a varredura ou revogar a permissão nas configurações do Android. Respeite a privacidade das pessoas ao redor.",
+  "termsAccountTitle": "Conta e envio opcional",
+  "termsAccountBody": "Se você entrar em uma conta, a API configurada recebe os dados necessários à autenticação. O envio de informações sobre novas sessões exige autorização separada em Conta opcional. Quando habilitado, os dados enviados ficam vinculados à conta por até 30 dias. Desativar limpa a fila local. Use Excluir histórico para remover sessões do servidor. Em versões de teste com diagnóstico, iniciar o registro e compartilhar o arquivo são escolhas separadas.",
+  "termsChoiceTitle": "Sua escolha e consulta",
+  "termsChoiceBody": "Aceitar registra somente a versão deste termo nas preferências do aparelho. Esse aceite permite usar o app. A permissão de câmera, o envio de metadados, o diagnóstico e a participação em pesquisa têm decisões próprias. Você pode consultar o termo em Ajuda e segurança. Para dúvidas sobre esta versão ou seus dados, procure a equipe pelo canal de distribuição do protótipo.",
+  "termsAccept": "Aceitar e continuar",
+  "termsDecline": "Não aceitar",
+  "termsDeclined": "O uso do aplicativo está suspenso. Você pode sair ou revisar o termo quando quiser.",
+  "termsReview": "Revisar termo",
+  "termsSaveError": "Não foi possível salvar o aceite neste aparelho. Tente novamente.",
   "diagnosticsTitle": "Diagnóstico de teste",
   "diagnosticsIntro": "Registre informações técnicas para ajudar a equipe a investigar o funcionamento do app. Não são gravados fotos, vídeos, áudio, localização, senhas ou dados da conta. Nenhum envio é automático.",
   "diagnosticsConsent": "Quero registrar este teste e escolherei se vou compartilhar o relatório.",

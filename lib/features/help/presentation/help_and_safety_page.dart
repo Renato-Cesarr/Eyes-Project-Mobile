@@ -7,8 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final class HelpAndSafetyPage extends StatelessWidget {
-  const HelpAndSafetyPage({this.diagnosticsEnabled = false, super.key});
+  const HelpAndSafetyPage({
+    this.showTerms = false,
+    this.diagnosticsEnabled = false,
+    super.key,
+  });
 
+  final bool showTerms;
   final bool diagnosticsEnabled;
 
   @override
@@ -69,6 +74,16 @@ final class HelpAndSafetyPage extends StatelessWidget {
             icon: Icons.camera_alt_outlined,
           ),
           SizedBox(height: layout.spaceXl),
+          if (showTerms) ...[
+            EyesButton(
+              label: l10n.termsTitle,
+              variant: EyesButtonVariant.outlined,
+              icon: Icons.description_outlined,
+              onPressed: () =>
+                  unawaited(context.pushNamed(AppRoutes.termsReview)),
+            ),
+            SizedBox(height: layout.spaceMd),
+          ],
           EyesButton(
             label: l10n.repeatOnboarding,
             onPressed: () => unawaited(

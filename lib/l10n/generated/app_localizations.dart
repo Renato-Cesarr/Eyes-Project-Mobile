@@ -1789,6 +1789,108 @@ abstract class AppLocalizations {
   /// **'Envio desativado neste aparelho. A exclusão remota não foi confirmada. Use Excluir histórico para tentar novamente.'**
   String get scanSyncDeleteFailed;
 
+  /// No description provided for @termsTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Termo de uso e privacidade'**
+  String get termsTitle;
+
+  /// No description provided for @termsVersion.
+  ///
+  /// In pt, this message translates to:
+  /// **'Versão {version}'**
+  String termsVersion(int version);
+
+  /// No description provided for @termsPurposeTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Finalidade do aplicativo'**
+  String get termsPurposeTitle;
+
+  /// No description provided for @termsPurposeBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'O Our Eyes é um protótipo acadêmico que reconhece algumas classes de objetos e oferece avisos por voz e vibração. O uso da assistência funciona no aparelho, inclusive sem conta e sem internet.'**
+  String get termsPurposeBody;
+
+  /// No description provided for @termsSafetyTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Limites dos avisos'**
+  String get termsSafetyTitle;
+
+  /// No description provided for @termsSafetyBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'O reconhecimento pode falhar, atrasar ou confundir objetos. A proximidade indicada é relativa e não mede distância. Use o aplicativo como recurso complementar em ambiente controlado. Mantenha seus recursos habituais de mobilidade e orientação. O protótipo não deve orientar travessias, deslocamentos vendados ou decisões de emergência.'**
+  String get termsSafetyBody;
+
+  /// No description provided for @termsCameraTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Câmera e processamento local'**
+  String get termsCameraTitle;
+
+  /// No description provided for @termsCameraBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'O Android pede permissão de câmera quando você inicia o recurso correspondente. O aplicativo processa os quadros no aparelho durante a varredura, sem gravá-los como fotos ou vídeos e sem enviá-los ao servidor. Você pode interromper a varredura ou revogar a permissão nas configurações do Android. Respeite a privacidade das pessoas ao redor.'**
+  String get termsCameraBody;
+
+  /// No description provided for @termsAccountTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conta e envio opcional'**
+  String get termsAccountTitle;
+
+  /// No description provided for @termsAccountBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'Se você entrar em uma conta, a API configurada recebe os dados necessários à autenticação. O envio de informações sobre novas sessões exige autorização separada em Conta opcional. Quando habilitado, os dados enviados ficam vinculados à conta por até 30 dias. Desativar limpa a fila local. Use Excluir histórico para remover sessões do servidor. Em versões de teste com diagnóstico, iniciar o registro e compartilhar o arquivo são escolhas separadas.'**
+  String get termsAccountBody;
+
+  /// No description provided for @termsChoiceTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sua escolha e consulta'**
+  String get termsChoiceTitle;
+
+  /// No description provided for @termsChoiceBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aceitar registra somente a versão deste termo nas preferências do aparelho. Esse aceite permite usar o app. A permissão de câmera, o envio de metadados, o diagnóstico e a participação em pesquisa têm decisões próprias. Você pode consultar o termo em Ajuda e segurança. Para dúvidas sobre esta versão ou seus dados, procure a equipe pelo canal de distribuição do protótipo.'**
+  String get termsChoiceBody;
+
+  /// No description provided for @termsAccept.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aceitar e continuar'**
+  String get termsAccept;
+
+  /// No description provided for @termsDecline.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não aceitar'**
+  String get termsDecline;
+
+  /// No description provided for @termsDeclined.
+  ///
+  /// In pt, this message translates to:
+  /// **'O uso do aplicativo está suspenso. Você pode sair ou revisar o termo quando quiser.'**
+  String get termsDeclined;
+
+  /// No description provided for @termsReview.
+  ///
+  /// In pt, this message translates to:
+  /// **'Revisar termo'**
+  String get termsReview;
+
+  /// No description provided for @termsSaveError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível salvar o aceite neste aparelho. Tente novamente.'**
+  String get termsSaveError;
+
   /// No description provided for @diagnosticsTitle.
   ///
   /// In pt, this message translates to:

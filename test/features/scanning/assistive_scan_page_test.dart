@@ -23,6 +23,7 @@ import 'package:eyes_mobile/features/scanning/infrastructure/camera_preview_surf
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../support/accepted_usage_terms.dart';
 import '../../support/fake_assistive_feedback.dart';
 import '../../support/fake_onboarding.dart';
 
@@ -191,6 +192,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          acceptedUsageTerms(),
           appErrorReporterProvider.overrideWithValue(AppErrorReporter(logger)),
           speechGatewayProvider.overrideWithValue(
             speech ?? FakeSpeechGateway(),

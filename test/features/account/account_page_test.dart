@@ -21,6 +21,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
+import '../../support/accepted_usage_terms.dart';
 import '../../support/fake_account.dart';
 import '../../support/fake_onboarding.dart';
 import '../../support/scan_metadata_fixture.dart';
@@ -77,6 +78,7 @@ void main() {
         preferences: prefs,
         accounts: sessions,
         gateway: gateway,
+        clock: () => metadataStart.add(const Duration(minutes: 2)),
         retryDelays: const [],
       );
       await sync.ready;
@@ -151,6 +153,7 @@ void main() {
         preferences: prefs,
         accounts: sessions,
         gateway: gateway,
+        clock: () => metadataStart.add(const Duration(minutes: 2)),
         retryDelays: const [],
       );
       await sync.ready;
@@ -360,6 +363,7 @@ Future<_AccountFixture> _pumpAccount(
   final sessionStore = store ?? InMemoryRemoteSessionStore();
   final container = ProviderContainer(
     overrides: [
+      acceptedUsageTerms(),
       scanMetadataSyncProvider.overrideWithValue(sync),
       appEnvironmentProvider.overrideWithValue(environment),
       secureLoggerProvider.overrideWithValue(logger),

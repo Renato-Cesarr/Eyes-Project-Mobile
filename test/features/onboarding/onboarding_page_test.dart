@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/accepted_usage_terms.dart';
 import '../../support/fake_assistive_feedback.dart';
 import '../../support/fake_onboarding.dart';
 
@@ -298,6 +299,7 @@ Future<void> _pumpApp(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
+        acceptedUsageTerms(),
         appEnvironmentProvider.overrideWithValue(environment),
         secureLoggerProvider.overrideWithValue(logger),
         appErrorReporterProvider.overrideWithValue(AppErrorReporter(logger)),

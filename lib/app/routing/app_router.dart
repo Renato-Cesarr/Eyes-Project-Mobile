@@ -9,6 +9,8 @@ import 'package:eyes_mobile/features/not_found/presentation/not_found_page.dart'
 import 'package:eyes_mobile/features/onboarding/presentation/app_entry_page.dart';
 import 'package:eyes_mobile/features/onboarding/presentation/onboarding_page.dart';
 import 'package:eyes_mobile/features/scanning/presentation/assistive_scan_page.dart';
+import 'package:eyes_mobile/features/terms/application/usage_terms.dart';
+import 'package:eyes_mobile/features/terms/presentation/usage_terms_page.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -22,6 +24,8 @@ abstract final class AppRoutes {
   static const String settings = 'settings';
   static const String help = 'help';
   static const String designSystem = 'design-system';
+  static const String terms = 'terms';
+  static const String termsReview = 'terms-review';
   static const String diagnostics = 'diagnostics';
 }
 
@@ -31,11 +35,21 @@ final Provider<bool> designSystemGalleryEnabledProvider = Provider<bool>(
 
 final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
   final galleryEnabled = ref.watch(designSystemGalleryEnabledProvider);
+  final terms = ref.watch(usageTermsProvider);
   final diagnosticsEnabled = ref.watch(diagnosticsEnabledProvider);
   final router = GoRouter(
     errorBuilder: (BuildContext context, GoRouterState state) =>
         const NotFoundPage(),
     initialLocation: '/',
+    redirect: (context, state) async {
+      if (state.uri.path == '/terms') return null;
+      try {
+        if (await terms.isAccepted()) return null;
+      } on Exception {
+        // If storage is unavailable, let the user retry from the terms screen.
+      }
+      return '/terms';
+    },
     routes: <RouteBase>[
       if (diagnosticsEnabled)
         GoRoute(
@@ -43,6 +57,16 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
           path: '/diagnostics',
           builder: (context, state) => const DiagnosticsPage(),
         ),
+      GoRoute(
+        name: AppRoutes.terms,
+        path: '/terms',
+        builder: (context, state) => const UsageTermsPage(),
+      ),
+      GoRoute(
+        name: AppRoutes.termsReview,
+        path: '/terms/review',
+        builder: (context, state) => const UsageTermsPage(review: true),
+      ),
       GoRoute(
         name: AppRoutes.entry,
         path: '/',
@@ -74,7 +98,10 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
         name: AppRoutes.help,
         path: '/help',
         builder: (BuildContext context, GoRouterState state) =>
-            HelpAndSafetyPage(diagnosticsEnabled: diagnosticsEnabled),
+            HelpAndSafetyPage(
+              showTerms: true,
+              diagnosticsEnabled: diagnosticsEnabled,
+            ),
       ),
       GoRoute(
         name: AppRoutes.settings,

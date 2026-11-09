@@ -6,12 +6,15 @@ import 'package:eyes_mobile/features/not_found/presentation/not_found_page.dart'
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/accepted_usage_terms.dart';
+
 void main() {
   testWidgets('development flavor exposes the component gallery', (
     WidgetTester tester,
   ) async {
     final container = ProviderContainer(
       overrides: [
+        acceptedUsageTerms(),
         appEnvironmentProvider.overrideWithValue(AppEnvironment.dev()),
         designSystemGalleryEnabledProvider.overrideWithValue(true),
       ],
@@ -34,6 +37,7 @@ void main() {
   ) async {
     final container = ProviderContainer(
       overrides: [
+        acceptedUsageTerms(),
         appEnvironmentProvider.overrideWithValue(AppEnvironment.prod()),
         designSystemGalleryEnabledProvider.overrideWithValue(false),
       ],
