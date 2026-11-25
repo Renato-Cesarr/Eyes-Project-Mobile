@@ -82,6 +82,54 @@ void main() {
     },
   );
 
+  test(
+    'exige mais confiança para pessoa sem mudar as outras classes',
+    () async {
+      final interpreter = _FakeLiteInterpreter.valid(
+        outputs: {
+          'StatefulPartitionedCall:3': _floatBytes([
+            for (var i = 0; i < 6; i++) ...[0.1, 0.2, 0.8, 0.9],
+            ...List<double>.filled(76, 0),
+          ]),
+          'StatefulPartitionedCall:2': _floatBytes([
+            0,
+            61,
+            66,
+            26,
+            0,
+            0.25,
+            ...List<double>.filled(19, 0),
+          ]),
+          'StatefulPartitionedCall:1': _floatBytes([
+            0.5,
+            0.45,
+            0.45,
+            0.45,
+            0.56,
+            0.95,
+            ...List<double>.filled(19, 0),
+          ]),
+          'StatefulPartitionedCall:0': _floatBytes([6]),
+        },
+      );
+      final detector = TfliteObjectDetector(
+        model: VerifiedModelAsset(bytes: Uint8List(1), contract: contract),
+        interpreterFactory: _FakeLiteInterpreterFactory(interpreter),
+      );
+      addTearDown(detector.close);
+
+      final result = await detector.detect(_blackFrame());
+
+      expect(result.detections.map((detection) => detection.kind), [
+        DetectedObjectKind.chair,
+        DetectedObjectKind.table,
+        DetectedObjectKind.backpack,
+        DetectedObjectKind.person,
+      ]);
+      expect(result.detections.last.confidence, closeTo(0.56, 0.0001));
+    },
+  );
+
   test('rejeita artefato cujo tensor diverge do manifesto', () {
     final interpreter = _FakeLiteInterpreter.valid(
       outputs: _emptyOutputs(),

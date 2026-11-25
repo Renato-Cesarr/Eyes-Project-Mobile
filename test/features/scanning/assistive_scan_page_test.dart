@@ -530,6 +530,7 @@ void main() {
   testWidgets('TalkBack receives only a temporally stabilized alert', (
     WidgetTester tester,
   ) async {
+    const alert = 'Cadeira muito próxima, à frente. Cuidado.';
     final semantics = tester.ensureSemantics();
     await pumpApp(tester, _WidgetCameraGateway());
     await tester.ensureVisible(find.text('Iniciar varredura'));
@@ -542,35 +543,43 @@ void main() {
 
     controller.process(_detectionBatch(0));
     await tester.pump();
-    expect(
-      find.text('Cadeira muito próxima, à frente. Cuidado.'),
-      findsNothing,
-    );
+    expect(find.text(alert), findsNothing);
 
     controller.process(_detectionBatch(1));
     controller.process(_detectionBatch(2));
     await tester.pump();
 
-    expect(
-      find.text('Cadeira muito próxima, à frente. Cuidado.'),
-      findsOneWidget,
-    );
-    expect(
-      find.bySemanticsLabel('Cadeira muito próxima, à frente. Cuidado.'),
-      findsOneWidget,
-    );
+    expect(find.text(alert), findsOneWidget);
+    expect(find.bySemanticsLabel(alert), findsOneWidget);
     expect(
       find.bySemanticsLabel(RegExp(r'FPS|threshold|tensor|\d+\s*ms')),
       findsNothing,
     );
+
+    controller.process(_detectionBatch(3, visible: false));
+    await tester.pump();
+    expect(find.text(alert), findsOneWidget);
+    controller.process(_detectionBatch(4, visible: false));
+    await tester.pump();
+    expect(find.text(alert), findsNothing);
+    expect(find.bySemanticsLabel(alert), findsNothing);
+
+    controller.process(_detectionBatch(8));
+    controller.process(_detectionBatch(9));
+    controller.process(_detectionBatch(10));
+    await tester.pump();
+    expect(find.text(alert), findsOneWidget);
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.text(alert), findsNothing);
+
     await tester.ensureVisible(find.text('Pausar varredura'));
     await tester.pumpAndSettle();
+    controller.process(_detectionBatch(15));
+    await tester.pump();
+    expect(find.text(alert), findsOneWidget);
     await tester.tap(find.text('Pausar varredura'));
     await tester.pumpAndSettle();
-    expect(
-      find.text('Cadeira muito próxima, à frente. Cuidado.'),
-      findsNothing,
-    );
+    expect(find.text(alert), findsNothing);
     expect(container.read(proximityControllerProvider).lastAlert, isNull);
     semantics.dispose();
   });
@@ -612,19 +621,20 @@ void main() {
   });
 }
 
-DetectionBatch _detectionBatch(int second) {
+DetectionBatch _detectionBatch(int second, {bool visible = true}) {
   return DetectionBatch(
     detections: [
-      DetectedObject(
-        kind: DetectedObjectKind.chair,
-        confidence: 0.9,
-        boundingBox: NormalizedBoundingBox(
-          top: 0.05,
-          left: 0.20,
-          bottom: 0.98,
-          right: 0.80,
+      if (visible)
+        DetectedObject(
+          kind: DetectedObjectKind.chair,
+          confidence: 0.9,
+          boundingBox: NormalizedBoundingBox(
+            top: 0.05,
+            left: 0.20,
+            bottom: 0.98,
+            right: 0.80,
+          ),
         ),
-      ),
     ],
     capturedAt: DateTime.utc(2026).add(Duration(seconds: second)),
     timings: const DetectionTimings(

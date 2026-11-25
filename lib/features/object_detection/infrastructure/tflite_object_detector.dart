@@ -48,6 +48,8 @@ final class TfliteObjectDetector implements ObjectDetectorGateway {
   final VisionFramePreprocessor preprocessor;
   final LiteInterpreter _interpreter;
   final double scoreThreshold;
+  // Candidate floor for person alerts. Other classes use the configured floor.
+  static const _personScoreFloor = 0.55;
   var _closed = false;
 
   @override
@@ -113,12 +115,17 @@ final class TfliteObjectDetector implements ObjectDetectorGateway {
     for (var index = 0; index < count; index++) {
       final score = scores[index].toDouble();
       final labelValue = classes[index];
-      if (!score.isFinite || score < scoreThreshold || !labelValue.isFinite) {
+      if (!score.isFinite ||
+          score < scoreThreshold ||
+          score > 1 ||
+          !labelValue.isFinite ||
+          labelValue != labelValue.truncateToDouble()) {
         continue;
       }
-      final modelClass = _contract.classForLabelIndex(labelValue.round());
+      final modelClass = _contract.classForLabelIndex(labelValue.toInt());
       final kind = modelClass == null ? null : _domainKind(modelClass.domainId);
-      if (kind == null) {
+      if (kind == null ||
+          (kind == DetectedObjectKind.person && score < _personScoreFloor)) {
         continue;
       }
       final boxOffset = index * 4;
@@ -139,7 +146,7 @@ final class TfliteObjectDetector implements ObjectDetectorGateway {
       detections.add(
         DetectedObject(
           kind: kind,
-          confidence: score.clamp(0.0, 1.0),
+          confidence: score,
           boundingBox: NormalizedBoundingBox(
             top: top,
             left: left,

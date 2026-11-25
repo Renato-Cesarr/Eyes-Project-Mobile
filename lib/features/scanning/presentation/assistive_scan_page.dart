@@ -239,7 +239,9 @@ final class _AssistiveScanContent extends ConsumerWidget {
         operationalStatus.phase == AssistiveScanPhase.paused;
     final previewAspectRatio = session.previewAspectRatio;
     final latestAlert = isActivelyScanning
-        ? ref.watch(proximityControllerProvider).lastAlert
+        ? ref.watch(
+            proximityControllerProvider.select((state) => state.lastAlert),
+          )
         : null;
 
     if (blockingFailure != null) {

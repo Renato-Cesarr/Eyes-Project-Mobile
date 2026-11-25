@@ -9,6 +9,8 @@ final class ProximityState {
   }) : recentEvents = List<ProximityAlertEvent>.unmodifiable(recentEvents);
 
   final ProximityEvaluation? latestEvaluation;
+
+  /// Most recent announcement while its track remains relevant to the view.
   final ProximityAlertEvent? lastAlert;
   final List<ProximityAlertEvent> recentEvents;
   final int processedFrames;
